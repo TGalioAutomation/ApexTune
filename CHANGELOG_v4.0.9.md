@@ -31,6 +31,7 @@ Bản release lớn gom toàn bộ nhóm thay đổi từ 2026-09-08 đến 2026
 ### Widget
 
 - **WidgetKit widget** "MacOptimizer" (Small/Medium): vòng điểm sức khỏe, CPU/RAM/ổ đĩa, uptime; tự làm mới 15 phút, app reload khi mở dashboard.
+- **Lỗi đã biết trên macOS 27.0 (26A428):** tiến trình widget trap `EXC_BREAKPOINT` trong ExtensionFoundation (`MainActor.assumeIsolated` lúc `EXExtension.bootstrap`) trước khi code widget chạy — xảy ra với appex build thủ công bằng SPM; đã thử Swift 5/6, minos 13/27, các mẫu khởi tạo runtime mà không hết. Widget trên macOS 26 vẫn hoạt động khi được đăng ký. Theo dõi và rebuild bằng Xcode project nếu Apple không sửa.
 
 ### Nền & độ tin cậy
 

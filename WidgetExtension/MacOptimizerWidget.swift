@@ -26,13 +26,19 @@ struct HealthProvider: TimelineProvider {
 
 // MARK: - Widget
 
+// LƯU Ý (2026-09-28, macOS 27.0/26A428): widget appex này trap
+// EXC_BREAKPOINT trong ExtensionFoundation (MainActor.assumeIsolated lúc
+// EXExtension.bootstrap) trước khi code bên dưới kịp chạy — xảy ra cả khi
+// hosted lẫn standalone, bất kể Swift 5/6, minos 13/27 hay các mẫu khởi
+// tạo runtime concurrency. Widget hệ thống build bằng Xcode (Reminders)
+// chạy bình thường. Hướng đi: chờ Apple sửa hoặc rebuild appex bằng
+// Xcode project thật.
 @main
 struct MacOptimizerWidgetBundle: WidgetBundle {
     var body: some Widget {
         MacHealthWidget()
     }
 }
-
 struct MacHealthWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "MacOptimizerHealth", provider: HealthProvider()) { entry in

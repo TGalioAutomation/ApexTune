@@ -90,7 +90,7 @@ struct SystemMetrics {
         }
         guard result == KERN_SUCCESS else { return 0 }
 
-        let pageSize = UInt64(vm_kernel_page_size)
+        let pageSize = UInt64(getpagesize()) // hàm thay cho global var vm_kernel_page_size (Swift 6 an toàn concurrency)
         let total = totalPhysicalBytes()
         // Trên macOS: internal = bộ nhớ ẩn danh của tiến trình, compressor = trang đã nén.
         let used = (UInt64(stats.internal_page_count) + UInt64(stats.compressor_page_count)) * pageSize

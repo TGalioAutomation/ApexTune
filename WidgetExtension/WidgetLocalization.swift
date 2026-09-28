@@ -42,7 +42,8 @@ enum WidgetL {
     /// Tìm `Languages/<code>.json` trong app chứa widget. Widget appex nằm ở
     /// `MacOptimizer.app/Contents/PlugIns/`, resource bundle SPM nằm ở
     /// `MacOptimizer.app/Contents/Resources/MacOptimizer_AppUninstaller.bundle`
-    /// — quét mọi *.bundle cho chắc, kèm đường dự phòng không qua bundle.
+    /// (JSON nằm ở `<bundle>/Contents/Resources/Languages/`). Quét mọi
+    /// *.bundle cho chắc, kèm đường dự phòng không qua bundle.
     private static func languageFileURL(code: String) -> URL? {
         let fileManager = FileManager.default
         let plugIns = Bundle.main.bundleURL.deletingLastPathComponent()   // .../Contents/PlugIns
@@ -52,10 +53,13 @@ enum WidgetL {
         if let bundles = try? fileManager.contentsOfDirectory(
             at: resources, includingPropertiesForKeys: nil) {
             for bundleURL in bundles where bundleURL.pathExtension == "bundle" {
-                let nested = bundleURL.appendingPathComponent("Languages/\(code).json")
-                if fileManager.fileExists(atPath: nested.path) { return nested }
-                let flat = bundleURL.appendingPathComponent("\(code).json")
-                if fileManager.fileExists(atPath: flat.path) { return flat }
+                for candidate in [
+                    bundleURL.appendingPathComponent("Contents/Resources/Languages/\(code).json"),
+                    bundleURL.appendingPathComponent("Languages/\(code).json"),
+                    bundleURL.appendingPathComponent("\(code).json"),
+                ] where fileManager.fileExists(atPath: candidate.path) {
+                    return candidate
+                }
             }
         }
         let direct = resources.appendingPathComponent("Languages/\(code).json")

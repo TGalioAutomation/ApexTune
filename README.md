@@ -41,7 +41,7 @@ The app runs as an accessory utility (`LSUIElement`): no Dock icon, everything h
 - Live status item metrics: `GPU`, `CPU`, `DISK`, `RAM`, `Network`, `Battery` — toggle each one, reorder, use display presets and sampling profiles.
 - **5 banner themes** for the menu bar strip: Dark, Light, Mono, Accent, Minimal.
 - **RAM alerts** based on a system-wide threshold (configurable 60–95%), naming the heaviest app with a confirm-before-force-quit flow.
-- A **WidgetKit widget** (Small/Medium) showing the health score, CPU/RAM/disk gauges and uptime.
+- A **WidgetKit widget** (Small/Medium) showing the health score, CPU/RAM/disk gauges and uptime. *(Known issue: on macOS 27.0 the widget process crashes inside Apple's ExtensionFoundation bootstrap before our code runs — affects hand-built SPM appex; works on macOS 26.)*
 - Per-metric detail windows (CPU, RAM, storage, network, battery, force-quit apps) open from the dashboard.
 - Launch at login, optional app icon on the status item.
 

@@ -41,7 +41,7 @@ App chạy dạng utility (`LSUIElement`): không có icon ở Dock, mọi thứ
 - Status item hiển thị động `GPU`, `CPU`, `DISK`, `RAM`, `Mạng`, `Pin` — bật/tắt từng metric, đổi thứ tự, preset hiển thị, profile lấy mẫu.
 - **5 theme banner** cho dải số liệu trên menu bar: Tối, Sáng, Đơn sắc, Màu nhấn, Tối giản.
 - **Cảnh báo RAM** theo ngưỡng toàn hệ thống (tùy chỉnh 60–95%), kèm gợi ý app nặng nhất và buộc thoát có xác nhận.
-- **Widget** WidgetKit (Small/Medium) hiển thị điểm sức khỏe, CPU/RAM/ổ đĩa và uptime.
+- **Widget** WidgetKit (Small/Medium) hiển thị điểm sức khỏe, CPU/RAM/ổ đĩa và uptime. *(Lỗi đã biết: trên macOS 27.0 tiến trình widget crash trong bootstrap của ExtensionFoundation trước khi code widget chạy — ảnh hưởng appex build thủ công bằng SPM; hoạt động tốt trên macOS 26.)*
 - Chi tiết từng metric (CPU, RAM, ổ đĩa, mạng, pin, buộc thoát app) mở từ dashboard.
 - Khởi động cùng macOS, tùy chọn giữ icon app trên status item.
 
