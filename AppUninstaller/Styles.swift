@@ -207,6 +207,8 @@ struct GradientStyles {
         case .updater: return updater
         case .spaceLens: return spaceLens
         case .aiModels: return aiModels
+        case .docker: return LinearGradient(colors: [Color(hex: "4DB7FF"), Color(hex: "2563EB")], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case .backgroundItems: return optimizer
         }
     }
 
@@ -446,6 +448,8 @@ enum AppModule: String, CaseIterable, Identifiable {
     case fileExplorer = "Quản lý tệp"
     case spaceLens = "Bản đồ dung lượng"
     case aiModels = "Mô hình AI"
+    case docker = "Image Docker"
+    case backgroundItems = "Dịch vụ nền"
     case uninstaller = "Gỡ cài đặt ứng dụng"
     case updater = "Cập nhật ứng dụng"
     case trash = "Thùng rác"
@@ -467,6 +471,8 @@ enum AppModule: String, CaseIterable, Identifiable {
         case .fileExplorer: return "folder" // Changed icon for File Management
         case .spaceLens: return "circle.hexagongrid" // Space Lens icon
         case .aiModels: return "brain.head.profile"
+        case .docker: return "shippingbox.fill"
+        case .backgroundItems: return "list.bullet.rectangle.fill"
         case .trash: return "trash"
         case .malware: return "exclamationmark.shield.fill"
         case .privacy: return "hand.raised.fill"
@@ -487,6 +493,8 @@ enum AppModule: String, CaseIterable, Identifiable {
         case .fileExplorer: return GradientStyles.fileExplorer
         case .spaceLens: return GradientStyles.spaceLens // New Gradient
         case .aiModels: return GradientStyles.aiModels
+        case .docker: return LinearGradient(colors: [Color(hex: "4DB7FF"), Color(hex: "2563EB")], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case .backgroundItems: return GradientStyles.optimizer
         case .trash: return GradientStyles.trash
         case .malware: return LinearGradient(colors: [Color(hex: "FF6B6B"), Color(hex: "FF8E53")], startPoint: .topLeading, endPoint: .bottomTrailing)
         case .privacy:
@@ -509,6 +517,11 @@ enum AppModule: String, CaseIterable, Identifiable {
         case .fileExplorer: return BackgroundStyles.fileExplorer
         case .spaceLens: return BackgroundStyles.spaceLens // New Background
         case .aiModels: return BackgroundStyles.aiModels
+        case .docker: return LinearGradient(stops: [
+            .init(color: Color(hex: "12314F"), location: 0.0),
+            .init(color: Color(hex: "2A123A"), location: 1.0)
+        ], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case .backgroundItems: return BackgroundStyles.privacy
         case .trash: return BackgroundStyles.trash
         case .malware: return LinearGradient(stops: [
             .init(color: Color(hex: "E05E5E"), location: 0.0),
@@ -522,22 +535,24 @@ enum AppModule: String, CaseIterable, Identifiable {
     
     var description: String {
         switch self {
-        case .monitor: return "Giám sát CPU, bộ nhớ và mạng theo thời gian thực"
-        case .uninstaller: return "Xóa sạch ứng dụng và toàn bộ tệp còn sót lại"
-        case .deepClean: return "Quét các tệp còn sót lại từ ứng dụng đã gỡ"
-        case .cleaner: return "Dọn bộ nhớ đệm và rác hệ thống"
-        case .maintenance: return "Chạy các tác vụ bảo trì hệ thống"
-        case .optimizer: return "Quản lý ứng dụng khởi động và giải phóng bộ nhớ"
-        case .shredder: return "Xóa an toàn các tệp nhạy cảm"
-        case .largeFiles: return "Tìm và dọn các tệp chiếm nhiều dung lượng"
-        case .fileExplorer: return "Duyệt và quản lý tệp trên ổ đĩa"
-        case .spaceLens: return "So sánh trực quan dung lượng thư mục và tệp để dọn nhanh hơn"
-        case .aiModels: return "Quản lý model Ollama và LM Studio, xem dung lượng và xóa nhanh"
-        case .trash: return "Xem và dọn sạch thùng rác"
-        case .malware: return "Quét và loại bỏ phần mềm độc hại"
-        case .privacy: return "Bảo vệ dữ liệu riêng tư của bạn"
-        case .smartClean: return "Quét nhanh và dọn rác hệ thống chỉ với một lần chạm"
-        case .updater: return "Giữ mọi ứng dụng luôn ở phiên bản mới và ổn định nhất"
+        case .monitor: return L("Giám sát CPU, bộ nhớ và mạng theo thời gian thực")
+        case .uninstaller: return L("Xóa sạch ứng dụng và toàn bộ tệp còn sót lại")
+        case .deepClean: return L("Quét các tệp còn sót lại từ ứng dụng đã gỡ")
+        case .cleaner: return L("Dọn bộ nhớ đệm và rác hệ thống")
+        case .maintenance: return L("Chạy các tác vụ bảo trì hệ thống")
+        case .optimizer: return L("Quản lý ứng dụng khởi động và giải phóng bộ nhớ")
+        case .shredder: return L("Xóa an toàn các tệp nhạy cảm")
+        case .largeFiles: return L("Tìm và dọn các tệp chiếm nhiều dung lượng")
+        case .fileExplorer: return L("Duyệt và quản lý tệp trên ổ đĩa")
+        case .spaceLens: return L("So sánh trực quan dung lượng thư mục và tệp để dọn nhanh hơn")
+        case .aiModels: return L("Quản lý model Ollama và LM Studio, xem dung lượng và xóa nhanh")
+        case .docker: return L("Xem image Docker đang chiếm dung lượng và xóa bớt")
+        case .backgroundItems: return L("Liệt kê dịch vụ tự khởi động của bên thứ ba và tạm tắt khi cần")
+        case .trash: return L("Xem và dọn sạch thùng rác")
+        case .malware: return L("Quét và loại bỏ phần mềm độc hại")
+        case .privacy: return L("Bảo vệ dữ liệu riêng tư của bạn")
+        case .smartClean: return L("Quét nhanh và dọn rác hệ thống chỉ với một lần chạm")
+        case .updater: return L("Giữ mọi ứng dụng luôn ở phiên bản mới và ổn định nhất")
         }
     }
 }

@@ -74,12 +74,12 @@ class FileExplorerService: ObservableObject {
         currentPath = home
         
         quickAccessItems = [
-            QuickAccessItem(name: "Thư mục chính", icon: "house.fill", url: home),
-            QuickAccessItem(name: "Màn hình nền", icon: "menubar.dock.rectangle", url: home.appendingPathComponent("Desktop")),
-            QuickAccessItem(name: "Tài liệu", icon: "doc.fill", url: home.appendingPathComponent("Documents")),
-            QuickAccessItem(name: "Tải xuống", icon: "arrow.down.circle.fill", url: home.appendingPathComponent("Downloads")),
-            QuickAccessItem(name: "Ứng dụng", icon: "square.grid.2x2.fill", url: URL(fileURLWithPath: "/Applications")),
-            QuickAccessItem(name: "Gốc ổ đĩa", icon: "externaldrive.fill", url: URL(fileURLWithPath: "/")),
+            QuickAccessItem(name: L("Thư mục chính"), icon: "house.fill", url: home),
+            QuickAccessItem(name: L("Màn hình nền"), icon: "menubar.dock.rectangle", url: home.appendingPathComponent("Desktop")),
+            QuickAccessItem(name: L("Tài liệu"), icon: "doc.fill", url: home.appendingPathComponent("Documents")),
+            QuickAccessItem(name: L("Tải xuống"), icon: "arrow.down.circle.fill", url: home.appendingPathComponent("Downloads")),
+            QuickAccessItem(name: L("Ứng dụng"), icon: "square.grid.2x2.fill", url: URL(fileURLWithPath: "/Applications")),
+            QuickAccessItem(name: L("Gốc ổ đĩa"), icon: "externaldrive.fill", url: URL(fileURLWithPath: "/")),
         ]
         
         navigateTo(home, addToHistory: true)
@@ -142,7 +142,7 @@ class FileExplorerService: ObservableObject {
                 }
             } catch {
                 DispatchQueue.main.async {
-                    self.error = "Không thể truy cập thư mục này: \(error.localizedDescription)"
+                    self.error = String(format: L("Không thể truy cập thư mục này: %@"), error.localizedDescription)
                     self.isLoading = false
                 }
             }
@@ -254,14 +254,14 @@ class FileExplorerService: ObservableObject {
                         self.shellOutput += output
                     }
                     if !errorOutput.isEmpty {
-                        self.shellOutput += "[Lỗi] \(errorOutput)"
+                        self.shellOutput += String(format: L("[Lỗi] %@"), errorOutput)
                     }
                     self.isRunningCommand = false
                     self.refresh()
                 }
             } catch {
                 DispatchQueue.main.async {
-                    self.shellOutput += "[Thực thi thất bại] \(error.localizedDescription)\n"
+                    self.shellOutput += String(format: L("[Thực thi thất bại] %@\n"), error.localizedDescription)
                     self.isRunningCommand = false
                 }
             }

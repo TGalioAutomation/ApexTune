@@ -27,7 +27,7 @@ struct ForceQuitAppsView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.white.opacity(0.45))
-                    TextField("Tìm ứng dụng đang chạy", text: $searchText)
+                    TextField(L("Tìm ứng dụng đang chạy"), text: $searchText)
                         .textFieldStyle(.plain)
                         .foregroundColor(.white)
                 }
@@ -36,7 +36,7 @@ struct ForceQuitAppsView: View {
                 .background(Color.white.opacity(0.06))
                 .cornerRadius(12)
                 
-                Text("Chọn ứng dụng regular đang chạy để buộc thoát nhanh từ menu bar.")
+                Text(L("Chọn ứng dụng regular đang chạy để buộc thoát nhanh từ menu bar."))
                     .font(.system(size: 11))
                     .foregroundColor(.white.opacity(0.55))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -48,10 +48,10 @@ struct ForceQuitAppsView: View {
                                 Image(systemName: "checkmark.circle")
                                     .font(.system(size: 24))
                                     .foregroundColor(.green.opacity(0.9))
-                                Text("Không có ứng dụng phù hợp")
+                                Text(L("Không có ứng dụng phù hợp"))
                                     .font(.system(size: 13, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Thử đổi từ khóa hoặc làm mới danh sách.")
+                                Text(L("Thử đổi từ khóa hoặc làm mới danh sách."))
                                     .font(.system(size: 11))
                                     .foregroundColor(.white.opacity(0.5))
                             }
@@ -80,10 +80,10 @@ struct ForceQuitAppsView: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Buộc thoát ứng dụng")
+                Text(L("Buộc thoát ứng dụng"))
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
-                Text("\(runningApps.count) ứng dụng đang mở")
+                Text(String(format: L("%d ứng dụng đang mở"), runningApps.count))
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.6))
             }
@@ -157,7 +157,7 @@ private struct ForceQuitAppRow: View {
             }
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(app.localizedName ?? "Ứng dụng không rõ")
+                Text(app.localizedName ?? L("Ứng dụng không rõ"))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.white)
                     .lineLimit(1)
@@ -170,7 +170,7 @@ private struct ForceQuitAppRow: View {
             Spacer()
             
             Button(action: onForceQuit) {
-                Text(isProcessing ? "Đang thoát..." : "Buộc thoát")
+                Text(isProcessing ? L("Đang thoát...") : L("Buộc thoát"))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)

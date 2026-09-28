@@ -3,6 +3,7 @@ import SwiftUI
 struct MenuBarCustomizationView: View {
     @ObservedObject var manager: MenuBarManager
     @ObservedObject private var systemMonitor: SystemMonitorService
+    @ObservedObject private var launchAtLogin = LaunchAtLoginManager.shared
     @State private var selectedSection: CustomizerSection = .display
     
     private let compactColumns = [GridItem(.adaptive(minimum: 108), spacing: 8)]
@@ -35,10 +36,10 @@ struct MenuBarCustomizationView: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Tùy chỉnh thanh menu")
+                Text(L("Tùy chỉnh thanh menu"))
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
-                Text("Chọn thông tin bạn muốn luôn nhìn thấy trên thanh menu.")
+                Text(L("Chọn thông tin bạn muốn luôn nhìn thấy trên thanh menu."))
                     .font(primaryBodyFont)
                     .lineSpacing(1)
                     .foregroundColor(.white.opacity(0.6))
@@ -90,6 +91,7 @@ struct MenuBarCustomizationView: View {
         case .display:
             previewCard
             presetsCard
+            bannerThemeCard
             selectedMetricsCard
             availableMetricsCard
         case .sampling:
@@ -103,7 +105,7 @@ struct MenuBarCustomizationView: View {
     
     private var previewCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Xem trước")
+            Text(L("Xem trước"))
                 .font(sectionTitleFont)
                 .foregroundColor(.white)
             
@@ -112,7 +114,7 @@ struct MenuBarCustomizationView: View {
                     Image(nsImage: previewImage)
                         .interpolation(.high)
                 } else if manager.statusMetricDisplays.isEmpty {
-                    Text("Chỉ biểu tượng")
+                    Text(L("Chỉ biểu tượng"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.white)
                 } else {
@@ -148,31 +150,31 @@ struct MenuBarCustomizationView: View {
     
     private var presetsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Preset hiển thị")
+            Text(L("Preset hiển thị"))
                 .font(sectionTitleFont)
                 .foregroundColor(.white)
-            Text("Nhóm này chỉ quyết định thông tin nào hiện trên thanh menu, không đổi nhịp lấy mẫu.")
+            Text(L("Nhóm này chỉ quyết định thông tin nào hiện trên thanh menu, không đổi nhịp lấy mẫu."))
                 .font(secondaryBodyFont)
                 .lineSpacing(1)
                 .foregroundColor(.white.opacity(0.55))
             
             LazyVGrid(columns: compactColumns, spacing: 10) {
-                presetButton(title: "Mặc định", subtitle: "GPU + CPU + DISK + RAM") {
+                presetButton(title: L("Mặc định"), subtitle: "GPU + CPU + DISK + RAM") {
                     manager.setStatusMetrics([.gpu, .cpu, .storage, .memory])
                     manager.showsStatusIcon = true
                 }
                 
-                presetButton(title: "Làm việc", subtitle: "GPU + CPU + RAM") {
+                presetButton(title: L("Làm việc"), subtitle: "GPU + CPU + RAM") {
                     manager.setStatusMetrics([.gpu, .cpu, .memory])
                     manager.showsStatusIcon = true
                 }
                 
-                presetButton(title: "Giám sát", subtitle: "Hiện tất cả") {
+                presetButton(title: L("Giám sát"), subtitle: L("Hiện tất cả")) {
                     manager.setStatusMetrics(MenuBarStatusMetric.allCases)
                     manager.showsStatusIcon = true
                 }
                 
-                presetButton(title: "Tối giản", subtitle: "Chỉ biểu tượng") {
+                presetButton(title: L("Tối giản"), subtitle: L("Chỉ biểu tượng")) {
                     manager.setStatusMetrics([])
                     manager.showsStatusIcon = true
                 }
@@ -183,12 +185,76 @@ struct MenuBarCustomizationView: View {
         .cornerRadius(16)
     }
     
-    private var samplingProfilesCard: some View {
+    private var bannerThemeCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Nhịp lấy mẫu")
+            Text(L("Giao diện banner"))
                 .font(sectionTitleFont)
                 .foregroundColor(.white)
-            Text("Mỗi profile đổi tốc độ thu thập CPU, RAM, Mạng, Pin, DISK và danh sách tiến trình.")
+            Text(L("Đổi kiểu dáng dải số liệu ngay trên thanh menu."))
+                .font(secondaryBodyFont)
+                .lineSpacing(1)
+                .foregroundColor(.white.opacity(0.55))
+
+            LazyVGrid(columns: compactColumns, spacing: 10) {
+                ForEach(MenuBarBannerTheme.allCases) { theme in
+                    bannerThemeButton(theme)
+                }
+            }
+        }
+        .padding(14)
+        .background(Color.white.opacity(0.05))
+        .cornerRadius(16)
+    }
+
+    private func bannerThemeButton(_ theme: MenuBarBannerTheme) -> some View {
+        let isActive = manager.bannerTheme == theme
+
+        return Button(action: {
+            manager.bannerTheme = theme
+        }) {
+            VStack(alignment: .leading, spacing: 8) {
+                BannerThemeChipPreview(theme: theme)
+                    .frame(maxWidth: .infinity)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack {
+                        Text(theme.title)
+                            .font(itemTitleFont)
+                            .foregroundColor(.white)
+                        Spacer()
+                        if isActive {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                        }
+                    }
+                    Text(theme.subtitle)
+                        .font(secondaryBodyFont)
+                        .lineSpacing(1)
+                        .foregroundColor(.white.opacity(0.58))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
+            .background(Color.white.opacity(isActive ? 0.14 : 0.08))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isActive ? Color.green.opacity(0.8) : Color.clear, lineWidth: 1)
+            )
+            .cornerRadius(12)
+        }
+        .buttonStyle(.plain)
+        .help(theme.subtitle)
+        .accessibilityLabel("\(L("Giao diện banner")): \(theme.title)")
+        .accessibilityAddTraits(isActive ? .isSelected : [])
+    }
+
+    private var samplingProfilesCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L("Nhịp lấy mẫu"))
+                .font(sectionTitleFont)
+                .foregroundColor(.white)
+            Text(L("Mỗi profile đổi tốc độ thu thập CPU, RAM, Mạng, Pin, DISK và danh sách tiến trình."))
                 .font(secondaryBodyFont)
                 .lineSpacing(1)
                 .foregroundColor(.white.opacity(0.55))
@@ -204,10 +270,10 @@ struct MenuBarCustomizationView: View {
                     Image(systemName: "slider.horizontal.3")
                         .foregroundColor(.white.opacity(0.8))
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Bạn đang dùng nhịp lấy mẫu tùy chỉnh")
+                        Text(L("Bạn đang dùng nhịp lấy mẫu tùy chỉnh"))
                             .font(itemTitleFont)
                             .foregroundColor(.white)
-                        Text("Các chỉnh sửa phía dưới sẽ được lưu lại cho lần mở sau.")
+                        Text(L("Các chỉnh sửa phía dưới sẽ được lưu lại cho lần mở sau."))
                             .font(secondaryBodyFont)
                             .lineSpacing(1)
                             .foregroundColor(.white.opacity(0.55))
@@ -226,14 +292,14 @@ struct MenuBarCustomizationView: View {
     
     private var samplingIntervalsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Tùy chỉnh theo từng loại")
+            Text(L("Tùy chỉnh theo từng loại"))
                 .font(sectionTitleFont)
                 .foregroundColor(.white)
-            Text("Chu kỳ càng ngắn thì số liệu càng mới, nhưng tốn tài nguyên nền hơn.")
+            Text(L("Chu kỳ càng ngắn thì số liệu càng mới, nhưng tốn tài nguyên nền hơn."))
                 .font(secondaryBodyFont)
                 .lineSpacing(1)
                 .foregroundColor(.white.opacity(0.55))
-            Text("Chỉ những metric đang bật hoặc panel đang mở mới được lấy mẫu.")
+            Text(L("Chỉ những metric đang bật hoặc panel đang mở mới được lấy mẫu."))
                 .font(secondaryBodyFont)
                 .foregroundColor(.green.opacity(0.85))
             
@@ -250,7 +316,7 @@ struct MenuBarCustomizationView: View {
 
     private var customSamplingSummaryCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Trạng thái hiện tại")
+            Text(L("Trạng thái hiện tại"))
                 .font(sectionTitleFont)
                 .foregroundColor(.white)
             
@@ -278,12 +344,12 @@ struct MenuBarCustomizationView: View {
     
     private var selectedMetricsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Thứ tự đang hiển thị")
+            Text(L("Thứ tự đang hiển thị"))
                 .font(sectionTitleFont)
                 .foregroundColor(.white)
             
             if manager.selectedStatusMetrics.isEmpty {
-                Text("Hiện chưa có metric nào được bật. Bạn vẫn có thể giữ lại biểu tượng ứng dụng trên thanh menu.")
+                Text(L("Hiện chưa có metric nào được bật. Bạn vẫn có thể giữ lại biểu tượng ứng dụng trên thanh menu."))
                     .font(primaryBodyFont)
                     .lineSpacing(1)
                     .foregroundColor(.white.opacity(0.6))
@@ -336,7 +402,7 @@ struct MenuBarCustomizationView: View {
     
     private var availableMetricsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Thông tin có thể hiển thị")
+            Text(L("Thông tin có thể hiển thị"))
                 .font(sectionTitleFont)
                 .foregroundColor(.white)
             
@@ -370,31 +436,63 @@ struct MenuBarCustomizationView: View {
     
     private var optionsCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Tùy chọn khác")
+            Text(L("Tùy chọn khác"))
                 .font(sectionTitleFont)
                 .foregroundColor(.white)
-            
+
             Toggle(isOn: Binding(
-                get: { manager.showsStatusIcon },
-                set: { _ in manager.toggleStatusIcon() }
+                get: { launchAtLogin.isEnabled },
+                set: { launchAtLogin.setEnabled($0) }
             )) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Hiện biểu tượng ứng dụng")
+                    Text(L("Khởi động cùng macOS"))
                         .font(itemTitleFont)
                         .foregroundColor(.white)
-                    Text("Giữ lại biểu tượng app ở đầu status item.")
+                    Text(L("Tự động chạy MacOptimizer và giám sát menu bar khi đăng nhập."))
                         .font(secondaryBodyFont)
                         .foregroundColor(.white.opacity(0.5))
                 }
             }
             .toggleStyle(.switch)
             .tint(.purple)
-            
+
+            Toggle(isOn: Binding(
+                get: { manager.showsStatusIcon },
+                set: { _ in manager.toggleStatusIcon() }
+            )) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(L("Hiện biểu tượng ứng dụng"))
+                        .font(itemTitleFont)
+                        .foregroundColor(.white)
+                    Text(L("Giữ lại biểu tượng app ở đầu status item."))
+                        .font(secondaryBodyFont)
+                        .foregroundColor(.white.opacity(0.5))
+                }
+            }
+            .toggleStyle(.switch)
+            .tint(.purple)
+
+            Stepper(value: Binding(
+                get: { systemMonitor.memoryAlertThresholdPercent },
+                set: { systemMonitor.updateMemoryAlertThreshold($0) }
+            ), in: 60...95, step: 5) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(String(format: L("Cảnh báo RAM từ %d%%"), Int(systemMonitor.memoryAlertThresholdPercent)))
+                        .font(itemTitleFont)
+                        .foregroundColor(.white)
+                    Text(L("Chỉ cảnh báo khi toàn bộ hệ thống dùng RAM vượt ngưỡng này."))
+                        .font(secondaryBodyFont)
+                        .foregroundColor(.white.opacity(0.5))
+                }
+            }
+            .tint(.green)
+
             Button(action: {
                 manager.resetStatusBarPreferences()
                 systemMonitor.applySamplingProfile(.balanced)
+                systemMonitor.updateMemoryAlertThreshold(85)
             }) {
-                Text("Khôi phục cấu hình mặc định")
+                Text(L("Khôi phục cấu hình mặc định"))
                     .font(itemTitleFont)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
@@ -498,7 +596,7 @@ struct MenuBarCustomizationView: View {
                 in: kind.range,
                 step: kind.step
             ) {
-                Text("Điều chỉnh nhịp lấy mẫu")
+                Text(L("Điều chỉnh nhịp lấy mẫu"))
                     .font(secondaryBodyFont)
                     .foregroundColor(.white.opacity(0.55))
             }
@@ -513,17 +611,17 @@ struct MenuBarCustomizationView: View {
     private func exampleText(for metric: MenuBarStatusMetric) -> String {
         switch metric {
         case .gpu:
-            return "Ví dụ: icon + 53%"
+            return L("Ví dụ: icon + 53%")
         case .storage:
-            return "Ví dụ: icon + F:36.6GB U:357.8GB"
+            return L("Ví dụ: icon + F:36.6GB U:357.8GB")
         case .memory:
-            return "Ví dụ: icon + 61%"
+            return L("Ví dụ: icon + 61%")
         case .cpu:
-            return "Ví dụ: icon + 64%"
+            return L("Ví dụ: icon + 64%")
         case .network:
-            return "Ví dụ: icon + ↓2.4M ↑350K"
+            return L("Ví dụ: icon + ↓2.4M ↑350K")
         case .battery:
-            return "Ví dụ: icon + 82%"
+            return L("Ví dụ: icon + 82%")
         }
     }
 }
@@ -532,14 +630,110 @@ private enum CustomizerSection: String, CaseIterable, Identifiable {
     case display
     case sampling
     case options
-    
+
     var id: String { rawValue }
-    
+
     var title: String {
         switch self {
-        case .display: return "Hiển thị"
-        case .sampling: return "Lấy mẫu"
-        case .options: return "Khác"
+        case .display: return L("Hiển thị")
+        case .sampling: return L("Lấy mẫu")
+        case .options: return L("Khác")
         }
+    }
+}
+
+/// Mô phỏng viên thuốc "RAM 64%" theo từng theme banner — nhãn màu mint như RAM thật.
+private struct BannerThemeChipPreview: View {
+    let theme: MenuBarBannerTheme
+
+    /// Mint của chỉ số RAM trong banner thật.
+    private let accent = Color(red: 0.63, green: 0.98, blue: 0.80)
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color.black.opacity(0.35))
+            chip
+                .padding(.horizontal, 6)
+        }
+        .frame(height: 24)
+    }
+
+    @ViewBuilder
+    private var chip: some View {
+        switch theme {
+        case .dark:
+            styled(
+                fill: LinearGradient(
+                    colors: [Color(red: 0.24, green: 0.29, blue: 0.43), Color(red: 0.17, green: 0.20, blue: 0.31)],
+                    startPoint: .leading, endPoint: .trailing
+                ),
+                stroke: accent.opacity(0.26),
+                label: accent,
+                value: .white
+            )
+        case .light:
+            styled(
+                fill: LinearGradient(
+                    colors: [Color.white.opacity(0.96), Color(white: 0.92).opacity(0.94)],
+                    startPoint: .leading, endPoint: .trailing
+                ),
+                stroke: Color.black.opacity(0.10),
+                label: Color(red: 0.32, green: 0.49, blue: 0.40),
+                value: Color.black.opacity(0.82)
+            )
+        case .mono:
+            styled(
+                fill: LinearGradient(
+                    colors: [Color.black.opacity(0.88), Color.black.opacity(0.76)],
+                    startPoint: .leading, endPoint: .trailing
+                ),
+                stroke: Color.white.opacity(0.14),
+                label: Color.white.opacity(0.62),
+                value: .white
+            )
+        case .accentFill:
+            styled(
+                fill: LinearGradient(
+                    colors: [accent, Color(red: 0.45, green: 0.71, blue: 0.58)],
+                    startPoint: .leading, endPoint: .trailing
+                ),
+                stroke: Color.white.opacity(0.22),
+                label: Color.white.opacity(0.95),
+                value: .white
+            )
+        case .minimal:
+            HStack(spacing: 4) {
+                Text("RAM")
+                    .font(.system(size: 8.5, weight: .bold))
+                    .foregroundColor(accent)
+                Text("64%")
+                    .font(.system(size: 10.5, weight: .semibold))
+                    .monospacedDigit()
+                    .foregroundColor(.white)
+            }
+            .shadow(color: Color.black.opacity(0.5), radius: 2, y: 1)
+        }
+    }
+
+    private func styled(
+        fill: LinearGradient,
+        stroke: Color,
+        label: Color,
+        value: Color
+    ) -> some View {
+        HStack(spacing: 4) {
+            Text("RAM")
+                .font(.system(size: 8.5, weight: .bold))
+                .foregroundColor(label)
+            Text("64%")
+                .font(.system(size: 10.5, weight: .semibold))
+                .monospacedDigit()
+                .foregroundColor(value)
+        }
+        .padding(.horizontal, 9)
+        .padding(.vertical, 5)
+        .background(Capsule().fill(fill))
+        .overlay(Capsule().strokeBorder(stroke, lineWidth: 1))
     }
 }

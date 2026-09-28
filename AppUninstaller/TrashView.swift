@@ -25,7 +25,7 @@ struct TrashItem: Identifiable, Sendable {
     }
     
     var formattedDate: String {
-        guard let date = dateDeleted else { return "Không rõ" }
+        guard let date = dateDeleted else { return L("Không rõ") }
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .short
@@ -492,7 +492,7 @@ struct TrashView: View {
             }
             Button(loc.L("cancel"), role: .cancel) {}
         } message: {
-            Text("Điều này không thể hoàn tác được. Tất cả các tập tin sẽ bị xóa vĩnh viễn.")
+            Text(L("Điều này không thể hoàn tác được. Tất cả các tập tin sẽ bị xóa vĩnh viễn."))
         }
     }
     
@@ -505,20 +505,20 @@ struct TrashView: View {
                 VStack(alignment: .leading, spacing: 30) {
                     // Branding Header
                     HStack(spacing: 8) {
-                        Text("Dọn rác")
+                        Text(L("Dọn rác"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
                         
                         // Trash Icon
                         HStack(spacing: 4) {
                             Image(systemName: "trash.circle.fill")
-                            Text("Hoàn thành trống")
+                            Text(L("Hoàn thành trống"))
                                 .font(.system(size: 20, weight: .heavy))
                         }
                         .foregroundColor(.white)
                     }
                     
-                    Text("Dọn sạch tất cả Thùng rác trên máy Mac, bao gồm cả Thư và Ảnh.\nDọn sạch lần cuối: Không bao giờ")
+                    Text(L("Dọn sạch tất cả Thùng rác trên máy Mac, bao gồm cả Thư và Ảnh.\nDọn sạch lần cuối: Không bao giờ"))
                         .font(.system(size: 13))
                         .foregroundColor(.white.opacity(0.7))
                         .lineSpacing(4)
@@ -527,26 +527,26 @@ struct TrashView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         featureRow(
                             icon: "trash.slash",
-                            title: "Dọn sạch tất cả thùng rác ngay lập tức",
-                            subtitle: "Không cần phải duyệt tất cả các ổ đĩa và ứng dụng để tìm thùng rác."
+                            title: L("Dọn sạch tất cả thùng rác ngay lập tức"),
+                            subtitle: L("Không cần phải duyệt tất cả các ổ đĩa và ứng dụng để tìm thùng rác.")
                         )
                         
                         featureRow(
                             icon: "exclamationmark.shield",
-                            title: "Tránh lỗi tìm kiếm",
-                            subtitle: "Đảm bảo Thùng rác của bạn được dọn sạch bất kể có vấn đề gì."
+                            title: L("Tránh lỗi tìm kiếm"),
+                            subtitle: L("Đảm bảo Thùng rác của bạn được dọn sạch bất kể có vấn đề gì.")
                         )
                         
                         featureRow(
                             icon: "mail.and.text.magnifyingglass",
-                            title: "Bao gồm Thư & Ảnh",
-                            subtitle: "Đồng thời dọn sạch rác khỏi ứng dụng Thư và thư viện Ảnh."
+                            title: L("Bao gồm Thư & Ảnh"),
+                            subtitle: L("Đồng thời dọn sạch rác khỏi ứng dụng Thư và thư viện Ảnh.")
                         )
                     }
                     
                     // Optional: View Items Button
                     Button(action: {}) {
-                        Text("Xem các mục thùng rác...")
+                        Text(L("Xem các mục thùng rác..."))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.black)
                             .padding(.horizontal, 16)
@@ -608,7 +608,7 @@ struct TrashView: View {
                             .frame(width: 74, height: 74)
                             .shadow(color: Color.black.opacity(0.3), radius: 10, y: 5)
                         
-                        Text("Quét")
+                        Text(L("Quét"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
                     }
@@ -647,7 +647,7 @@ struct TrashView: View {
             // danh hiệu hàng đầu
 
             HStack {
-                Text("Rác")
+                Text(L("Rác"))
                     .font(.title2)
                     .foregroundColor(.white)
             }
@@ -676,7 +676,7 @@ struct TrashView: View {
             // Văn bản trạng thái - Sử dụng khung cố định để tránh hiện tượng giật bố cục
 
             VStack(spacing: 8) {
-                Text("Đang tính kích thước thùng rác...")
+                Text(L("Đang tính kích thước thùng rác..."))
                     .font(.title) 
                     .foregroundColor(.white)
                 
@@ -688,7 +688,7 @@ struct TrashView: View {
                     .frame(height: 20) // Fixed text height
                     .padding(.horizontal, 40)
                 
-                Text("Thùng rác hệ thống")
+                Text(L("Thùng rác hệ thống"))
                     .font(.caption)
                     .foregroundColor(.secondaryText)
             }
@@ -713,7 +713,7 @@ struct TrashView: View {
                     scanner.stopScan()
                 }) {
                     VStack(spacing: 2) {
-                        Text("Dừng lại")
+                        Text(L("Dừng lại"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
                     }
@@ -747,7 +747,7 @@ struct TrashView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("Bắt đầu lại")
+                        Text(L("Bắt đầu lại"))
                     }
                     .foregroundColor(.white.opacity(0.8))
                 }
@@ -755,7 +755,7 @@ struct TrashView: View {
                 
                 Spacer()
                 
-                Text("Rác")
+                Text(L("Rác"))
                     .font(.title3)
                     .foregroundColor(.white)
                 
@@ -764,7 +764,7 @@ struct TrashView: View {
                 // Assistant placeholder
                  HStack {
                     Circle().fill(Color.white.opacity(0.2)).frame(width: 6, height: 6)
-                    Text("Trợ lý")
+                    Text(L("Trợ lý"))
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
@@ -794,7 +794,7 @@ struct TrashView: View {
                 
                 // Text Info
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Quét hoàn tất")
+                    Text(L("Quét hoàn tất"))
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.white)
                     
@@ -809,13 +809,13 @@ struct TrashView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Bao gồm")
+                        Text(L("Bao gồm"))
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.6))
                         
                         HStack(spacing: 8) {
                             Circle().fill(Color.white.opacity(0.6)).frame(width: 4, height: 4)
-                            Text("Thùng rác trên máy Mac")
+                            Text(L("Thùng rác trên máy Mac"))
                                 .font(.system(size: 14))
                                 .foregroundColor(.white.opacity(0.8))
                         }
@@ -834,7 +834,7 @@ struct TrashView: View {
                     .buttonStyle(.plain)
                     
                     HStack {
-                         Text("Tổng số tìm thấy")
+                         Text(L("Tổng số tìm thấy"))
                          Text(scanner.formattedTotalSize)
                              .foregroundColor(.white)
                     }
@@ -860,7 +860,7 @@ struct TrashView: View {
                              .fill(Color.white.opacity(0.2))
                              .frame(width: 80, height: 80)
                         
-                        Text("Lau dọn")
+                        Text(L("Lau dọn"))
                              .font(.system(size: 18, weight: .medium))
                              .foregroundColor(.white)
                     }
@@ -881,7 +881,7 @@ struct TrashView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("Bắt đầu lại")
+                        Text(L("Bắt đầu lại"))
                     }
                     .foregroundColor(.white.opacity(0.8))
                 }
@@ -934,14 +934,14 @@ struct TrashView: View {
                     .foregroundColor(.green)
                     .font(.title)
                 
-                Text("Không có gì để dọn")
+                Text(L("Không có gì để dọn"))
                     .font(.title)
                     .bold()
                     .foregroundColor(.white)
             }
             .padding(.bottom, 8)
             
-            Text("Không tìm thấy tệp nào trong bất kỳ Thùng rác nào.")
+            Text(L("Không tìm thấy tệp nào trong bất kỳ Thùng rác nào."))
                 .font(.body)
                 .foregroundColor(.white.opacity(0.8))
             
@@ -949,7 +949,7 @@ struct TrashView: View {
             
             // Back/Rescan Button
              CircularActionButton(
-                 title: "Quay lại",
+                 title: L("Quay lại"),
                  gradient: CircularActionButton.blueGradient,
                  action: {
                      scanner.reset()
@@ -958,7 +958,7 @@ struct TrashView: View {
              .padding(.bottom, 60)
         }
     }
-    
+
     // MARK: - 4. Trang đang được làm sạch
 
     private var cleaningPage: some View {
@@ -991,11 +991,11 @@ struct TrashView: View {
             }
             .padding(.bottom, 40)
             
-            Text("Đang dọn...")
+            Text(L("Đang dọn..."))
                 .font(.title3)
                 .foregroundColor(.white)
             
-            Text("Đã dọn \(scanner.cleanedCount) mục")
+            Text(String(format: L("Đã dọn %d mục"), scanner.cleanedCount))
                 .foregroundColor(.secondaryText)
                 .padding(.top, 8)
             
@@ -1004,7 +1004,7 @@ struct TrashView: View {
             // nút giữ chỗ
 
              CircularActionButton(
-                 title: "Đang dọn",
+                 title: L("Đang dọn"),
                  gradient: CircularActionButton.grayGradient,
                  action: {}
              )
@@ -1026,7 +1026,7 @@ struct TrashView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.left")
-                        Text("Quay lại")
+                        Text(L("Quay lại"))
                     }
                     .foregroundColor(.secondaryText)
                 }
@@ -1058,12 +1058,12 @@ struct TrashView: View {
             }
             .padding(.bottom, 40)
             
-            Text("Dọn dẹp hoàn tất")
+            Text(L("Dọn dẹp hoàn tất"))
                 .font(.title)
                 .bold()
                 .foregroundColor(.white)
             
-            Text("Đã giải phóng \(ByteCountFormatter.string(fromByteCount: scanner.cleanedSize, countStyle: .file))")
+            Text(String(format: L("Đã giải phóng %@"), ByteCountFormatter.string(fromByteCount: scanner.cleanedSize, countStyle: .file)))
                 .foregroundColor(.secondaryText)
                 .padding(.top, 8)
             
@@ -1072,7 +1072,7 @@ struct TrashView: View {
             // Nút hoàn tất
 
              CircularActionButton(
-                 title: "Xong",
+                 title: L("Xong"),
                  gradient: CircularActionButton.blueGradient,
                  action: {
                      scanner.reset()
@@ -1097,7 +1097,7 @@ struct TrashDirectoryView: View {
     var body: some View {
         List {
             if items.isEmpty {
-                Text("Thư mục trống")
+                Text(L("Thư mục trống"))
                     .foregroundColor(.secondaryText)
                     .padding()
             } else {
@@ -1142,7 +1142,7 @@ struct TrashDirectoryView: View {
                 try? FileManager.default.removeItem(at: item.url)
                 items = scanner.scanDirectory(url)
             } label: {
-                Label("Xóa ngay lập tức", systemImage: "trash")
+                Label(L("Xóa ngay lập tức"), systemImage: "trash")
             }
         }
     }
@@ -1163,7 +1163,7 @@ struct TrashItemRow: View {
                     .foregroundColor(.primaryText)
                     .lineLimit(1)
                 
-                Text("Đã xóa lúc \(item.formattedDate)")
+                Text(String(format: L("Đã xóa lúc %@"), item.formattedDate))
                     .font(.system(size: 11))
                     .foregroundColor(.tertiaryText)
             }

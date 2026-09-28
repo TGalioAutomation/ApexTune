@@ -8,7 +8,7 @@ struct StorageDetailView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text("Dung lượng lưu trữ")
+                Text(L("Dung lượng lưu trữ"))
                     .font(.headline)
                     .foregroundColor(.white)
                 
@@ -56,10 +56,10 @@ struct StorageDetailView: View {
                             Text(diskManager.formattedFree)
                                 .font(.system(size: 32, weight: .bold))
                                 .foregroundColor(.white)
-                            Text("Dung lượng trống")
+                            Text(L("Dung lượng trống"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.white.opacity(0.6))
-                            Text("Tổng \(diskManager.formattedTotal)")
+                            Text(String(format: L("Tổng %@"), diskManager.formattedTotal))
                                 .font(.system(size: 10))
                                 .foregroundColor(.white.opacity(0.4))
                         }
@@ -70,11 +70,11 @@ struct StorageDetailView: View {
                     VStack(spacing: 12) {
                         // Mock Categories for Visuals (since we don't scan full file types instantly in menu bar)
                         // In a real app we'd fetch these from a background service
-                        StorageCategoryRow(color: .blue, name: "Ứng dụng", size: "35.09 GB")
-                        StorageCategoryRow(color: .cyan, name: "Tài liệu", size: "12.4 GB")
-                        StorageCategoryRow(color: .purple, name: "Dữ liệu hệ thống", size: "89.2 GB")
-                        StorageCategoryRow(color: .pink, name: "Ảnh", size: "5.1 GB")
-                        StorageCategoryRow(color: .gray, name: "Khác", size: "10.2 GB")
+                        StorageCategoryRow(color: .blue, name: L("Ứng dụng"), size: "35.09 GB")
+                        StorageCategoryRow(color: .cyan, name: L("Tài liệu"), size: "12.4 GB")
+                        StorageCategoryRow(color: .purple, name: L("Dữ liệu hệ thống"), size: "89.2 GB")
+                        StorageCategoryRow(color: .pink, name: L("Ảnh"), size: "5.1 GB")
+                        StorageCategoryRow(color: .gray, name: L("Khác"), size: "10.2 GB")
                     }
                     .padding(.horizontal, 20)
                     
@@ -83,7 +83,7 @@ struct StorageDetailView: View {
                         Button(action: {
                             manager.openMainApp()
                         }) {
-                            Text("Dọn rác")
+                            Text(L("Dọn rác"))
                                 .font(.system(size: 13, weight: .medium))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -96,7 +96,7 @@ struct StorageDetailView: View {
                         Button(action: {
                             manager.openMainApp()
                         }) {
-                            Text("Quản lý tệp lớn")
+                            Text(L("Quản lý tệp lớn"))
                                 .font(.system(size: 13, weight: .medium))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)

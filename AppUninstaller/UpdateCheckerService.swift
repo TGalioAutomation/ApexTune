@@ -57,7 +57,7 @@ class UpdateCheckerService: ObservableObject {
         guard isNetworkAvailable else {
             print("[UpdateChecker] ⚠️ Network not available, skipping update check")
             await MainActor.run {
-                self.errorMessage = "Không có kết nối mạng"
+                self.errorMessage = L("Không có kết nối mạng")
             }
             return
         }

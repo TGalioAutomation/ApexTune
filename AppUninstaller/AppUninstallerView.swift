@@ -29,8 +29,8 @@ struct AppUninstallerView: View {
         
         var title: String {
             switch self {
-            case .all: return "Tất cả ứng dụng"
-            case .leftovers: return "Thức ăn thừa"
+            case .all: return L("Tất cả ứng dụng")
+            case .leftovers: return L("Thức ăn thừa")
             case .appStore: return "App Store"
             case .vendor(let name): return name
             }
@@ -83,7 +83,7 @@ struct AppUninstallerView: View {
             VStack(spacing: 0) {
                 // Header
                 HStack {
-                    Text("Trình gỡ cài đặt")
+                    Text(loc.L("Trình gỡ cài đặt"))
                         .font(.headline)
                         .foregroundColor(.white)
                     Spacer()
@@ -113,7 +113,7 @@ struct AppUninstallerView: View {
                     SidebarRow(category: .leftovers, count: 0, isSelected: selectedCategory == .leftovers)
                         .onTapGesture { selectedCategory = .leftovers }
                     
-                    Text("Cửa hàng")
+                    Text(loc.L("Cửa hàng"))
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.5))
                         .padding(.top, 10)
@@ -122,7 +122,7 @@ struct AppUninstallerView: View {
                     SidebarRow(category: .appStore, count: appScanner.apps.filter { $0.isAppStore }.count, isSelected: selectedCategory == .appStore)
                         .onTapGesture { selectedCategory = .appStore }
                     
-                    Text("Nhà cung cấp")
+                    Text(loc.L("Nhà cung cấp"))
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.5))
                         .padding(.top, 10)
@@ -154,7 +154,7 @@ struct AppUninstallerView: View {
                             }) {
                                 HStack(spacing: 4) {
                                     Image(systemName: "chevron.left")
-                                    Text("Quay lại")
+                                    Text(loc.L("Quay lại"))
                                 }
                                 .foregroundColor(.secondaryText)
                             }
@@ -184,7 +184,7 @@ struct AppUninstallerView: View {
                                 .foregroundColor(.white)
                             Spacer()
                             
-                            Text("Sắp xếp theo tên")
+                            Text(loc.L("Sắp xếp theo tên"))
                                 .font(.caption)
                                 .foregroundColor(.white.opacity(0.6))
                         }
@@ -193,7 +193,7 @@ struct AppUninstallerView: View {
                         if appScanner.isScanning {
                              Spacer()
                              ProgressView()
-                             Text("Đang quét ứng dụng...")
+                             Text(loc.L("Đang quét ứng dụng..."))
                                 .padding(.top)
                              Spacer()
                         } else {
@@ -235,7 +235,7 @@ struct AppUninstallerView: View {
                                                 )
                                             
                                             VStack {
-                                                Text("Gỡ cài đặt")
+                                                Text(loc.L("Gỡ cài đặt"))
                                                     .foregroundColor(.white)
                                                     .fontWeight(.medium)
                                                 Text(ByteCountFormatter.string(fromByteCount: totalSelectedSize, countStyle: .file))
@@ -268,15 +268,15 @@ struct AppUninstallerView: View {
         }
         // Hộp thoại xác nhận gỡ cài đặt
 
-        .alert("Xác nhận Gỡ cài đặt?", isPresented: $showingDeleteConfirmation) {
-            Button("Hoàn tất Gỡ cài đặt", role: .destructive) {
+        .alert(loc.L("Xác nhận Gỡ cài đặt?"), isPresented: $showingDeleteConfirmation) {
+            Button(loc.L("Hoàn tất Gỡ cài đặt"), role: .destructive) {
                 Task {
                     await performUninstall()
                 }
             }
             Button(loc.L("cancel"), role: .cancel) {}
         } message: {
-            Text("Thao tác này sẽ xóa các ứng dụng đã chọn cùng toàn bộ tệp liên quan như tùy chọn, bộ đệm và nhật ký. Tệp sẽ được chuyển vào Thùng rác để có thể khôi phục nếu cần.")
+            Text(loc.L("Thao tác này sẽ xóa các ứng dụng đã chọn cùng toàn bộ tệp liên quan như tùy chọn, bộ đệm và nhật ký. Tệp sẽ được chuyển vào Thùng rác để có thể khôi phục nếu cần."))
         }
         // Chỉ báo tiến trình gỡ cài đặt
 
@@ -291,7 +291,7 @@ struct AppUninstallerView: View {
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             .scaleEffect(1.5)
                         
-                        Text("Đang gỡ cài đặt...")
+                        Text(loc.L("Đang gỡ cài đặt..."))
                             .font(.headline)
                             .foregroundColor(.white)
                         
@@ -310,12 +310,16 @@ struct AppUninstallerView: View {
         }
         // Hộp thoại gỡ cài đặt kết quả
 
-        .alert("Gỡ cài đặt hoàn tất", isPresented: $showingResults) {
+        .alert(loc.L("Gỡ cài đặt hoàn tất"), isPresented: $showingResults) {
             Button("OK") {
                 showingResults = false
             }
         } message: {
-            Text("Đã xóa thành công \(totalSuccessCount) mục, giải phóng \(ByteCountFormatter.string(fromByteCount: totalRemovedSize, countStyle: .file))\(totalFailedCount > 0 ? ", \(totalFailedCount) mục xóa thất bại" : "")")
+            if totalFailedCount > 0 {
+                Text(String(format: loc.L("Đã xóa thành công %d mục, giải phóng %@, %d mục xóa thất bại"), totalSuccessCount, ByteCountFormatter.string(fromByteCount: totalRemovedSize, countStyle: .file), totalFailedCount))
+            } else {
+                Text(String(format: loc.L("Đã xóa thành công %d mục, giải phóng %@"), totalSuccessCount, ByteCountFormatter.string(fromByteCount: totalRemovedSize, countStyle: .file)))
+            }
         }
     }
     
@@ -330,7 +334,7 @@ struct AppUninstallerView: View {
         
         await MainActor.run {
             isUninstalling = true
-            uninstallProgress = "Chuẩn bị..."
+            uninstallProgress = loc.L("Chuẩn bị...")
             totalRemovedSize = 0
             totalSuccessCount = 0
             totalFailedCount = 0
@@ -341,14 +345,14 @@ struct AppUninstallerView: View {
             // cập nhật tiến độ
 
             await MainActor.run {
-                uninstallProgress = "Đang xử lý: \(app.name)"
+                uninstallProgress = String(format: loc.L("Đang xử lý: %@"), app.name)
             }
             
             // Kiểm tra xem ứng dụng có đang chạy không
 
             if fileRemover.isAppRunning(app) {
                 await MainActor.run {
-                    uninstallProgress = "Đang đóng ứng dụng: \(app.name)"
+                    uninstallProgress = String(format: loc.L("Đang đóng ứng dụng: %@"), app.name)
                 }
                 // Cố gắng chấm dứt ứng dụng
 
@@ -368,14 +372,14 @@ struct AppUninstallerView: View {
             // Quét các tập tin còn sót lại
 
             await MainActor.run {
-                uninstallProgress = "Đang quét tệp còn sót: \(app.name)"
+                uninstallProgress = String(format: loc.L("Đang quét tệp còn sót: %@"), app.name)
             }
             await appScanner.scanResidualFiles(for: app)
             
             // thực hiện xóa
 
             await MainActor.run {
-                uninstallProgress = "Đang xóa: \(app.name)"
+                uninstallProgress = String(format: loc.L("Đang xóa: %@"), app.name)
             }
             
             let result = await fileRemover.removeApp(app, includeApp: true, moveToTrash: true)
@@ -406,7 +410,7 @@ struct AppUninstallerView: View {
     private func performSingleAppUninstall(app: InstalledApp, includeApp: Bool, moveToTrash: Bool) async {
         await MainActor.run {
             isUninstalling = true
-            uninstallProgress = "Đang xử lý: \(app.name)"
+            uninstallProgress = String(format: loc.L("Đang xử lý: %@"), app.name)
             totalRemovedSize = 0
             totalSuccessCount = 0
             totalFailedCount = 0
@@ -416,7 +420,7 @@ struct AppUninstallerView: View {
 
         if includeApp && fileRemover.isAppRunning(app) {
             await MainActor.run {
-                uninstallProgress = "Đang đóng ứng dụng: \(app.name)"
+                uninstallProgress = String(format: loc.L("Đang đóng ứng dụng: %@"), app.name)
             }
             let _ = fileRemover.terminateApp(app)
             try? await Task.sleep(nanoseconds: 1_000_000_000)
@@ -430,7 +434,7 @@ struct AppUninstallerView: View {
         // thực hiện xóa
 
         await MainActor.run {
-            uninstallProgress = "Đang xóa: \(app.name)"
+            uninstallProgress = String(format: loc.L("Đang xóa: %@"), app.name)
         }
         
         let result = await fileRemover.removeApp(app, includeApp: includeApp, moveToTrash: moveToTrash)

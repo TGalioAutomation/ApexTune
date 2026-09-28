@@ -371,34 +371,34 @@ class SafetyGuard {
 
     func getDeletionAdvice(for url: URL) -> (riskLevel: DeletionRiskLevel, advice: String) {
         if !isSafeToDelete(url) {
-            return (.critical, "Đây là tệp hệ thống quan trọng. Xóa nó có thể làm hệ thống hoặc ứng dụng hoạt động lỗi.")
+            return (.critical, L("Đây là tệp hệ thống quan trọng. Xóa nó có thể làm hệ thống hoặc ứng dụng hoạt động lỗi."))
         }
-        
+
         if isSystemPreference(url) {
-            return (.critical, "Đây là tệp cấu hình hệ thống. Xóa nó sẽ làm mất các thiết lập hiện tại.")
+            return (.critical, L("Đây là tệp cấu hình hệ thống. Xóa nó sẽ làm mất các thiết lập hiện tại."))
         }
-        
+
         if isCriticalAppConfig(url) {
-            return (.high, "Đây là cấu hình ứng dụng quan trọng. Xóa nó có thể làm mất thiết lập và trạng thái đăng nhập.")
+            return (.high, L("Đây là cấu hình ứng dụng quan trọng. Xóa nó có thể làm mất thiết lập và trạng thái đăng nhập."))
         }
-        
+
         if url.path.contains("/Library/Preferences") {
             if isPreferenceOrphaned(url) {
-                return (.low, "Tệp này có thể là cấu hình còn sót lại của ứng dụng đã gỡ cài đặt.")
+                return (.low, L("Tệp này có thể là cấu hình còn sót lại của ứng dụng đã gỡ cài đặt."))
             } else {
-                return (.medium, "Ứng dụng liên quan vẫn đang được dùng. Bạn nên giữ lại tệp này.")
+                return (.medium, L("Ứng dụng liên quan vẫn đang được dùng. Bạn nên giữ lại tệp này."))
             }
         }
-        
+
         if url.path.contains("/Library/Caches") {
-            return (.low, "Đây là tệp bộ đệm, có thể xóa an toàn và ứng dụng sẽ tự tạo lại khi cần.")
+            return (.low, L("Đây là tệp bộ đệm, có thể xóa an toàn và ứng dụng sẽ tự tạo lại khi cần."))
         }
-        
+
         if url.path.contains("/Library/Logs") {
-            return (.low, "Đây là tệp nhật ký, có thể xóa an toàn.")
+            return (.low, L("Đây là tệp nhật ký, có thể xóa an toàn."))
         }
-        
-        return (.medium, "Nên chuyển vào Thùng rác thay vì xóa ngay lập tức.")
+
+        return (.medium, L("Nên chuyển vào Thùng rác thay vì xóa ngay lập tức."))
     }
     
     // MARK: - phương pháp riêng tư

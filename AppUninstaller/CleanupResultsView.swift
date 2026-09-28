@@ -30,13 +30,13 @@ struct CleanupResultsView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 16, weight: .semibold))
-                            Text("Quay lại")
+                            Text(L("Quay lại"))
                                 .font(.system(size: 14, weight: .medium))
                         }
                         .foregroundColor(.white)
                     }
                     Spacer()
-                    Text("Dọn dẹp hoàn tất")
+                    Text(L("Dọn dẹp hoàn tất"))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                     Spacer()
@@ -74,11 +74,11 @@ struct CleanupResultsView: View {
                     VStack(spacing: 20) {
                         // Title
                         VStack(spacing: 8) {
-                            Text("Làm tốt lắm!")
+                            Text(L("Làm tốt lắm!"))
                                 .font(.system(size: 28, weight: .bold))
                                 .foregroundColor(.white)
                             
-                            Text("Mac của bạn đang ở trạng thái tốt.")
+                            Text(L("Mac của bạn đang ở trạng thái tốt."))
                                 .font(.system(size: 14, weight: .regular))
                                 .foregroundColor(.white.opacity(0.8))
                         }
@@ -88,21 +88,21 @@ struct CleanupResultsView: View {
                             ResultCard(
                                 icon: "2",
                                 title: formattedSize,
-                                subtitle: "Rác không cần thiết đã được dọn sạch",
+                                subtitle: L("Rác không cần thiết đã được dọn sạch"),
                                 color: Color(red: 0.4, green: 0.8, blue: 1.0)
                             )
                             
                             ResultCard(
                                 icon: "fingerprint",
-                                title: "Nên chạy quét sâu",
-                                subtitle: "Quét sâu có thể tìm thêm tệp rác. Nên chạy mỗi tuần một lần.",
+                                title: L("Nên chạy quét sâu"),
+                                subtitle: L("Quét sâu có thể tìm thêm tệp rác. Nên chạy mỗi tuần một lần."),
                                 color: Color(red: 0.4, green: 0.9, blue: 0.6)
                             )
                             
                             ResultCard(
                                 icon: "checkmark.circle",
-                                title: "\(cleanedCount) tác vụ",
-                                subtitle: "Hiệu năng Mac đã được tối ưu",
+                                title: String(format: L("%d tác vụ"), cleanedCount),
+                                subtitle: L("Hiệu năng Mac đã được tối ưu"),
                                 color: Color(red: 1.0, green: 0.5, blue: 0.6)
                             )
                         }
@@ -115,7 +115,7 @@ struct CleanupResultsView: View {
                 // Bottom action
                 VStack(spacing: 12) {
                     Button(action: onDismiss) {
-                        Text("Về trang chính")
+                        Text(L("Về trang chính"))
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -124,7 +124,7 @@ struct CleanupResultsView: View {
                             .cornerRadius(8)
                     }
                     
-                    Text("Xem nhật ký chi tiết")
+                    Text(L("Xem nhật ký chi tiết"))
                         .font(.system(size: 12, weight: .regular))
                         .foregroundColor(.white.opacity(0.6))
                 }

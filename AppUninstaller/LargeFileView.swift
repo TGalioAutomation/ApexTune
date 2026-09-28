@@ -52,10 +52,10 @@ struct LargeFileView: View {
             VStack(alignment: .leading, spacing: 40) {
                 // 1. Title & Subtitle
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Tệp lớn và cũ")
+                    Text(L("Tệp lớn và cũ"))
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.white)
-                    Text("Tìm và xóa các tập tin và thư mục lớn.")
+                    Text(L("Tìm và xóa các tập tin và thư mục lớn."))
                         .font(.title3)
                         .foregroundColor(.white.opacity(0.8))
                 }
@@ -64,13 +64,13 @@ struct LargeFileView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     featureRow(
                         icon: "eyeglasses",
-                        title: "Bãi chứa tập tin tại chỗ",
-                        desc: "Dễ dàng tìm thấy những đồ vật bị bỏ quên với số lượng lớn để quyết định loại bỏ chúng."
+                        title: L("Bãi chứa tập tin tại chỗ"),
+                        desc: L("Dễ dàng tìm thấy những đồ vật bị bỏ quên với số lượng lớn để quyết định loại bỏ chúng.")
                     )
                     featureRow(
                         icon: "slider.horizontal.3",
-                        title: "Sắp xếp tập tin dễ dàng",
-                        desc: "Bộ lọc đơn giản để nhanh chóng xem xét và loại bỏ các tập tin không cần thiết."
+                        title: L("Sắp xếp tập tin dễ dàng"),
+                        desc: L("Bộ lọc đơn giản để nhanh chóng xem xét và loại bỏ các tập tin không cần thiết.")
                     )
                 }
                 
@@ -82,7 +82,7 @@ struct LargeFileView: View {
                             .foregroundColor(.white.opacity(0.6))
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("mac: \(ByteCountFormatter.string(fromByteCount: totalDiskSpace, countStyle: .file))")
+                            Text(String(format: L("mac: %@"), ByteCountFormatter.string(fromByteCount: totalDiskSpace, countStyle: .file)))
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
                             
@@ -100,7 +100,7 @@ struct LargeFileView: View {
                             }
                             .frame(height: 6)
                             
-                            Text("Đã dùng \(ByteCountFormatter.string(fromByteCount: usedDiskSpace, countStyle: .file))")
+                            Text(String(format: L("Đã dùng %@"), ByteCountFormatter.string(fromByteCount: usedDiskSpace, countStyle: .file)))
                                 .font(.caption)
                                 .foregroundColor(.white.opacity(0.6))
                         }
@@ -141,7 +141,7 @@ struct LargeFileView: View {
             VStack {
                 Spacer()
                 CircularActionButton(
-                    title: "Quét",
+                    title: L("Quét"),
                     gradient: GradientStyles.largeFiles,
                     action: {
                         Task { await scanner.scan() }
@@ -174,7 +174,7 @@ struct LargeFileView: View {
     // MARK: - 2. Scanning Page (Image 1 UI)
     var scanningPage: some View {
         VStack(spacing: 40) {
-            Text("Tệp lớn và cũ")
+            Text(L("Tệp lớn và cũ"))
                 .font(.headline)
                 .opacity(0.6)
                 .padding(.top, 20)
@@ -199,7 +199,7 @@ struct LargeFileView: View {
             }
             
             VStack(spacing: 16) {
-                Text("Tìm các tập tin lớn và cũ...")
+                Text(L("Tìm các tập tin lớn và cũ..."))
                     .font(.title2)
                     .fontWeight(.bold)
                 
@@ -207,7 +207,7 @@ struct LargeFileView: View {
                 // Ideally scanner needs to publish `currentScanningPath`.
                 // For now, use a placeholder or check if scanner exposes it. (Scanner doesn't Expose it yet? check. It only published count.)
                 // Let's add simple progress text.
-                Text("Đang quét các tệp lớn...")
+                 Text(L("Đang quét các tệp lớn..."))
                      .font(.caption)
                      .foregroundColor(.secondaryText)
             }
@@ -216,7 +216,7 @@ struct LargeFileView: View {
             
             // Stop button with ring
             CircularActionButton(
-                title: "Dừng lại",
+                title: L("Dừng lại"),
                 progress: 0.5, // Fake progress or use scanner.progress if available
                 showProgress: true,
                 scanSize: ByteCountFormatter.string(fromByteCount: scanner.totalSize, countStyle: .file),
@@ -238,7 +238,7 @@ struct LargeFileView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("Bắt đầu lại")
+                        Text(L("Bắt đầu lại"))
                     }
                     .foregroundColor(.secondaryText)
                 }
@@ -246,7 +246,7 @@ struct LargeFileView: View {
                 
                 Spacer()
                 
-                Text("Tệp lớn và cũ")
+                Text(L("Tệp lớn và cũ"))
                     .font(.title2)
                     .foregroundColor(.white)
                 
@@ -288,12 +288,12 @@ struct LargeFileView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)
-                    Text("Không có gì để dọn")
+                    Text(L("Không có gì để dọn"))
                         .font(.title)
                         .fontWeight(.bold)
                 }
                 
-                Text("Không tìm thấy tập tin lớn hoặc cũ.")
+                Text(L("Không tìm thấy tập tin lớn hoặc cũ."))
                     .font(.body)
                     .foregroundColor(.secondaryText)
             }
@@ -302,7 +302,7 @@ struct LargeFileView: View {
             
             // Back or Rescan button
             CircularActionButton(
-                title: "Quay lại",
+                title: L("Quay lại"),
                 gradient: GradientStyles.largeFiles,
                 action: {
                     scanner.reset()
@@ -322,7 +322,7 @@ struct LargeFileView: View {
     // MARK: - 4. Cleaning Page (Image 3 UI)
     var cleaningPage: some View {
         VStack(spacing: 40) {
-            Text("Tệp lớn và cũ")
+            Text(L("Tệp lớn và cũ"))
                 .font(.headline)
                 .opacity(0.6)
                 .padding(.top, 20)
@@ -343,7 +343,7 @@ struct LargeFileView: View {
             }
             
             VStack(spacing: 16) {
-                Text("Đang xóa các tập tin không mong muốn...")
+                Text(L("Đang xóa các tập tin không mong muốn..."))
                     .font(.title2)
                 
                 HStack {
@@ -352,7 +352,7 @@ struct LargeFileView: View {
                         .padding(8)
                         .background(Color.orange)
                         .cornerRadius(6)
-                    Text("Tệp lớn và cũ")
+                    Text(L("Tệp lớn và cũ"))
                     Spacer()
                     Text(ByteCountFormatter.string(fromByteCount: scanner.cleanedSize, countStyle: .file))
                     // Spinner
@@ -369,7 +369,7 @@ struct LargeFileView: View {
             Spacer()
             
             CircularActionButton(
-                title: "Dừng lại",
+                title: L("Dừng lại"),
                 progress: 0.8, // Fake
                 showProgress: true,
                 action: {
@@ -399,7 +399,7 @@ struct LargeFileView: View {
                 
                 Spacer()
                 
-                Button("Xem nhật ký") {
+                Button(L("Xem nhật ký")) {
                     // Log action
                 }
                 .buttonStyle(.plain)
@@ -409,29 +409,29 @@ struct LargeFileView: View {
             
             // Right: Details & Recommendations
             VStack(alignment: .leading, spacing: 20) {
-                Text("Khuyến nghị")
+                Text(L("Khuyến nghị"))
                     .font(.headline)
                 
                 HStack(spacing: 10) {
                     recommendationCard(
                         icon: "ladybug", 
-                        title: "Quét phần mềm độc hại",
-                        desc: "Phát hiện các mối đe dọa tiềm ẩn...",
-                        btn: "Chạy quét sâu"
+                        title: L("Quét phần mềm độc hại"),
+                        desc: L("Phát hiện các mối đe dọa tiềm ẩn..."),
+                        btn: L("Chạy quét sâu")
                     )
                     
                     recommendationCard(
                         icon: "puzzlepiece.extension", 
-                        title: "Quản lý tiện ích mở rộng",
-                        desc: "Bao gồm các plugin...",
-                        btn: "Xem tiện ích mở rộng"
+                        title: L("Quản lý tiện ích mở rộng"),
+                        desc: L("Bao gồm các plugin..."),
+                        btn: L("Xem tiện ích mở rộng")
                     )
                     
                     recommendationCard(
                         icon: "wrench.and.screwdriver", 
-                        title: "Bảo trì máy Mac của bạn",
-                        desc: "Chạy tập lệnh...",
-                        btn: "Chạy bảo trì"
+                        title: L("Bảo trì máy Mac của bạn"),
+                        desc: L("Chạy tập lệnh..."),
+                        btn: L("Chạy bảo trì")
                     )
                 }
                 
@@ -442,11 +442,11 @@ struct LargeFileView: View {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
-                        Text("Đã xóa các tệp đã chọn")
+                        Text(L("Đã xóa các tệp đã chọn"))
                             .font(.title2)
                             .fontWeight(.bold)
                     }
-                    Text("Bây giờ bạn có nhiều không gian trống hơn trên đĩa khởi động.")
+                    Text(L("Bây giờ bạn có nhiều không gian trống hơn trên đĩa khởi động."))
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
@@ -460,7 +460,7 @@ struct LargeFileView: View {
                          showCleaningFinished = false
                          scanner.reset()
                     }) {
-                        Text("Xem các mục còn lại")
+                        Text(L("Xem các mục còn lại"))
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
                             .background(Color.white.opacity(0.1))
@@ -470,7 +470,7 @@ struct LargeFileView: View {
                     Button(action: {
                         // Share logic
                     }) {
-                        Label("Chia sẻ kết quả", systemImage: "square.and.arrow.up")
+                        Label(L("Chia sẻ kết quả"), systemImage: "square.and.arrow.up")
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
                             .background(Color.white.opacity(0.1))
@@ -486,9 +486,9 @@ struct LargeFileView: View {
                         Text("II").foregroundColor(.black).fontWeight(.bold)
                     }
                     VStack(alignment: .leading) {
-                        Text("Xóa các tập tin trùng lặp")
+                        Text(L("Xóa các tập tin trùng lặp"))
                             .font(.headline)
-                        Text("Xóa các bản sao thông qua Gemini...")
+                        Text(L("Xóa các bản sao thông qua Gemini..."))
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }

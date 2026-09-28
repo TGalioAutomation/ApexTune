@@ -19,11 +19,11 @@ enum SidebarSection: String, CaseIterable {
         case .protection:
             return [.malware, .privacy]
         case .speed:
-            return [.optimizer, .maintenance]
+            return [.optimizer, .backgroundItems, .maintenance]
         case .apps:
             return [.uninstaller, .updater]
         case .files:
-            return [.fileExplorer, .spaceLens, .aiModels, .largeFiles, .shredder]
+            return [.fileExplorer, .spaceLens, .aiModels, .docker, .largeFiles, .shredder]
         }
     }
 }
@@ -56,7 +56,7 @@ struct NavigationSidebar: View {
                             // Hiển thị lời nhắc cập nhật phiên bản
 
                             if updateService.hasUpdate {
-                                Text("Phiên bản mới")
+                                Text(L("Phiên bản mới"))
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 6)
@@ -86,7 +86,7 @@ struct NavigationSidebar: View {
                             // Tiêu đề nhóm
 
                             if !section.rawValue.isEmpty {
-                                Text(section.rawValue)
+                                Text(L(section.rawValue))
                                     .font(.system(size: 10, weight: .medium))
                                     .foregroundColor(.white.opacity(0.4))
                                     .textCase(.uppercase)
@@ -132,14 +132,14 @@ struct NavigationSidebar: View {
                                 .clipShape(Circle())
                         }
                         .buttonStyle(.plain)
-                        .help("Cài đặt")
+                        .help(L("Cài đặt"))
                     }
                     
                     HStack(spacing: 6) {
-                        Text("v4.0.8")
+                        Text("v4.0.9")
                             .font(.system(size: 10))
                             .foregroundColor(.white.opacity(0.3))
-                        Text("Bản Pro")
+                        Text(L("Bản Pro"))
                             .font(.system(size: 10, weight: .medium))
                             .foregroundStyle(
                                 LinearGradient(
@@ -226,22 +226,24 @@ struct SidebarMenuItem: View {
 
     private var localizedName: String {
         switch module {
-        case .monitor: return "Giám sát"
-        case .uninstaller: return "Gỡ cài đặt"
-        case .updater: return "Trình cập nhật"
-        case .deepClean: return "Làm sạch sâu"
-        case .cleaner: return "Rác hệ thống"
-        case .maintenance: return "Bảo trì"
-        case .optimizer: return "Tối ưu hóa"
-        case .shredder: return "Hủy tệp"
-        case .largeFiles: return "Tệp lớn / cũ"
-        case .fileExplorer: return "Duyệt tệp"
-        case .spaceLens: return "Không gian đĩa"
-        case .aiModels: return "Mô hình AI"
-        case .trash: return "Thùng rác"
-        case .privacy: return "Quyền riêng tư"
-        case .malware: return "Quét mã độc"
-        case .smartClean: return "Quét thông minh"
+        case .monitor: return L("Giám sát")
+        case .uninstaller: return L("Gỡ cài đặt")
+        case .updater: return L("Trình cập nhật")
+        case .deepClean: return L("Làm sạch sâu")
+        case .cleaner: return L("Rác hệ thống")
+        case .maintenance: return L("Bảo trì")
+        case .optimizer: return L("Tối ưu hóa")
+        case .shredder: return L("Hủy tệp")
+        case .largeFiles: return L("Tệp lớn / cũ")
+        case .fileExplorer: return L("Duyệt tệp")
+        case .spaceLens: return L("Không gian đĩa")
+        case .aiModels: return L("Mô hình AI")
+        case .docker: return L("Image Docker")
+        case .backgroundItems: return L("Dịch vụ nền")
+        case .trash: return L("Thùng rác")
+        case .privacy: return L("Quyền riêng tư")
+        case .malware: return L("Quét mã độc")
+        case .smartClean: return L("Quét thông minh")
         }
     }
     

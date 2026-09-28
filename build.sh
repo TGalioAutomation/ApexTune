@@ -5,6 +5,13 @@
 
 set -e
 
+# Toolchain: CommandLineTools đang thiếu macro plugin (SwiftUIMacros) khiến
+# swift build lỗi "@State... plugin for module 'SwiftUIMacros' not found".
+# Ưu tiên toolchain Xcode khi có (không ghi đè nếu người dùng đã đặt DEVELOPER_DIR).
+if [ -z "${DEVELOPER_DIR}" ] && [ -d "/Applications/Xcode.app/Contents/Developer" ]; then
+    export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
+fi
+
 # Định nghĩa màu sắc
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -117,9 +124,25 @@ else
     echo -e "${GREEN}OK${NC}"
 fi
 
+# 5.1 Widget extension (WidgetKit — Notification Center / Desktop)
+echo -e "${YELLOW}[5.1/7] Đóng gói widget extension...${NC}"
+echo -n "  - swift build --target MacOptimizerWidget ... "
+swift build -c release --target MacOptimizerWidget
+WIDGET_BIN="${BIN_DIR}/MacOptimizerWidget"
+APPEX="${BUILD_DIR}/${BUNDLE_NAME}/Contents/PlugIns/MacOptimizerWidget.appex"
+mkdir -p "${APPEX}/Contents/MacOS"
+cp "WidgetExtension/Info.plist" "${APPEX}/Contents/Info.plist"
+cp "${WIDGET_BIN}" "${APPEX}/Contents/MacOS/MacOptimizerWidget"
+# Widget extension BẮT BUỘC có app-sandbox entitlement, nếu không dasd/pluginkit bỏ qua.
+codesign --force --sign - --entitlements "WidgetExtension/widget.entitlements" "${APPEX}"
+echo -e "${GREEN}OK (PlugIns/MacOptimizerWidget.appex)${NC}"
+
 # 6. Ký ứng dụng
 echo -e "${YELLOW}[5/7] Ký ứng dụng...${NC}"
 codesign --force --deep --sign - "${BUILD_DIR}/${BUNDLE_NAME}"
+# --deep ký lại appex lồng bên trong mà KHÔNG có entitlements (mất app-sandbox),
+# nên phải ký lại appex với entitlements sandbox SAU CÙNG.
+codesign --force --sign - --entitlements "WidgetExtension/widget.entitlements" "${APPEX}"
 echo -e "${GREEN}✓ Ký xong${NC}"
 
 # 7. Đóng gói DMG (kèm ảnh nền và Applications shortcut)

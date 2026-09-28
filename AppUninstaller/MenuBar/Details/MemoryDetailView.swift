@@ -8,7 +8,7 @@ struct MemoryDetailView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text("Bộ nhớ")
+                Text(L("Bộ nhớ"))
                     .font(.headline)
                     .foregroundColor(.white)
                 Spacer()
@@ -68,10 +68,10 @@ struct MemoryDetailView: View {
                                 Text(formatSimpleGB(available))
                                     .font(.system(size: 32, weight: .bold))
                                     .foregroundColor(.white)
-                                Text("Dung lượng khả dụng")
+                                Text(L("Dung lượng khả dụng"))
                                     .font(.system(size: 12))
                                     .foregroundColor(.white.opacity(0.6))
-                                Text("(Tổng \(systemMonitor.memoryTotalString))")
+                                Text(String(format: L("(Tổng %@)"), systemMonitor.memoryTotalString))
                                     .font(.system(size: 10))
                                     .foregroundColor(.white.opacity(0.4))
                             }
@@ -79,9 +79,9 @@ struct MemoryDetailView: View {
                         
                         // Legend
                         VStack(alignment: .leading, spacing: 12) {
-                            MemoryLegendItem(color: Color(hex: "00C7BE"), label: "Bộ nhớ đang hoạt động", value: formatGB(systemMonitor.memoryApp))
-                            MemoryLegendItem(color: Color(hex: "6A85FC"), label: "Bộ nhớ cố định", value: formatGB(systemMonitor.memoryWired))
-                            MemoryLegendItem(color: Color(hex: "A358DF"), label: "Đã nén", value: formatGB(systemMonitor.memoryCompressed))
+                            MemoryLegendItem(color: Color(hex: "00C7BE"), label: L("Bộ nhớ đang hoạt động"), value: formatGB(systemMonitor.memoryApp))
+                            MemoryLegendItem(color: Color(hex: "6A85FC"), label: L("Bộ nhớ cố định"), value: formatGB(systemMonitor.memoryWired))
+                            MemoryLegendItem(color: Color(hex: "A358DF"), label: L("Đã nén"), value: formatGB(systemMonitor.memoryCompressed))
                         }
                     }
                     .padding(.top, 10)
@@ -90,25 +90,25 @@ struct MemoryDetailView: View {
                     HStack(spacing: 12) {
                         // Pressure Card
                         MemoryInfoCard(
-                            title: "Áp lực",
+                            title: L("Áp lực"),
                             value: String(format: "%.0f%%", systemMonitor.memoryPressure * 100),
-                            desc: "Mac hiện vẫn có thể xử lý thêm tác vụ.",
-                            linkText: "Tìm hiểu thêm"
+                            desc: L("Mac hiện vẫn có thể xử lý thêm tác vụ."),
+                            linkText: L("Tìm hiểu thêm")
                         )
                         
                         // Swap Card
                         MemoryInfoCard(
-                            title: "Bộ nhớ hoán đổi",
+                            title: L("Bộ nhớ hoán đổi"),
                             value: systemMonitor.memorySwapUsed, // e.g. "2.4 GB"
-                            desc: "Dung lượng trống trên ổ đĩa có thể hỗ trợ tối ưu hiệu năng bộ nhớ của Mac.",
-                            linkText: "Tìm hiểu thêm"
+                            desc: L("Dung lượng trống trên ổ đĩa có thể hỗ trợ tối ưu hiệu năng bộ nhớ của Mac."),
+                            linkText: L("Tìm hiểu thêm")
                         )
                     }
                     .padding(.horizontal, 16)
                     
                     // 3. Top Consumers Header
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Tiến trình dùng nhiều nhất")
+                        Text(L("Tiến trình dùng nhiều nhất"))
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
@@ -116,11 +116,11 @@ struct MemoryDetailView: View {
                         VStack(spacing: 2) {
                            // Header Row
                             HStack {
-                                Text("Tên tiến trình")
+                                Text(L("Tên tiến trình"))
                                     .font(.system(size: 12))
                                     .foregroundColor(.white.opacity(0.5))
                                 Spacer()
-                                Text("Mức dùng")
+                                Text(L("Mức dùng"))
                                     .font(.system(size: 12))
                                     .foregroundColor(.white.opacity(0.5))
                                     .frame(width: 60, alignment: .trailing)
@@ -262,7 +262,7 @@ struct MemoryAppRowPro: View {
                 .foregroundColor(Color(hex: "FFD700")) // Gold/Yellow color for value
             
             Button(action: onForceQuit) {
-                Text("Buộc thoát")
+                Text(L("Buộc thoát"))
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.8))
                     .frame(width: 68)

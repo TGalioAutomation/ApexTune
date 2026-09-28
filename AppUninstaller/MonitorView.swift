@@ -66,11 +66,11 @@ struct ConsoleDashboardView: View {
             // Header
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Trung tâm hệ thống")
+                    Text(L("Trung tâm hệ thống"))
                         .font(.largeTitle)
                         .bold()
                         .foregroundColor(.white)
-                    Text("Tổng quan và quản lý hệ thống")
+                    Text(L("Tổng quan và quản lý hệ thống"))
                         .foregroundColor(.white.opacity(0.7))
                 }
                 Spacer()
@@ -82,7 +82,7 @@ struct ConsoleDashboardView: View {
                     // Top Stats: System Stats, Network (Reorganized)
                     HStack(spacing: 16) {
                         // CPU & Memory Circle
-                        MonitorCard(title: "Tải hệ thống", icon: "cpu", color: .blue) {
+                        MonitorCard(title: L("Tải hệ thống"), icon: "cpu", color: .blue) {
                             HStack(spacing: 20) {
                                 UsageRing(percentage: systemService.cpuUsage, label: "CPU", subLabel: String(format: "%.0f%%", systemService.cpuUsage * 100))
                                 UsageRing(percentage: systemService.memoryUsage, label: "RAM", subLabel: String(format: "%.0f%%", systemService.memoryUsage * 100))
@@ -94,7 +94,7 @@ struct ConsoleDashboardView: View {
                         Button(action: {
                             viewState = .networkOptimize
                         }) {
-                            MonitorCard(title: "Mạng", icon: "wifi", color: .green) {
+                            MonitorCard(title: L("Mạng"), icon: "wifi", color: .green) {
                                 VStack(spacing: 8) {
                                     // Đồ thị dạng sóng
 
@@ -135,7 +135,7 @@ struct ConsoleDashboardView: View {
                     }
                     .frame(height: 160)
                     
-                    Text("Công cụ quản lý")
+                    Text(L("Công cụ quản lý"))
                         .font(.headline)
                         .foregroundColor(.white.opacity(0.8))
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -145,8 +145,8 @@ struct ConsoleDashboardView: View {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                         // App Management
                         DashboardButton(
-                            title: "Trình quản lý ứng dụng",
-                            description: "Quản lý ứng dụng, buộc thoát, đặt lại",
+                            title: L("Trình quản lý ứng dụng"),
+                            description: L("Quản lý ứng dụng, buộc thoát, đặt lại"),
                             icon: "square.grid.2x2.fill",
                             color: .cyan
                         ) {
@@ -155,8 +155,8 @@ struct ConsoleDashboardView: View {
                         
                         // Port Management
                         DashboardButton(
-                            title: "Quản lý cổng mạng",
-                            description: "Xem và đóng các cổng mạng",
+                            title: L("Quản lý cổng mạng"),
+                            description: L("Xem và đóng các cổng mạng"),
                             icon: "network",
                             color: .purple
                         ) {
@@ -165,8 +165,8 @@ struct ConsoleDashboardView: View {
                         
                         // Process Management
                         DashboardButton(
-                            title: "Quản lý tiến trình",
-                            description: "Giám sát và tiêu diệt các tiến trình nền",
+                            title: L("Quản lý tiến trình"),
+                            description: L("Giám sát và tiêu diệt các tiến trình nền"),
                             icon: "waveform.path.ecg",
                             color: .green
                         ) {
@@ -175,8 +175,8 @@ struct ConsoleDashboardView: View {
                         
                         // Protection Center
                         DashboardButton(
-                            title: "Bảo vệ hệ thống",
-                            description: ProtectionService.shared.isMonitoring ? ("Bật bảo vệ thời gian thực") : ("Bảo vệ bị vô hiệu hóa"),
+                            title: L("Bảo vệ hệ thống"),
+                            description: ProtectionService.shared.isMonitoring ? L("Bật bảo vệ thời gian thực") : L("Bảo vệ bị vô hiệu hóa"),
                             icon: "shield.checkerboard",
                             color: ProtectionService.shared.isMonitoring ? .green : .orange
                         ) {
@@ -220,7 +220,7 @@ struct ConsoleAppManagerView: View {
         VStack(spacing: 0) {
             // Header with Back Button
             ConsoleHeader(
-                title: "Trình quản lý ứng dụng",
+                title: L("Trình quản lý ứng dụng"),
                 backAction: { viewState = .dashboard }
             )
             
@@ -228,7 +228,7 @@ struct ConsoleAppManagerView: View {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.secondaryText)
-                TextField("Tìm kiếm ứng dụng...", text: $searchText)
+                TextField(L("Tìm kiếm ứng dụng..."), text: $searchText)
                     .textFieldStyle(.plain)
                     .foregroundColor(.white)
                 
@@ -250,7 +250,7 @@ struct ConsoleAppManagerView: View {
             if isScanning {
                 Spacer()
                 ProgressView()
-                Text("Đang tải ứng dụng...")
+                Text(L("Đang tải ứng dụng..."))
                     .foregroundColor(.secondaryText)
                     .padding(.top)
                 Spacer()
@@ -258,11 +258,11 @@ struct ConsoleAppManagerView: View {
                 List {
                     // Header Row
                     HStack {
-                        Text("Tên ứng dụng")
+                        Text(L("Tên ứng dụng"))
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        Text("Trạng thái")
+                        Text(L("Trạng thái"))
                             .frame(width: 80, alignment: .leading)
-                        Text("hành động")
+                        Text(L("hành động"))
                             .frame(width: 200, alignment: .trailing)
                     }
                     .font(.caption)
@@ -392,7 +392,7 @@ struct AppManagerRow: View {
             Text(installedApp.name)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.white)
-            Text(("Kích thước ứng dụng:") + installedApp.formattedSize)
+            Text(String(format: L("Kích thước ứng dụng: %@"), installedApp.formattedSize))
                 .font(.caption)
                 .foregroundColor(.white.opacity(0.6))
         }
@@ -402,11 +402,11 @@ struct AppManagerRow: View {
         HStack {
             if isRunningLocal {
                 Circle().fill(Color.green).frame(width: 8, height: 8)
-                Text("Đang chạy")
+                Text(L("Đang chạy"))
                     .font(.caption)
                     .foregroundColor(.green)
             } else {
-                Text("Đã dừng")
+                Text(L("Đã dừng"))
                     .font(.caption)
                     .foregroundColor(.secondaryText)
             }
@@ -429,13 +429,13 @@ struct AppManagerRow: View {
             HStack(spacing: 4) {
                 if isSpinning {
                     ProgressView().scaleEffect(0.5).frame(width: 10, height: 10)
-                    Text("Làm sạch...")
+                    Text(L("Làm sạch..."))
                 } else if showSuccess {
                     Image(systemName: "checkmark")
-                    Text("Xong")
+                    Text(L("Xong"))
                 } else {
                     Image(systemName: "eraser")
-                    Text("Lau dọn")
+                    Text(L("Lau dọn"))
                 }
             }
             .padding(.horizontal, 10)
@@ -447,12 +447,12 @@ struct AppManagerRow: View {
         }
         .disabled(isSpinning)
         .buttonStyle(.plain)
-        .help("Làm sạch dữ liệu ứng dụng (giữ ứng dụng được cài đặt)")
+        .help(L("Làm sạch dữ liệu ứng dụng (giữ ứng dụng được cài đặt)"))
         .alert(isPresented: $showCleanConfirmation) {
             Alert(
-                title: Text("Xác nhận sạch"),
-                message: Text("Thao tác này sẽ xóa tất cả bộ nhớ đệm, nhật ký và dữ liệu cấu hình.\nBản thân ứng dụng (\(app.installedApp.formattedSize) ) sẽ được giữ lại."),
-                primaryButton: .destructive(Text("Làm sạch dữ liệu")) {
+                title: Text(L("Xác nhận sạch")),
+                message: Text(String(format: L("Thao tác này sẽ xóa tất cả bộ nhớ đệm, nhật ký và dữ liệu cấu hình.\nBản thân ứng dụng (%@ ) sẽ được giữ lại."), app.installedApp.formattedSize)),
+                primaryButton: .destructive(Text(L("Làm sạch dữ liệu"))) {
                     Task {
                         isSpinning = true
                         showSuccess = false
@@ -497,7 +497,7 @@ struct AppManagerRow: View {
                         }
                     }
                 },
-                secondaryButton: .cancel(Text("Hủy bỏ"))
+                secondaryButton: .cancel(Text(L("Hủy bỏ")))
             )
         }
     }
@@ -513,7 +513,7 @@ struct AppManagerRow: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "xmark.octagon.fill")
-                        Text("Buộc thoát")
+                        Text(L("Buộc thoát"))
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
@@ -540,7 +540,7 @@ struct ConsolePortManagerView: View {
     var body: some View {
         VStack(spacing: 0) {
             ConsoleHeader(
-                title: "Quản lý cổng mạng",
+                title: L("Quản lý cổng mạng"),
                 backAction: { viewState = .dashboard },
                 refreshAction: { Task { await portService.scanPorts() } }
             )
@@ -548,7 +548,7 @@ struct ConsolePortManagerView: View {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.secondaryText)
-                TextField("Tìm kiếm cổng, PID...", text: $searchText)
+                TextField(L("Tìm kiếm cổng, PID..."), text: $searchText)
                     .textFieldStyle(.plain)
                     .foregroundColor(.white)
             }
@@ -567,16 +567,16 @@ struct ConsolePortManagerView: View {
                 ScrollView {
                     VStack(spacing: 1) {
                         HStack {
-                            Text("Quá trình")
+                            Text(L("Quá trình"))
                                 .frame(width: 150, alignment: .leading)
                             Text("PID")
                                 .frame(width: 60, alignment: .leading)
-                            Text("Cảng")
+                            Text(L("Cảng"))
                                 .frame(width: 80, alignment: .leading)
-                            Text("nguyên mẫu")
+                            Text(L("nguyên mẫu"))
                                 .frame(width: 60, alignment: .leading)
                             Spacer()
-                            Text("Hoạt động")
+                            Text(L("Hoạt động"))
                                 .frame(width: 60)
                         }
                         .font(.caption)
@@ -617,7 +617,7 @@ struct ConsolePortManagerView: View {
                                 Spacer()
                                 
                                 Button(action: { portService.terminateProcess(port) }) {
-                                    Text("Giết")
+                                    Text(L("Giết"))
                                         .font(.caption)
                                         .foregroundColor(.white)
                                         .padding(.horizontal, 10)
@@ -653,7 +653,7 @@ struct ConsoleProcessManagerView: View {
     var body: some View {
         VStack(spacing: 0) {
             ConsoleHeader(
-                title: "Quy trình nền",
+                title: L("Quy trình nền"),
                 backAction: { viewState = .dashboard },
                 refreshAction: { Task { await processService.scanProcesses(showApps: false) } }
             )
@@ -661,7 +661,7 @@ struct ConsoleProcessManagerView: View {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.secondaryText)
-                TextField("Quá trình tìm kiếm...", text: $searchText)
+                TextField(L("Quá trình tìm kiếm..."), text: $searchText)
                     .textFieldStyle(.plain)
                     .foregroundColor(.white)
             }
@@ -709,7 +709,7 @@ struct ConsoleProcessManagerView: View {
                                         .font(.system(size: 16))
                                 }
                                 .buttonStyle(.plain)
-                                .help("Buộc thoát")
+                                .help(L("Buộc thoát"))
                             }
                             .padding(12)
                             .background(Color.white.opacity(0.02))
@@ -931,10 +931,10 @@ struct ConsoleJunkCleanView: View {
             )
         }
         .confirmationDialog(
-            "Xác nhận Xóa",
+            L("Xác nhận Xóa"),
             isPresented: $showDeleteConfirmation
         ) {
-            Button("Bắt đầu làm sạch", role: .destructive) {
+            Button(L("Bắt đầu làm sạch"), role: .destructive) {
                 Task {
                     let result = await service.cleanAll()
                     deleteResult = (result.success, result.failed, result.size)
@@ -949,10 +949,10 @@ struct ConsoleJunkCleanView: View {
             }
             Button(loc.L("cancel"), role: .cancel) {}
         } message: {
-            Text("Làm sạch tất cả các tệp đã chọn để giải phóng dung lượng.")
+            Text(L("Làm sạch tất cả các tệp đã chọn để giải phóng dung lượng."))
         }
-        .alert("Một số tệp yêu cầu đặc quyền quản trị viên", isPresented: $showRetryWithAdmin) {
-            Button("Xóa với quản trị viên", role: .destructive) {
+        .alert(L("Một số tệp yêu cầu đặc quyền quản trị viên"), isPresented: $showRetryWithAdmin) {
+            Button(L("Xóa với quản trị viên"), role: .destructive) {
                 Task {
                     let adminResult = await service.cleanWithPrivileges(files: failedFiles)
                     if let currentResult = deleteResult {
@@ -971,7 +971,7 @@ struct ConsoleJunkCleanView: View {
             }
         } message: {
             let totalFailedSize = failedFiles.reduce(0) { $0 + $1.size }
-            Text("Không thể xóa một số tệp (\(ByteCountFormatter.string(fromByteCount: totalFailedSize, countStyle: .file))).")
+            Text(String(format: L("Không thể xóa một số tệp (%@)."), ByteCountFormatter.string(fromByteCount: totalFailedSize, countStyle: .file)))
         }
     }
     
@@ -980,7 +980,7 @@ struct ConsoleJunkCleanView: View {
     private var noDataView: some View {
         VStack(spacing: 0) {
             ConsoleHeader(
-                title: "Dọn dẹp rác",
+                title: L("Dọn dẹp rác"),
                 backAction: { viewState = .dashboard }
             )
             
@@ -997,12 +997,12 @@ struct ConsoleJunkCleanView: View {
             }
             .padding(.bottom, 30)
             
-            Text("Chưa có dữ liệu rác")
+            Text(L("Chưa có dữ liệu rác"))
                 .font(.title2)
                 .foregroundColor(.white)
                 .padding(.bottom, 8)
             
-            Text("Chạy quét hệ thống để phát hiện các tập tin rác có thể dọn dẹp được")
+            Text(L("Chạy quét hệ thống để phát hiện các tập tin rác có thể dọn dẹp được"))
                 .font(.body)
                 .foregroundColor(.secondaryText)
                 .padding(.bottom, 40)
@@ -1014,7 +1014,7 @@ struct ConsoleJunkCleanView: View {
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
-                    Text("Bắt đầu quét")
+                    Text(L("Bắt đầu quét"))
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -1034,13 +1034,13 @@ struct ConsoleJunkCleanView: View {
     private var scanningView: some View {
         VStack(spacing: 0) {
             ConsoleHeader(
-                title: "Dọn dẹp rác",
+                title: L("Dọn dẹp rác"),
                 backAction: { viewState = .dashboard }
             )
             
             Spacer()
             
-            Text("Đang quét...")
+            Text(L("Đang quét..."))
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.bottom, 40)
@@ -1063,7 +1063,7 @@ struct ConsoleJunkCleanView: View {
             Spacer()
             
             CircularActionButton(
-                title: "Dừng lại",
+                title: L("Dừng lại"),
                 gradient: CircularActionButton.stopGradient,
                 progress: service.scanProgress,
                 showProgress: true,
@@ -1089,7 +1089,7 @@ struct ConsoleJunkCleanView: View {
     private var resultsView: some View {
         VStack(spacing: 0) {
             ConsoleHeader(
-                title: "Dọn dẹp rác",
+                title: L("Dọn dẹp rác"),
                 backAction: { viewState = .dashboard },
                 refreshAction: {
                     Task {
@@ -1101,12 +1101,12 @@ struct ConsoleJunkCleanView: View {
             
             Spacer()
             
-            Text("Quét hoàn tất")
+            Text(L("Quét hoàn tất"))
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.bottom, 8)
             
-            Text("Đã tìm thấy các tập tin rác sau")
+            Text(L("Đã tìm thấy các tập tin rác sau"))
                 .font(.body)
                 .foregroundColor(.secondaryText)
                 .padding(.bottom, 30)
@@ -1117,8 +1117,8 @@ struct ConsoleJunkCleanView: View {
                 ResultCategoryCard(
                     icon: "internaldrive.fill",
                     iconColor: .blue,
-                    title: "Dọn dẹp",
-                    subtitle: "Xóa rác",
+                    title: L("Dọn dẹp"),
+                    subtitle: L("Xóa rác"),
                     value: ByteCountFormatter.string(fromByteCount: totalScannedSize, countStyle: .file),
                     hasDetails: true,
                     onDetailTap: {
@@ -1131,7 +1131,7 @@ struct ConsoleJunkCleanView: View {
             Spacer()
             
             CircularActionButton(
-                title: "Dọn dẹp",
+                title: L("Dọn dẹp"),
                 gradient: CircularActionButton.greenGradient,
                 action: {
                     showDeleteConfirmation = true
@@ -1146,13 +1146,13 @@ struct ConsoleJunkCleanView: View {
     private var cleaningView: some View {
         VStack(spacing: 0) {
             ConsoleHeader(
-                title: "Dọn dẹp rác",
+                title: L("Dọn dẹp rác"),
                 backAction: { viewState = .dashboard }
             )
             
             Spacer()
             
-            Text("Đang dọn hệ thống...")
+            Text(L("Đang dọn hệ thống..."))
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.bottom, 40)
@@ -1185,7 +1185,7 @@ struct ConsoleJunkCleanView: View {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .green))
                 
-                Text("Vệ sinh")
+                Text(L("Vệ sinh"))
                     .font(.caption)
                     .foregroundColor(.white)
             }
@@ -1198,7 +1198,7 @@ struct ConsoleJunkCleanView: View {
     private var cleaningFinishedView: some View {
         VStack(spacing: 0) {
             ConsoleHeader(
-                title: "Dọn dẹp rác",
+                title: L("Dọn dẹp rác"),
                 backAction: {
                     showCleaningFinished = false
                     viewState = .dashboard
@@ -1223,13 +1223,13 @@ struct ConsoleJunkCleanView: View {
             
             // Tiêu đề kết quả
 
-            Text("Làm tốt!")
+            Text(L("Làm tốt!"))
                 .font(.title)
                 .bold()
                 .foregroundColor(.white)
                 .padding(.bottom, 8)
             
-            Text("Máy Mac của bạn đang ở trạng thái tốt.")
+            Text(L("Máy Mac của bạn đang ở trạng thái tốt."))
                 .font(.body)
                 .foregroundColor(.secondaryText)
                 .padding(.bottom, 30)
@@ -1252,7 +1252,7 @@ struct ConsoleJunkCleanView: View {
                             .font(.headline)
                             .foregroundColor(.white)
                     }
-                    Text("Đã xóa rác")
+                    Text(L("Đã xóa rác"))
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
@@ -1270,7 +1270,7 @@ struct ConsoleJunkCleanView: View {
                 }
                 viewState = .dashboard
             }) {
-                Text("Quay lại Trung tâm hệ thống")
+                Text(L("Quay lại Trung tâm hệ thống"))
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding(.horizontal, 24)
@@ -1398,7 +1398,7 @@ struct ConsoleNetworkOptimizeView: View {
     var body: some View {
         VStack(spacing: 0) {
             ConsoleHeader(
-                title: "Tối ưu hóa mạng",
+                title: L("Tối ưu hóa mạng"),
                 backAction: { viewState = .dashboard }
             )
             
@@ -1435,7 +1435,7 @@ struct ConsoleNetworkOptimizeView: View {
             // Hiển thị tốc độ mạng hiện tại
 
             VStack(spacing: 16) {
-                Text("Tốc độ mạng hiện tại")
+                Text(L("Tốc độ mạng hiện tại"))
                     .font(.title2)
                     .foregroundColor(.white)
                 
@@ -1444,7 +1444,7 @@ struct ConsoleNetworkOptimizeView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "arrow.down.circle.fill")
                                 .foregroundColor(.green)
-                            Text("Tải xuống")
+                            Text(L("Tải xuống"))
                                 .font(.caption)
                                 .foregroundColor(.secondaryText)
                         }
@@ -1457,7 +1457,7 @@ struct ConsoleNetworkOptimizeView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "arrow.up.circle.fill")
                                 .foregroundColor(.cyan)
-                            Text("Tải lên")
+                            Text(L("Tải lên"))
                                 .font(.caption)
                                 .foregroundColor(.secondaryText)
                         }
@@ -1480,7 +1480,7 @@ struct ConsoleNetworkOptimizeView: View {
             Button(action: { startOptimization() }) {
                 HStack(spacing: 8) {
                     Image(systemName: "bolt.fill")
-                    Text("Tối ưu hóa mạng")
+                    Text(L("Tối ưu hóa mạng"))
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -1495,14 +1495,14 @@ struct ConsoleNetworkOptimizeView: View {
             // Hướng dẫn tối ưu hóa
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Tối ưu hóa mạng sẽ:")
+                Text(L("Tối ưu hóa mạng sẽ:"))
                     .font(.caption)
                     .foregroundColor(.secondaryText)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    OptimizationItem(text: "Xóa bộ đệm DNS")
-                    OptimizationItem(text: "Xóa các tập tin tạm thời mạng")
-                    OptimizationItem(text: "Tối ưu hóa cài đặt mạng")
+                    OptimizationItem(text: L("Xóa bộ đệm DNS"))
+                    OptimizationItem(text: L("Xóa các tập tin tạm thời mạng"))
+                    OptimizationItem(text: L("Tối ưu hóa cài đặt mạng"))
                 }
             }
             .padding(.top, 30)
@@ -1532,7 +1532,7 @@ struct ConsoleNetworkOptimizeView: View {
                     .foregroundColor(.green)
             }
             
-            Text("Tối ưu hóa mạng...")
+            Text(L("Tối ưu hóa mạng..."))
                 .font(.title2)
                 .foregroundColor(.white)
             
@@ -1556,16 +1556,16 @@ struct ConsoleNetworkOptimizeView: View {
                     .foregroundColor(.green)
             }
             
-            Text("Hoàn tất tối ưu hóa mạng")
+            Text(L("Hoàn tất tối ưu hóa mạng"))
                 .font(.title2)
                 .foregroundColor(.white)
             
-            Text("Mạng của bạn đã được tối ưu hóa")
+            Text(L("Mạng của bạn đã được tối ưu hóa"))
                 .font(.body)
                 .foregroundColor(.secondaryText)
             
             Button(action: { viewState = .dashboard }) {
-                Text("Quay lại Trung tâm hệ thống")
+                Text(L("Quay lại Trung tâm hệ thống"))
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding(.horizontal, 24)
@@ -1583,9 +1583,9 @@ struct ConsoleNetworkOptimizeView: View {
         optimizationProgress = 0
         
         let steps = [
-            ("Đang xóa bộ đệm DNS...", "sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"),
-            ("Làm sạch các tập tin tạm thời mạng...", "rm -rf ~/Library/Caches/com.apple.network* 2>/dev/null"),
-            ("Đang tối ưu hóa cài đặt mạng...", "networksetup -setairportpower en0 off 2>/dev/null; sleep 1; networksetup -setairportpower en0 on 2>/dev/null")
+            (L("Đang xóa bộ đệm DNS..."), "sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"),
+            (L("Làm sạch các tập tin tạm thời mạng..."), "rm -rf ~/Library/Caches/com.apple.network* 2>/dev/null"),
+            (L("Đang tối ưu hóa cài đặt mạng..."), "networksetup -setairportpower en0 off 2>/dev/null; sleep 1; networksetup -setairportpower en0 on 2>/dev/null")
         ]
         
         Task {
@@ -1636,7 +1636,7 @@ struct ConsoleProtectionView: View {
     var body: some View {
         VStack(spacing: 0) {
             ConsoleHeader(
-                title: "Bảo vệ hệ thống",
+                title: L("Bảo vệ hệ thống"),
                 backAction: { viewState = .dashboard }
             )
             
@@ -1645,12 +1645,12 @@ struct ConsoleProtectionView: View {
                     // Status Card
                     HStack {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(protectionService.isMonitoring ? ("Bảo vệ thời gian thực: BẬT") : ("Bảo vệ thời gian thực: TẮT"))
+                            Text(protectionService.isMonitoring ? L("Bảo vệ thời gian thực: BẬT") : L("Bảo vệ thời gian thực: TẮT"))
                                 .font(.title3)
                                 .bold()
                                 .foregroundColor(protectionService.isMonitoring ? .green : .white)
                             
-                            Text("Giám sát tải xuống và chặn quảng cáo")
+                            Text(L("Giám sát tải xuống và chặn quảng cáo"))
                                 .font(.caption)
                                 .foregroundColor(.white.opacity(0.6))
                         }
@@ -1677,15 +1677,15 @@ struct ConsoleProtectionView: View {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                         // Downloads Monitored
                         MonitorStatCard(
-                            title: "Tải xuống",
-                            value: "Active",
+                            title: L("Tải xuống"),
+                            value: L("Active"),
                             icon: "arrow.down.circle.fill",
                             color: .blue
                         )
                         
                         // Ads Blocked
                         MonitorStatCard(
-                            title: "Quảng cáo bị chặn",
+                            title: L("Quảng cáo bị chặn"),
                             value: "\(protectionService.adBlockedCount)",
                             icon: "hand.raised.fill",
                             color: .orange
@@ -1693,7 +1693,7 @@ struct ConsoleProtectionView: View {
                         
                         // Threats
                         MonitorStatCard(
-                            title: "Mối đe dọa",
+                            title: L("Mối đe dọa"),
                             value: "\(protectionService.threatHistory.count)",
                             icon: "exclamationmark.shield.fill",
                             color: .red
@@ -1704,8 +1704,8 @@ struct ConsoleProtectionView: View {
                     VStack(spacing: 16) {
                         // Tab Picker
                         Picker("", selection: $selectedTab) {
-                            Text("Quảng cáo bị chặn").tag(0)
-                            Text("Các mối đe dọa đã phát hiện").tag(1)
+                            Text(L("Quảng cáo bị chặn")).tag(0)
+                            Text(L("Các mối đe dọa đã phát hiện")).tag(1)
                         }
                         .pickerStyle(.segmented)
                         .padding(.horizontal)
@@ -1715,8 +1715,8 @@ struct ConsoleProtectionView: View {
                             if protectionService.blockedAds.isEmpty {
                                 EmptyStateView(
                                     icon: "hand.raised",
-                                    title: "Không có quảng cáo nào bị chặn",
-                                    subtitle: "Quảng cáo sẽ bị chặn khi duyệt"
+                                    title: L("Không có quảng cáo nào bị chặn"),
+                                    subtitle: L("Quảng cáo sẽ bị chặn khi duyệt")
                                 )
                             } else {
                                 LazyVStack(spacing: 8) {
@@ -1737,7 +1737,7 @@ struct ConsoleProtectionView: View {
                                             
                                             Spacer()
                                             
-                                            Text("Bị chặn")
+                                            Text(L("Bị chặn"))
                                                 .font(.caption2)
                                                 .foregroundColor(.green)
                                                 .padding(.horizontal, 6)
@@ -1757,8 +1757,8 @@ struct ConsoleProtectionView: View {
                             if protectionService.threatHistory.isEmpty {
                                 EmptyStateView(
                                     icon: "checkmark.shield",
-                                    title: "Không có mối đe dọa nào được phát hiện",
-                                    subtitle: "Hệ thống của bạn hiện đang an toàn"
+                                    title: L("Không có mối đe dọa nào được phát hiện"),
+                                    subtitle: L("Hệ thống của bạn hiện đang an toàn")
                                 )
                             } else {
                                 ForEach(protectionService.threatHistory) { threat in
@@ -1775,7 +1775,7 @@ struct ConsoleProtectionView: View {
                                                 .truncationMode(.middle)
                                         }
                                         Spacer()
-                                        Text(threat.type.rawValue)
+                                        Text(L(threat.type.rawValue))
                                             .font(.caption)
                                             .padding(4)
                                             .background(Color.red.opacity(0.2))

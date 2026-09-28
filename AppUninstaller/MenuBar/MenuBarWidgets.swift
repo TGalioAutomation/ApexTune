@@ -1,248 +1,120 @@
 import SwiftUI
 
-struct MenuBarGlassCardModifier: ViewModifier {
+// MARK: - Bộ style chung của "Bảng điều khiển hệ thống"
+// Ngôn ngữ thiết kế: nền graphite tối, thẻ phẳng viền hairline,
+// phân cấp bằng nhãn section viết hoa và màu nhấn tiết chế.
+
+/// Thẻ chính: mặt phẳng nổi nhẹ trên nền graphite, không gradient dày.
+struct MenuBarPanelModifier: ViewModifier {
     let cornerRadius: CGFloat
-    
+    let isElevated: Bool
+
     func body(content: Content) -> some View {
         content
             .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0.18),
-                                    Color.white.opacity(0.08)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: isElevated
+                                ? [Color.white.opacity(0.075), Color.white.opacity(0.045)]
+                                : [Color.white.opacity(0.055), Color.white.opacity(0.032)],
+                            startPoint: .top,
+                            endPoint: .bottom
                         )
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(Color.black.opacity(0.22))
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .strokeBorder(Color.white.opacity(0.22), lineWidth: 1)
-                }
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
             )
     }
 }
 
 extension View {
-    func menuBarGlassCard(cornerRadius: CGFloat = 24) -> some View {
-        modifier(MenuBarGlassCardModifier(cornerRadius: cornerRadius))
+    func menuBarPanel(cornerRadius: CGFloat = 16, elevated: Bool = false) -> some View {
+        modifier(MenuBarPanelModifier(cornerRadius: cornerRadius, isElevated: elevated))
+    }
+
+    /// Mặt hàng con bên trong thẻ (hàng bấm, hàng toggle).
+    func menuBarInsetRow(cornerRadius: CGFloat = 11, hovered: Bool = false) -> some View {
+        background(
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(Color.white.opacity(hovered ? 0.085 : 0.048))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .strokeBorder(Color.white.opacity(hovered ? 0.12 : 0.05), lineWidth: 1)
+        )
     }
 }
 
-private struct MenuBarIconTile: View {
-    let symbol: String
-    
+/// Nhãn section viết hoa kèm chấm màu nhấn — dùng để phân nhóm nội dung.
+struct MenuBarSectionLabel: View {
+    let title: String
+    var tint: Color = Color(hex: "2CB7FF")
+
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.white.opacity(0.14))
-            Image(systemName: symbol)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(.white.opacity(0.95))
+        HStack(spacing: 6) {
+            Circle()
+                .fill(tint)
+                .frame(width: 4, height: 4)
+            Text(title)
+                .font(.system(size: 9.5, weight: .bold))
+                .tracking(1.4)
+                .foregroundColor(.white.opacity(0.5))
         }
-        .frame(width: 48, height: 48)
+        .accessibilityHidden(true)
     }
 }
 
-private struct MenuBarProgressBar: View {
+/// Ô icon vuông bo góc dùng chung cho các hàng.
+struct MenuBarIconChip: View {
+    let icon: String
+    let tint: Color
+    var size: CGFloat = 30
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: size * 0.32, style: .continuous)
+            .fill(tint.opacity(0.16))
+            .overlay(
+                RoundedRectangle(cornerRadius: size * 0.32, style: .continuous)
+                    .strokeBorder(tint.opacity(0.22), lineWidth: 1)
+            )
+            .overlay(
+                Image(systemName: icon)
+                    .font(.system(size: size * 0.44, weight: .semibold))
+                    .foregroundColor(tint)
+            )
+            .frame(width: size, height: size)
+    }
+}
+
+/// Track tiến trình mảnh dùng cho các hàng số liệu.
+struct MenuBarTrack: View {
     let progress: Double
-    
+    let tint: Color
+    var height: CGFloat = 4
+
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
+                Capsule().fill(Color.white.opacity(0.09))
                 Capsule()
-                    .fill(Color.white.opacity(0.18))
-                Capsule()
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.white.opacity(0.82), Color.white.opacity(0.45)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .frame(width: max(26, proxy.size.width * max(0.08, min(progress, 1.0))))
+                    .fill(tint)
+                    .frame(width: max(height, proxy.size.width * min(max(progress, 0.02), 1)))
+                    .animation(.easeOut(duration: 0.45), value: progress)
             }
         }
-        .frame(height: 13)
+        .frame(height: height)
     }
 }
 
-struct MenuBarPrimaryPillButton: View {
-    let title: String
-    let colors: [Color]
-    
-    var body: some View {
-        Text(title)
-            .font(.system(size: 11, weight: .bold))
-            .foregroundColor(.black.opacity(0.85))
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 9)
-            .background(
-                LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
-            )
-            .clipShape(Capsule())
-            .shadow(color: colors.first?.opacity(0.35) ?? .clear, radius: 10, y: 4)
-    }
-}
-
-private struct MenuBarMetricCard: View {
-    let icon: String
-    let title: String
-    let primaryText: String
-    let secondaryText: String?
-    let progress: Double?
-    let actionTitle: String?
-    let actionColors: [Color]
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .center, spacing: 12) {
-                MenuBarIconTile(symbol: icon)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.white)
-                    Text(primaryText)
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(.white.opacity(0.88))
-                }
-                Spacer(minLength: 0)
-            }
-            
-            if let progress {
-                MenuBarProgressBar(progress: progress)
-            }
-            
-            if let secondaryText {
-                Text(secondaryText)
-                    .font(.system(size: 10))
-                    .foregroundColor(.white.opacity(0.72))
-                    .lineLimit(2)
-            }
-            
-            if let actionTitle {
-                MenuBarPrimaryPillButton(title: actionTitle, colors: actionColors)
-            }
-        }
-        .padding(12)
-        .frame(maxWidth: .infinity, minHeight: 128, alignment: .topLeading)
-        .menuBarGlassCard()
-    }
-}
-
-struct StorageWidget: View {
-    @ObservedObject var diskManager = DiskSpaceManager.shared
-    
-    var body: some View {
-        MenuBarMetricCard(
-            icon: "internaldrive.fill",
-            title: "Dung lượng",
-            primaryText: "\(shortBytes(diskManager.usedSize)) / \(shortBytes(diskManager.totalSize))",
-            secondaryText: "Trống \(shortBytes(diskManager.freeSize))",
-            progress: diskManager.usagePercentage,
-            actionTitle: "Dọn ngay",
-            actionColors: [Color(hex: "31D8FF"), Color(hex: "10A6E9")]
-        )
-    }
-    
-    private func shortBytes(_ bytes: Int64) -> String {
-        let formatter = ByteCountFormatter()
-        formatter.allowedUnits = [.useTB, .useGB]
-        formatter.countStyle = .file
-        formatter.includesUnit = true
-        formatter.isAdaptive = true
-        return formatter.string(fromByteCount: bytes).replacingOccurrences(of: " ", with: " ")
-    }
-}
-
-struct MemoryWidget: View {
-    @ObservedObject var systemMonitor: SystemMonitorService
-    
-    var body: some View {
-        MenuBarMetricCard(
-            icon: "memorychip.fill",
-            title: "Bộ nhớ",
-            primaryText: "\(systemMonitor.memoryUsedString) / \(systemMonitor.memoryTotalString)",
-            secondaryText: "Áp lực \(Int(systemMonitor.memoryPressure * 100))%",
-            progress: systemMonitor.memoryUsage,
-            actionTitle: "Giải phóng",
-            actionColors: [Color(hex: "31D8FF"), Color(hex: "10A6E9")]
-        )
-    }
-}
-
-struct BatteryWidget: View {
-    @ObservedObject var systemMonitor: SystemMonitorService
-    
-    var body: some View {
-        MenuBarMetricCard(
-            icon: systemMonitor.isCharging ? "battery.100.bolt" : "battery.100",
-            title: "Pin",
-            primaryText: "\(Int(systemMonitor.batteryLevel * 100))% còn lại",
-            secondaryText: systemMonitor.batteryState,
-            progress: nil,
-            actionTitle: nil,
-            actionColors: []
-        )
-        .frame(minHeight: 104)
-    }
-}
-
-struct CPUWidget: View {
-    @ObservedObject var systemMonitor: SystemMonitorService
-    
-    var body: some View {
-        MenuBarMetricCard(
-            icon: "cpu",
-            title: "CPU",
-            primaryText: "Mức dùng \(Int(systemMonitor.cpuUsage * 100))%",
-            secondaryText: "Hoạt động \(formatUptime(systemMonitor.systemUptime))",
-            progress: nil,
-            actionTitle: nil,
-            actionColors: []
-        )
-        .frame(minHeight: 104)
-    }
-    
-    private func formatUptime(_ interval: TimeInterval) -> String {
-        let hours = Int(interval) / 3600
-        let minutes = (Int(interval) % 3600) / 60
-        return "\(hours) giờ \(minutes) phút"
-    }
-}
-
-struct NetworkWidget: View {
-    @ObservedObject var systemMonitor: SystemMonitorService
-    
-    var body: some View {
-        MenuBarMetricCard(
-            icon: "wifi",
-            title: "Wi-Fi",
-            primaryText: "Lưu lượng thời gian thực",
-            secondaryText: "↑ \(systemMonitor.formatSpeed(systemMonitor.uploadSpeed))   ↓ \(systemMonitor.formatSpeed(systemMonitor.downloadSpeed))",
-            progress: nil,
-            actionTitle: nil,
-            actionColors: []
-        )
-        .frame(minHeight: 104)
-    }
-}
-
-struct ConnectedDevicesWidget: View {
-    var body: some View {
-        MenuBarMetricCard(
-            icon: "display.2",
-            title: "Thiết bị kết nối",
-            primaryText: "1 thiết bị",
-            secondaryText: "Menu bar MacOptimizer đang hoạt động",
-            progress: nil,
-            actionTitle: nil,
-            actionColors: []
-        )
-        .frame(minHeight: 104)
+/// Hiệu ứng nhấn chung cho hàng bấm được.
+struct MenuBarButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.82 : 1)
+            .scaleEffect(configuration.isPressed ? 0.985 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }

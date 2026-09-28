@@ -72,7 +72,7 @@ struct DeepCleanView: View {
             DeepCleanDetailView(scanner: scanner, category: selectedCategoryForDetails, isPresented: $showingDetails)
         }
         .confirmationDialog(loc.L("confirm_clean"), isPresented: $showCleanConfirmation) {
-            Button("Bắt đầu làm sạch", role: .destructive) {
+            Button(L("Bắt đầu làm sạch"), role: .destructive) {
                 Task { @MainActor in
                     let result = await scanner.cleanSelected()
                     cleanResult = result
@@ -80,7 +80,7 @@ struct DeepCleanView: View {
             }
             Button(loc.L("cancel"), role: .cancel) {}
         } message: {
-            Text("Bạn có chắc chắn muốn xóa các mục đã chọn không? Tổng dung lượng: \(ByteCountFormatter.string(fromByteCount: scanner.selectedSize, countStyle: .file))")
+            Text(String(format: L("Bạn có chắc chắn muốn xóa các mục đã chọn không? Tổng dung lượng: %@"), ByteCountFormatter.string(fromByteCount: scanner.selectedSize, countStyle: .file)))
         }
     }
     
@@ -110,7 +110,7 @@ struct DeepCleanView: View {
                         .stroke(LinearGradient(colors: [.white.opacity(0.6), .white.opacity(0.1)], startPoint: .top, endPoint: .bottom), lineWidth: 1)
                         .frame(width: 50, height: 50)
 
-                    Text("Quét")
+                    Text(L("Quét"))
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundColor(.white)
                 }
@@ -152,7 +152,7 @@ struct DeepCleanView: View {
                             .fill(Color.white.opacity(0.1))
                             .frame(width: 48, height: 48)
                         
-                        Text("Dừng lại")
+                        Text(L("Dừng lại"))
                             .font(.system(size: 11))
                             .foregroundColor(.white)
                     }
@@ -191,7 +191,7 @@ struct DeepCleanView: View {
                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
                            .frame(width: 50, height: 50)
                            
-                        Text("Lau dọn")
+                        Text(L("Lau dọn"))
                            .font(.system(size: 12, weight: .semibold, design: .rounded))
                            .foregroundColor(.white)
                     }
@@ -216,7 +216,7 @@ struct DeepCleanView: View {
                     cleanResult = nil
                 }
             }) {
-                Text("Xong")
+                Text(L("Xong"))
                     .font(.system(size: 15, weight: .medium))
                     .foregroundColor(.white)
                     .frame(width: 160, height: 50)
@@ -238,20 +238,20 @@ struct DeepCleanView: View {
             VStack(alignment: .leading, spacing: 30) {
                 // Branding Header
                 HStack(spacing: 8) {
-                    Text("Làm sạch hệ thống sâu")
+                    Text(L("Làm sạch hệ thống sâu"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                     
                     // Magnifying Glass Icon
                     HStack(spacing: 4) {
                         Image(systemName: "magnifyingglass.circle.fill")
-                        Text("Quét toàn bộ")
+                            Text(L("Quét toàn bộ"))
                             .font(.system(size: 20, weight: .heavy))
                     }
                     .foregroundColor(.white)
                 }
                 
-                Text("Quét toàn bộ máy Mac của bạn để tìm các tệp lớn, rác, bộ nhớ đệm, nhật ký và phần còn sót lại.\nLần quét cuối cùng: Không bao giờ")
+                Text(L("Quét toàn bộ máy Mac của bạn để tìm các tệp lớn, rác, bộ nhớ đệm, nhật ký và phần còn sót lại.\nLần quét cuối cùng: Không bao giờ"))
                     .font(.system(size: 13))
                     .foregroundColor(.white.opacity(0.7))
                     .lineSpacing(4)
@@ -260,26 +260,26 @@ struct DeepCleanView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     featureRow(
                         icon: "doc.text.magnifyingglass",
-                        title: "Tìm tệp lớn",
-                        desc: "Nhanh chóng xác định vị trí các tệp lớn và cũ đang chiếm dung lượng."
+                        title: L("Tìm tệp lớn"),
+                        desc: L("Nhanh chóng xác định vị trí các tệp lớn và cũ đang chiếm dung lượng.")
                     )
                     
                     featureRow(
                         icon: "trash.circle",
-                        title: "Dọn dẹp hệ thống rác",
-                        desc: "Xóa bộ nhớ đệm, nhật ký và tệp tạm thời để giải phóng dung lượng."
+                        title: L("Dọn dẹp hệ thống rác"),
+                        desc: L("Xóa bộ nhớ đệm, nhật ký và tệp tạm thời để giải phóng dung lượng.")
                     )
                     
                     featureRow(
                         icon: "app.badge",
-                        title: "Phát hiện dư lượng ứng dụng",
-                        desc: "Tìm các tập tin và dữ liệu bị bỏ lại bởi các ứng dụng đã gỡ cài đặt."
+                        title: L("Phát hiện dư lượng ứng dụng"),
+                        desc: L("Tìm các tập tin và dữ liệu bị bỏ lại bởi các ứng dụng đã gỡ cài đặt.")
                     )
                 }
                 
                 // Configure Button (Cyan)
                 Button(action: {}) {
-                    Text("Định cấu hình tùy chọn quét...")
+                    Text(L("Định cấu hình tùy chọn quét..."))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.black)
                         .padding(.horizontal, 16)
@@ -496,12 +496,12 @@ struct DeepCleanView: View {
                             .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1)
                         
                         let itemCount = categoryItems.count
-                        Text("\(itemCount) mục")
+                        Text(String(format: L("%d mục"), itemCount))
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.85))
                             .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1)
                     } else if isCurrent {
-                        Text("Đang quét...")
+                        Text(L("Đang quét..."))
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.white.opacity(0.9))
                             .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1)
@@ -517,7 +517,7 @@ struct DeepCleanView: View {
                                 .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1)
                         }
                     } else {
-                        Text("Chờ...")
+                        Text(L("Chờ..."))
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.white.opacity(0.7))
                             .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1)
@@ -663,7 +663,7 @@ struct DeepCleanView: View {
                                 .foregroundColor(.white)
                                 .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1)
                             
-                            Text("\(items.count) mục")
+                            Text(String(format: L("%d mục"), items.count))
                                 .font(.system(size: 14))
                                 .foregroundColor(.white.opacity(0.85))
                                 .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1)
@@ -677,7 +677,7 @@ struct DeepCleanView: View {
                             selectedCategoryForDetails = category
                             showingDetails = true
                         }) {
-                            Text("Xem chi tiết")
+                            Text(L("Xem chi tiết"))
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 16)
@@ -740,11 +740,11 @@ struct DeepCleanView: View {
                 // Right: Text & Task List
                 VStack(alignment: .leading, spacing: 30) {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Đang dọn hệ thống...")
+                        Text(L("Đang dọn hệ thống..."))
                             .font(.system(size: 32, weight: .bold))
                             .foregroundColor(.white)
                         
-                        Text("Xóa các tệp không mong muốn và tối ưu hóa máy Mac của bạn.")
+                        Text(L("Xóa các tệp không mong muốn và tối ưu hóa máy Mac của bạn."))
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -833,10 +833,10 @@ struct DeepCleanView: View {
                 // Right: Results
                 VStack(alignment: .leading, spacing: 30) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Làm tốt!")
+                        Text(L("Làm tốt!"))
                             .font(.system(size: 36, weight: .bold))
                             .foregroundColor(.white)
-                        Text("Máy Mac của bạn đang ở trạng thái tốt.")
+                        Text(L("Máy Mac của bạn đang ở trạng thái tốt."))
                             .font(.system(size: 16))
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -845,8 +845,8 @@ struct DeepCleanView: View {
                         // 1. Deep Cleanup Result
                         DeepCleanResultRow(
                             icon: getCategoryImageName(.junkFiles) ?? "system_clean",
-                            title: "Làm sạch sâu",
-                            subtitle: "Đã xóa tệp",
+                            title: L("Làm sạch sâu"),
+                            subtitle: L("Đã xóa tệp"),
                             stat: ByteCountFormatter.string(fromByteCount: scanner.cleanedSize, countStyle: .file)
                         )
                         
@@ -854,9 +854,9 @@ struct DeepCleanView: View {
                         if let result = cleanResult {
                             DeepCleanResultRow(
                                 icon: "trash.fill",
-                                title: "Số mục đã dọn",
-                                subtitle: "Đã dọn thành công",
-                                stat: "\(result.count) mục"
+                                title: L("Số mục đã dọn"),
+                                subtitle: L("Đã dọn thành công"),
+                                stat: String(format: L("%d mục"), result.count)
                             )
                         }
                     }
@@ -940,7 +940,7 @@ struct DeepCleanDetailView: View {
                     Image(systemName: "arrow.left")
                         .font(.system(size: 48))
                         .foregroundColor(.secondaryText.opacity(0.5))
-                    Text("Chọn danh mục để xem chi tiết")
+                    Text(L("Chọn danh mục để xem chi tiết"))
                         .font(.title3)
                         .foregroundColor(.secondaryText)
                     Spacer()
@@ -968,7 +968,7 @@ struct DeepCleanDetailView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 14, weight: .semibold))
-                        Text("Quay lại Tổng quan")
+                        Text(L("Quay lại Tổng quan"))
                             .font(.system(size: 15, weight: .medium))
                     }
                     .foregroundColor(.white)
@@ -978,7 +978,7 @@ struct DeepCleanDetailView: View {
                 Spacer()
                 
                 Button(action: selectAllItems) {
-                    Text("Chọn tất cả")
+                        Text(L("Chọn tất cả"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(Color(hex: "40C4FF"))
                 }
@@ -1134,7 +1134,7 @@ struct DeepCleanDetailView: View {
 
                 let selectedItems = items.filter { $0.isSelected }
                 let totalSize = selectedItems.reduce(0) { $0 + $1.size }
-                Text("\(selectedItems.count) \("mục đã chọn"), \(ByteCountFormatter.string(fromByteCount: totalSize, countStyle: .file))")
+                Text(String(format: L("%d mục đã chọn, %@"), selectedItems.count, ByteCountFormatter.string(fromByteCount: totalSize, countStyle: .file)))
                     .font(.system(size: 12))
                     .foregroundColor(.secondaryText)
             }
@@ -1150,7 +1150,7 @@ struct DeepCleanDetailView: View {
                     Image(systemName: "checkmark.circle")
                         .font(.system(size: 60))
                         .foregroundColor(.green)
-                    Text("Không có mục nào trong danh mục này")
+                    Text(L("Không có mục nào trong danh mục này"))
                         .font(.title3)
                         .foregroundColor(.secondaryText)
                     Spacer()

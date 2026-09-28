@@ -166,7 +166,7 @@ struct AllCategoriesDetailSheet: View {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 14, weight: .medium))
-                        Text("Quay lại")
+                        Text(L("Quay lại"))
                             .font(.system(size: 14, weight: .medium))
                     }
                     .foregroundColor(.white.opacity(0.8))
@@ -175,7 +175,7 @@ struct AllCategoriesDetailSheet: View {
                 
                 Spacer()
                 
-                Text("Chi tiết dọn dẹp")
+                Text(L("Chi tiết dọn dẹp"))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.white)
                 
@@ -295,7 +295,7 @@ struct AllCategoriesDetailSheet: View {
             Image(systemName: "arrow.left")
                 .font(.system(size: 48))
                 .foregroundColor(.secondaryText.opacity(0.5))
-            Text("Chọn một danh mục")
+            Text(L("Chọn một danh mục"))
                 .font(.title3)
                 .foregroundColor(.secondaryText)
             Spacer()
@@ -310,7 +310,7 @@ struct AllCategoriesDetailSheet: View {
             // khu vực tiêu đề
 
             HStack {
-                Text(category.rawValue)
+                Text(L(category.rawValue))
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white)
                 
@@ -322,7 +322,7 @@ struct AllCategoriesDetailSheet: View {
                     Button(action: {
                         service.toggleCategorySelection(category, forceTo: true)
                     }) {
-                        Text("Chọn tất cả")
+                        Text(L("Chọn tất cả"))
                             .font(.system(size: 11))
                             .foregroundColor(.blue)
                     }
@@ -331,13 +331,13 @@ struct AllCategoriesDetailSheet: View {
                     Button(action: {
                         service.toggleCategorySelection(category, forceTo: false)
                     }) {
-                        Text("Bỏ chọn tất cả")
+                        Text(L("Bỏ chọn tất cả"))
                             .font(.system(size: 11))
                             .foregroundColor(.orange)
                     }
                     .buttonStyle(.plain)
                     
-                    Text("Sắp xếp theo kích thước ▼")
+                    Text(L("Sắp xếp theo kích thước ▼"))
                         .font(.system(size: 10))
                         .foregroundColor(.secondaryText)
                 }
@@ -400,12 +400,12 @@ struct AllCategoriesDetailSheet: View {
             // tiêu đề
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(category.rawValue)
+                Text(L(category.rawValue))
                     .font(.system(size: 18, weight: .bold)) // Reduced from Title
                     .foregroundColor(.white)
                 
                 let files = filesFor(category: category)
-                Text("\(files.count) mục, " + ByteCountFormatter.string(fromByteCount: files.reduce(0) { $0 + $1.size }, countStyle: .file))
+                Text(String(format: L("%d mục, %@"), files.count, ByteCountFormatter.string(fromByteCount: files.reduce(0) { $0 + $1.size }, countStyle: .file)))
                     .font(.system(size: 12)) // Reduced from subheadline
                     .foregroundColor(.secondaryText)
             }
@@ -452,12 +452,12 @@ struct AllCategoriesDetailSheet: View {
     private var virusRightPane: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Mối đe dọa vi-rút")
+                Text(L("Mối đe dọa vi-rút"))
                     .font(.system(size: 18, weight: .bold)) // Reduced
                     .foregroundColor(.white)
                 Text(service.virusThreats.isEmpty ? 
-                     ("Không phát hiện thấy mối đe dọa nào") :
-                     "\(service.virusThreats.count) " + ("mối đe dọa được tìm thấy"))
+                     L("Không phát hiện thấy mối đe dọa nào") :
+                     String(format: L("%d mối đe dọa được tìm thấy"), service.virusThreats.count))
                     .font(.system(size: 12)) // Reduced
                     .foregroundColor(service.virusThreats.isEmpty ? .green : .red)
             }
@@ -469,7 +469,7 @@ struct AllCategoriesDetailSheet: View {
                     Image(systemName: "checkmark.shield.fill")
                         .font(.system(size: 64))
                         .foregroundColor(.green)
-                    Text("Hệ thống của bạn an toàn")
+                    Text(L("Hệ thống của bạn an toàn"))
                         .font(.title3)
                         .foregroundColor(.white)
                         .padding(.top)
@@ -497,7 +497,7 @@ struct AllCategoriesDetailSheet: View {
                                 
                                 Spacer()
                                 
-                                Text(threat.type.rawValue)
+                                Text(L(threat.type.rawValue))
                                     .font(.caption)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
@@ -525,10 +525,10 @@ struct AllCategoriesDetailSheet: View {
     private var startupItemsRightPane: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Mục khởi động")
+                Text(L("Mục khởi động"))
                     .font(.system(size: 18, weight: .bold)) // Reduced
                     .foregroundColor(.white)
-                Text("\(service.startupItems.count) " + ("các mục bắt đầu tự động"))
+                Text(String(format: L("%d các mục bắt đầu tự động"), service.startupItems.count))
                     .font(.system(size: 12)) // Reduced
                     .foregroundColor(.secondaryText)
             }
@@ -565,7 +565,7 @@ struct AllCategoriesDetailSheet: View {
                             
                             Spacer()
                             
-                            Text(item.isEnabled ? ("Đã bật") : ("Tàn tật"))
+                            Text(item.isEnabled ? L("Đã bật") : L("Tàn tật"))
                                 .font(.caption)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
@@ -592,10 +592,10 @@ struct AllCategoriesDetailSheet: View {
     private var performanceAppsRightPane: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Hiệu suất")
+                Text(L("Hiệu suất"))
                     .font(.system(size: 18, weight: .bold)) // Reduced
                     .foregroundColor(.white)
-                Text("\(service.performanceApps.count) " + ("ứng dụng tiêu tốn tài nguyên"))
+                Text(String(format: L("%d ứng dụng tiêu tốn tài nguyên"), service.performanceApps.count))
                     .font(.system(size: 12)) // Reduced
                     .foregroundColor(.secondaryText)
             }
@@ -662,12 +662,12 @@ struct AllCategoriesDetailSheet: View {
     private var appUpdatesRightPane: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Cập nhật ứng dụng")
+                Text(L("Cập nhật ứng dụng"))
                     .font(.system(size: 18, weight: .bold)) // Reduced
                     .foregroundColor(.white)
                 Text(service.hasAppUpdates ? 
-                     ("Cập nhật có sẵn") :
-                     ("Tất cả các ứng dụng được cập nhật"))
+                     L("Cập nhật có sẵn") :
+                     L("Tất cả các ứng dụng được cập nhật"))
                     .font(.system(size: 12)) // Reduced
                     .foregroundColor(service.hasAppUpdates ? .blue : .green)
             }
@@ -679,8 +679,8 @@ struct AllCategoriesDetailSheet: View {
                     .font(.system(size: 64))
                     .foregroundColor(service.hasAppUpdates ? .blue : .green)
                 Text(service.hasAppUpdates ? 
-                     ("Bấm vào nút cập nhật để kiểm tra") :
-                     ("Không cần cập nhật"))
+                     L("Bấm vào nút cập nhật để kiểm tra") :
+                     L("Không cần cập nhật"))
                     .font(.title3)
                     .foregroundColor(.white)
                     .padding(.top)
@@ -803,22 +803,22 @@ struct FileItemRow: View {
                 toggleSelection()
             }
             .confirmationDialog(
-                "Xác nhận Xóa",
+                L("Xác nhận Xóa"),
                 isPresented: $showDeleteConfirmation
             ) {
                 Button(
-                    "Xóa bỏ",
+                    L("Xóa bỏ"),
                     role: .destructive
                 ) {
                     deleteSingleFile()
                 }
                 Button(
-                    "Hủy bỏ",
+                    L("Hủy bỏ"),
                     role: .cancel
                 ) {}
             } message: {
                 let fileName = file.name
-                Text("Bạn có chắc muốn xóa \"\(fileName)\" không? Thao tác này không thể hoàn tác.")
+                Text(String(format: L("Bạn có chắc muốn xóa \"%@\" không? Thao tác này không thể hoàn tác."), fileName))
             }
             .contextMenu {
                 // Chỉ hiển thị "Bỏ chọn" khi được chọn
@@ -829,7 +829,7 @@ struct FileItemRow: View {
                     } label: {
                         let fileName = file.name
                         Label(
-                            "Bỏ chọn \"\(fileName)\"",
+                            String(format: L("Bỏ chọn \"%@\""), fileName),
                             systemImage: "checkmark.circle"
                         )
                     }
@@ -843,7 +843,7 @@ struct FileItemRow: View {
                     openInFinder()
                 } label: {
                     Label(
-                        "Hiện trong Finder",
+                        L("Hiện trong Finder"),
                         systemImage: "folder"
                     )
                 }
@@ -855,7 +855,7 @@ struct FileItemRow: View {
                 } label: {
                     let fileName = file.name
                     Label(
-                        "Xem nhanh \"\(fileName)\"",
+                        String(format: L("Xem nhanh \"%@\""), fileName),
                         systemImage: "eye"
                     )
                 }
@@ -870,7 +870,7 @@ struct FileItemRow: View {
                     print("Bỏ qua: \(file.name)")
                 } label: {
                     Label(
-                        "Bỏ qua",
+                        L("Bỏ qua"),
                         systemImage: "eye.slash"
                     )
                 }

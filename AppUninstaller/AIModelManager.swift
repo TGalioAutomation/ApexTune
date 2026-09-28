@@ -78,20 +78,20 @@ final class AIModelManager: ObservableObject {
                 let escapedName = self.shellEscaped(name)
                 let output = self.runShell("ollama rm \(escapedName)")
                 if output.status == 0 {
-                    result = (true, "Đã xóa model `\(name)` khỏi Ollama.")
+                    result = (true, String(format: L("Đã xóa model `%@` khỏi Ollama."), name))
                 } else {
-                    result = (false, output.output.isEmpty ? "Không thể xóa model Ollama." : output.output)
+                    result = (false, output.output.isEmpty ? L("Không thể xóa model Ollama.") : output.output)
                 }
 
             case .trash(let url):
                 if DeletionLogService.shared.logAndDelete(at: url, category: "AIModels") {
-                    result = (true, "Đã chuyển `\(item.name)` vào Thùng rác.")
+                    result = (true, String(format: L("Đã chuyển `%@` vào Thùng rác."), item.name))
                 } else {
-                    result = (false, "Không thể chuyển `\(item.name)` vào Thùng rác.")
+                    result = (false, String(format: L("Không thể chuyển `%@` vào Thùng rác."), item.name))
                 }
 
             case .none:
-                result = (false, "Model này hiện chưa có thao tác xóa trực tiếp.")
+                result = (false, L("Model này hiện chưa có thao tác xóa trực tiếp."))
             }
 
             DispatchQueue.main.async {
@@ -108,19 +108,19 @@ final class AIModelManager: ObservableObject {
     func pullOllamaModel(completion: @escaping (Bool, String) -> Void) {
         let trimmed = ollamaPullName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
-            completion(false, "Nhập tên model Ollama trước khi pull.")
+            completion(false, L("Nhập tên model Ollama trước khi pull."))
             return
         }
 
         isPulling = true
-        actionMessage = "Đang tải `\(trimmed)` từ Ollama..."
+        actionMessage = String(format: L("Đang tải `%@` từ Ollama..."), trimmed)
 
         DispatchQueue.global(qos: .userInitiated).async {
             let output = self.runShell("ollama pull \(self.shellEscaped(trimmed))")
             let success = output.status == 0
             let message = success
-                ? "Đã pull xong `\(trimmed)`."
-                : (output.output.isEmpty ? "Pull model thất bại." : output.output)
+                ? String(format: L("Đã pull xong `%@`."), trimmed)
+                : (output.output.isEmpty ? L("Pull model thất bại.") : output.output)
 
             DispatchQueue.main.async {
                 self.isPulling = false
@@ -156,13 +156,13 @@ final class AIModelManager: ObservableObject {
 
         let status: String
         if !hasCLI && !roots.isEmpty {
-            status = "Có dữ liệu Ollama cục bộ nhưng không tìm thấy lệnh `ollama`."
+            status = L("Có dữ liệu Ollama cục bộ nhưng không tìm thấy lệnh `ollama`.")
         } else if hasCLI && items.isEmpty {
-            status = "Ollama sẵn sàng nhưng chưa có model nào được pull."
+            status = L("Ollama sẵn sàng nhưng chưa có model nào được pull.")
         } else if !hasCLI {
-            status = "Chưa phát hiện Ollama trên máy này."
+            status = L("Chưa phát hiện Ollama trên máy này.")
         } else {
-            status = "Đã phát hiện \(items.count) model Ollama."
+            status = String(format: L("Đã phát hiện %d model Ollama."), items.count)
         }
 
         return AIProviderState(
@@ -194,11 +194,11 @@ final class AIModelManager: ObservableObject {
 
         let status: String
         if roots.isEmpty {
-            status = "Chưa tìm thấy thư mục model của LM Studio."
+            status = L("Chưa tìm thấy thư mục model của LM Studio.")
         } else if items.isEmpty {
-            status = "Có thư mục LM Studio nhưng chưa nhận diện được file model quen thuộc."
+            status = L("Có thư mục LM Studio nhưng chưa nhận diện được file model quen thuộc.")
         } else {
-            status = "Đã phát hiện \(items.count) model trong LM Studio."
+            status = String(format: L("Đã phát hiện %d model trong LM Studio."), items.count)
         }
 
         return AIProviderState(
@@ -258,7 +258,7 @@ final class AIModelManager: ObservableObject {
             modifiedDate: modifiedDate,
             url: url,
             locationDescription: url.path,
-            details: isDirectoryItem ? "Thư mục model của LM Studio" : "Tệp model của LM Studio",
+            details: isDirectoryItem ? L("Thư mục model của LM Studio") : L("Tệp model của LM Studio"),
             deleteStrategy: .trash(url: url)
         )
     }

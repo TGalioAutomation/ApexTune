@@ -150,10 +150,10 @@ struct SmartCleanerView: View {
         }
         // Alerts & Confirmations ... (Keeping existing logic)
         .confirmationDialog(
-            "Xác nhận Xóa",
+            L("Xác nhận Xóa"),
             isPresented: $showDeleteConfirmation
         ) {
-            Button("Bắt đầu làm sạch", role: .destructive) {
+            Button(L("Bắt đầu làm sạch"), role: .destructive) {
                 Task {
                     let result = await service.cleanAll()
                     deleteResult = (result.success, result.failed, result.size)
@@ -167,10 +167,10 @@ struct SmartCleanerView: View {
             }
             Button(loc.L("cancel"), role: .cancel) {}
         } message: {
-            Text("Làm sạch tất cả các tệp đã chọn để giải phóng dung lượng.")
+            Text(L("Làm sạch tất cả các tệp đã chọn để giải phóng dung lượng."))
         }
-        .alert("Một số tệp yêu cầu đặc quyền quản trị viên", isPresented: $showRetryWithAdmin) {
-             Button("Xóa với quản trị viên", role: .destructive) {
+        .alert(L("Một số tệp yêu cầu đặc quyền quản trị viên"), isPresented: $showRetryWithAdmin) {
+             Button(L("Xóa với quản trị viên"), role: .destructive) {
                  Task {
                      let adminResult = await service.cleanWithPrivileges(files: failedFiles)
                      if let currentResult = deleteResult {
@@ -187,7 +187,7 @@ struct SmartCleanerView: View {
              Button(loc.L("cancel"), role: .cancel) { showCleaningFinished = true }
         } message: {
 
-            Text("Không thể xóa một số tệp do thiếu quyền truy cập.")
+            Text(L("Không thể xóa một số tệp do thiếu quyền truy cập."))
         }
         }
     
@@ -195,7 +195,7 @@ struct SmartCleanerView: View {
     private var headerView: some View {
         ZStack {
             // Center Title
-            Text("Quét thông minh")
+            Text(L("Quét thông minh"))
                 .font(.system(size: 14, weight: .regular))
                 .foregroundColor(.white.opacity(0.6))
             
@@ -210,7 +210,7 @@ struct SmartCleanerView: View {
                     }) {
                         HStack(spacing: 6) {
                             Image(systemName: "arrow.counterclockwise")
-                            Text("Bắt đầu lại")
+                            Text(L("Bắt đầu lại"))
                         }
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.white.opacity(0.8))
@@ -258,12 +258,12 @@ struct SmartCleanerView: View {
                     }
 
                     VStack(spacing: compactHeight ? 8 : 12) {
-                        Text("Chào mừng đến với MacOptimizer")
+                        Text(L("Chào mừng đến với MacOptimizer"))
                             .font(.system(size: compactHeight ? 31 : 40, weight: .regular))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
 
-                        Text("Bắt đầu quét toàn diện để kiểm tra và dọn máy Mac của bạn.")
+                        Text(L("Bắt đầu quét toàn diện để kiểm tra và dọn máy Mac của bạn."))
                             .font(.system(size: compactHeight ? 14 : 16))
                             .foregroundColor(.white.opacity(0.6))
                             .multilineTextAlignment(.center)
@@ -285,11 +285,11 @@ struct SmartCleanerView: View {
     private func quickStorageEntryPoints(compactLayout: Bool) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(spacing: 6) {
-                Text("Mục chiếm dung lượng lớn")
+                Text(L("Mục chiếm dung lượng lớn"))
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white)
 
-                Text("Đi thẳng vào nơi thường làm đầy ổ đĩa nhanh nhất.")
+                Text(L("Đi thẳng vào nơi thường làm đầy ổ đĩa nhanh nhất."))
                     .font(.system(size: 13))
                     .foregroundColor(.white.opacity(0.58))
             }
@@ -299,11 +299,11 @@ struct SmartCleanerView: View {
                     VStack(spacing: 12) {
                         storageEntryCard(
                             icon: "brain.head.profile",
-                            title: "Mô hình AI",
+                            title: L("Mô hình AI"),
                             value: aiModelsSummaryValue,
                             subtitle: aiModelsSummarySubtitle,
                             gradient: GradientStyles.aiModels,
-                            actionTitle: "Quản lý model",
+                            actionTitle: L("Quản lý model"),
                             compactLayout: true
                         ) {
                             selectedModule = .aiModels
@@ -311,11 +311,11 @@ struct SmartCleanerView: View {
 
                         storageEntryCard(
                             icon: "circle.hexagongrid.fill",
-                            title: "Bản đồ dung lượng",
-                            value: "Quét trực quan",
-                            subtitle: "Xem thư mục và tệp nào đang chiếm ổ đĩa nhiều nhất.",
+                            title: L("Bản đồ dung lượng"),
+                            value: L("Quét trực quan"),
+                            subtitle: L("Xem thư mục và tệp nào đang chiếm ổ đĩa nhiều nhất."),
                             gradient: GradientStyles.spaceLens,
-                            actionTitle: "Mở bản đồ",
+                            actionTitle: L("Mở bản đồ"),
                             compactLayout: true
                         ) {
                             selectedModule = .spaceLens
@@ -325,11 +325,11 @@ struct SmartCleanerView: View {
                     HStack(spacing: 16) {
                         storageEntryCard(
                             icon: "brain.head.profile",
-                            title: "Mô hình AI",
+                            title: L("Mô hình AI"),
                             value: aiModelsSummaryValue,
                             subtitle: aiModelsSummarySubtitle,
                             gradient: GradientStyles.aiModels,
-                            actionTitle: "Quản lý model",
+                            actionTitle: L("Quản lý model"),
                             compactLayout: false
                         ) {
                             selectedModule = .aiModels
@@ -337,11 +337,11 @@ struct SmartCleanerView: View {
 
                         storageEntryCard(
                             icon: "circle.hexagongrid.fill",
-                            title: "Bản đồ dung lượng",
-                            value: "Quét trực quan",
-                            subtitle: "Xem thư mục và tệp nào đang chiếm ổ đĩa nhiều nhất.",
+                            title: L("Bản đồ dung lượng"),
+                            value: L("Quét trực quan"),
+                            subtitle: L("Xem thư mục và tệp nào đang chiếm ổ đĩa nhiều nhất."),
                             gradient: GradientStyles.spaceLens,
-                            actionTitle: "Mở bản đồ",
+                            actionTitle: L("Mở bản đồ"),
                             compactLayout: false
                         ) {
                             selectedModule = .spaceLens
@@ -358,17 +358,17 @@ struct SmartCleanerView: View {
         if total > 0 {
             return ByteCountFormatter.string(fromByteCount: total, countStyle: .file)
         }
-        return "Chưa phát hiện"
+        return L("Chưa phát hiện")
     }
 
     private var aiModelsSummarySubtitle: String {
         let detectedProviders = aiModelManager.providerStates.values.filter(\.isDetected)
         if detectedProviders.isEmpty {
-            return "Tự kiểm tra Ollama và LM Studio để biết có model local nào đang chiếm chỗ không."
+            return L("Tự kiểm tra Ollama và LM Studio để biết có model local nào đang chiếm chỗ không.")
         }
 
         let providerNames = detectedProviders.map(\.provider.rawValue).joined(separator: " + ")
-        return "Đã phát hiện \(providerNames). Mở để xem model nào nặng nhất và xóa nhanh."
+        return String(format: L("Đã phát hiện %@. Mở để xem model nào nặng nhất và xóa nhanh."), providerNames)
     }
 
     private func storageEntryCard(
@@ -436,11 +436,11 @@ struct SmartCleanerView: View {
         VStack {
             // Title & Subtitle for Scanning - Added per user request
             VStack(spacing: 12) {
-                Text("Đang quét hệ thống...")
+                Text(L("Đang quét hệ thống..."))
                     .font(.system(size: 28, weight: .medium))
                     .foregroundColor(.white)
                 
-                Text("Quá trình này chỉ mất ít phút. Vui lòng chờ trong giây lát.")
+                Text(L("Quá trình này chỉ mất ít phút. Vui lòng chờ trong giây lát."))
                     .font(.system(size: 14))
                     .foregroundColor(.white.opacity(0.6))
             }
@@ -459,11 +459,11 @@ struct SmartCleanerView: View {
         VStack {
             // Title & Subtitle for Results
             VStack(spacing: 12) {
-                Text("Đây là những gì tôi tìm thấy.")
+                Text(L("Đây là những gì tôi tìm thấy."))
                     .font(.system(size: 28, weight: .medium))
                     .foregroundColor(.white)
                 
-                Text("Các tác vụ cần thiết để dọn dẹp, bảo vệ và tăng tốc máy Mac đã sẵn sàng.")
+                Text(L("Các tác vụ cần thiết để dọn dẹp, bảo vệ và tăng tốc máy Mac đã sẵn sàng."))
                     .font(.system(size: 14))
                     .foregroundColor(.white.opacity(0.6))
             }
@@ -516,11 +516,11 @@ struct SmartCleanerView: View {
                 // Right: Text & Task List
                 VStack(alignment: .leading, spacing: 30) {
                     VStack(alignment: .leading, spacing: 12) {
-                         Text("Đang dọn hệ thống...")
+                         Text(L("Đang dọn hệ thống..."))
                             .font(.system(size: 32, weight: .bold))
                             .foregroundColor(.white)
                         
-                        Text("Xóa các tệp không mong muốn và tối ưu hóa máy Mac của bạn.")
+                        Text(L("Xóa các tệp không mong muốn và tối ưu hóa máy Mac của bạn."))
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -545,7 +545,7 @@ struct SmartCleanerView: View {
                                         .foregroundColor(getCategoryColor(cat))
                                 }
                                 
-                                Text(cat == .largeFiles ? ("Rác") : getCategoryTitle(cat))
+                                Text(cat == .largeFiles ? L("Rác") : getCategoryTitle(cat))
                                     .font(.system(size: 15))
                                     .foregroundColor(.white)
                                 
@@ -566,7 +566,7 @@ struct SmartCleanerView: View {
                                         .font(.system(size: 12, weight: .bold))
                                         .foregroundColor(.green)
                                 } else {
-                                    Text("...")
+                                    Text(L("..."))
                                         .foregroundColor(.white.opacity(0.2))
                                 }
                             }
@@ -602,7 +602,7 @@ struct SmartCleanerView: View {
                 
                 // Right: Detailed Task List (Log)
                 VStack(alignment: .leading, spacing: 24) {
-                    Text("Nhật ký làm sạch")
+                    Text(L("Nhật ký làm sạch"))
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.white)
                     
@@ -614,7 +614,7 @@ struct SmartCleanerView: View {
                         cleaningTaskRow(
                             icon: "trash.circle.fill",
                             color: .pink,
-                            title: "Rác hệ thống",
+                            title: L("Rác hệ thống"),
                             size: sysJunkSize > 0 ? sysJunkSize : service.totalCleanedSize, 
                             state: sysJunkState
                         )
@@ -623,7 +623,7 @@ struct SmartCleanerView: View {
                         cleaningTaskRow(
                             icon: "trash.fill",
                             color: .green,
-                            title: "Rác",
+                            title: L("Rác"),
                             size: 0,
                             state: .completed
                         )
@@ -632,7 +632,7 @@ struct SmartCleanerView: View {
                         cleaningTaskRow(
                             icon: "exclamationmark.shield.fill",
                             color: .gray,
-                            title: "Ứng dụng có thể gây hại",
+                            title: L("Ứng dụng có thể gây hại"),
                             size: 0,
                             state: .completed
                         )
@@ -641,7 +641,7 @@ struct SmartCleanerView: View {
                         cleaningTaskRow(
                             icon: "network",
                             color: .blue,
-                            title: "Làm mới bộ đệm DNS",
+                            title: L("Làm mới bộ đệm DNS"),
                             size: 0,
                             state: .completed
                         )
@@ -649,7 +649,7 @@ struct SmartCleanerView: View {
                          cleaningTaskRow(
                              icon: "memorychip",
                              color: .blue,
-                             title: "RAM miễn phí",
+                             title: L("RAM miễn phí"),
                              size: 0,
                              state: .completed
                          )
@@ -662,7 +662,7 @@ struct SmartCleanerView: View {
             
             // Bottom Left: Hide Log Button
             Button(action: { withAnimation { viewingLog = false } }) {
-                Text("Ẩn nhật ký")
+                Text(L("Ẩn nhật ký"))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.white.opacity(0.8))
                     .padding(.horizontal, 16)
@@ -681,11 +681,11 @@ struct SmartCleanerView: View {
             
             // Headline
             VStack(spacing: 8) {
-                Text("Làm tốt lắm, đây là những gì tôi tìm thấy.")
+                Text(L("Làm tốt lắm, đây là những gì tôi tìm thấy."))
                     .font(.system(size: 32, weight: .medium))
                     .foregroundColor(.white)
                 
-                Text("Tất cả các nhiệm vụ để giữ cho máy Mac của bạn sạch sẽ, an toàn và tối ưu hóa đều sẵn sàng. Chạy ngay bây giờ!")
+                Text(L("Tất cả các nhiệm vụ để giữ cho máy Mac của bạn sạch sẽ, an toàn và tối ưu hóa đều sẵn sàng. Chạy ngay bây giờ!"))
                     .font(.system(size: 14))
                     .foregroundColor(.white.opacity(0.6))
             }
@@ -698,8 +698,8 @@ struct SmartCleanerView: View {
                 VStack(spacing: 30) {
                     ScanResultCard(
                         icon: "trash.circle.fill", // Using standard SF Symbol or custom
-                        title: "Dọn dẹp",
-                        subtitle: "Loại bỏ rác không mong muốn",
+                        title: L("Dọn dẹp"),
+                        subtitle: L("Loại bỏ rác không mong muốn"),
                         gradient: BackgroundStyles.cardApps, // Blue
                         isCompleted: true
                     )
@@ -719,15 +719,15 @@ struct SmartCleanerView: View {
                 VStack(spacing: 30) {
                     ScanResultCard(
                         icon: "lock.shield.fill",
-                        title: "Bảo vệ",
-                        subtitle: "Loại bỏ các mối đe dọa tiềm ẩn",
+                        title: L("Bảo vệ"),
+                        subtitle: L("Loại bỏ các mối đe dọa tiềm ẩn"),
                         gradient: BackgroundStyles.cardCleaning, // Green (naming mismatch in Styles)
                         isCompleted: true
                     )
                     
                     ScanResultStat(
-                        value: service.totalResolvedThreats > 0 ? "\(service.totalResolvedThreats)" : ("Tốt"),
-                        unit: service.totalResolvedThreats > 0 ? ("Mối đe dọa") : "",
+                        value: service.totalResolvedThreats > 0 ? "\(service.totalResolvedThreats)" : L("Tốt"),
+                        unit: service.totalResolvedThreats > 0 ? L("Mối đe dọa") : "",
                         detailsAction: nil, // No details for Good
                         color: Color.green, // Green Text
                         loc: loc
@@ -738,15 +738,15 @@ struct SmartCleanerView: View {
                 VStack(spacing: 30) {
                     ScanResultCard(
                         icon: "gauge.with.needle",
-                        title: "Tốc độ",
-                        subtitle: "Cải thiện hiệu suất hệ thống",
+                        title: L("Tốc độ"),
+                        subtitle: L("Cải thiện hiệu suất hệ thống"),
                         gradient: BackgroundStyles.cardProtection, // Pink/Purple (naming mismatch)
                         isCompleted: service.totalOptimizedItems > 0
                     )
                     
                     ScanResultStat(
                         value: "\(service.totalOptimizedItems)",
-                        unit: "Nhiệm vụ",
+                        unit: L("Nhiệm vụ"),
                         detailsAction: nil,
                         color: Color(red: 1.0, green: 0.4, blue: 0.6), // Pink Text
                         loc: loc
@@ -771,7 +771,7 @@ struct SmartCleanerView: View {
                         .frame(width: 80, height: 80)
                         .shadow(color: .blue.opacity(0.5), radius: 10)
                         
-                    Text("Chạy")
+                    Text(L("Chạy"))
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(.white)
                 }
@@ -834,18 +834,18 @@ struct SmartCleanerView: View {
                   .buttonStyle(.plain)
                   .popover(isPresented: $showFailedFilesPopover, arrowEdge: .top) {
                       VStack(alignment: .leading, spacing: 12) {
-                          Text("Mặt hàng này đã được làm sạch một phần.")
+                          Text(L("Mặt hàng này đã được làm sạch một phần."))
                               .font(.system(size: 13, weight: .bold))
                           
                           VStack(alignment: .leading, spacing: 4) {
-                              Text("Lỗi:")
+                              Text(L("Lỗi:"))
                                   .font(.system(size: 12, weight: .semibold))
                                   .foregroundColor(.gray)
                               
                               ScrollView {
                                   VStack(alignment: .leading, spacing: 4) {
                                       ForEach(failedFiles, id: \.id) { item in
-                                          Text("Không thể xóa \"\(item.url.lastPathComponent)\" vì ứng dụng liên quan vẫn đang chạy.")
+                                          Text(String(format: L("Không thể xóa \"%@\" vì ứng dụng liên quan vẫn đang chạy."), item.url.lastPathComponent))
                                               .font(.system(size: 11))
                                               .foregroundColor(.white.opacity(0.8))
                                       }
@@ -856,13 +856,13 @@ struct SmartCleanerView: View {
                           
                           Button(action: {
                               let errorText = failedFiles.map { item in
-                                  "Không thể xóa \"\(item.url.lastPathComponent)\" vì ứng dụng liên quan vẫn đang chạy."
+                                  String(format: L("Không thể xóa \"%@\" vì ứng dụng liên quan vẫn đang chạy."), item.url.lastPathComponent)
                               }.joined(separator: "\n")
                               let pasteboard = NSPasteboard.general
                               pasteboard.clearContents()
                               pasteboard.setString(errorText, forType: .string)
                           }) {
-                              Text("Sao chép vào Clipboard")
+                              Text(L("Sao chép vào Clipboard"))
                                   .font(.system(size: 12))
                                   .foregroundColor(.white.opacity(0.9))
                                   .padding(.horizontal, 12)
@@ -955,9 +955,9 @@ struct SmartCleanerView: View {
             let cleanupDone = state == .finished || (state == .cleaning && service.cleanedCategories.contains(.systemJunk) && !cleanupActive)
             
             itemColumn(
-                title: "Dọn dẹp",
+                title: L("Dọn dẹp"),
                 iconName: "yinpan_2026",
-                description: state == .scanning ? ("Đang tìm kiếm các tập tin không mong muốn...") : ("Loại bỏ rác không mong muốn"),
+                description: state == .scanning ? L("Đang tìm kiếm các tập tin không mong muốn...") : L("Loại bỏ rác không mong muốn"),
                 categories: [.systemJunk, .duplicates, .similarPhotos, .largeFiles],
                 state: state,
                 isActive: (state == .scanning && [.systemJunk, .duplicates, .similarPhotos, .largeFiles].contains(service.currentCategory)) || cleanupActive,
@@ -971,9 +971,9 @@ struct SmartCleanerView: View {
             let protectionDone = state == .finished || (state == .cleaning && service.cleanedCategories.contains(.virus))
             
             itemColumn(
-                title: "Bảo vệ",
+                title: L("Bảo vệ"),
                 iconName: "zhiwendunpai_2026",
-                description: state == .scanning ? ("Xác định các mối đe dọa tiềm ẩn...") : ("Loại bỏ các mối đe dọa tiềm ẩn"),
+                description: state == .scanning ? L("Xác định các mối đe dọa tiềm ẩn...") : L("Loại bỏ các mối đe dọa tiềm ẩn"),
                 categories: [.virus],
                 state: state,
                 isActive: (state == .scanning && service.currentCategory == .virus) || protectionActive,
@@ -989,9 +989,9 @@ struct SmartCleanerView: View {
             // ⚠️ Tạm thời vô hiệu hóa hiệu suất Ứng dụng: Người dùng báo cáo rằng việc quét và dọn dẹp thông minh sẽ phá hủy ứng dụng
 
             itemColumn(
-                title: "Tốc độ",
+                title: L("Tốc độ"),
                 iconName: "yibiaopan_2026", // Speedometer
-                description: state == .scanning ? ("Đang xác định các tác vụ phù hợp...") : ("Cải thiện hiệu suất hệ thống"),
+                description: state == .scanning ? L("Đang xác định các tác vụ phù hợp...") : L("Cải thiện hiệu suất hệ thống"),
                 categories: [.startupItems, .performanceApps, .appUpdates],
                 state: state,
                 isActive: (state == .scanning && [.startupItems, .performanceApps, .appUpdates].contains(service.currentCategory)) || speedActive,
@@ -1122,7 +1122,7 @@ struct SmartCleanerView: View {
                 } else if state == .completed {
                     // Completed: Show result size
                     VStack(spacing: 6) {
-                        if title == ("Dọn dẹp") {
+                        if title == L("Dọn dẹp") {
                             let size = categories.reduce(0) { $0 + service.sizeFor(category: $1) }
                             if size > 0 {
                                 Text(ByteCountFormatter.string(fromByteCount: size, countStyle: .file))
@@ -1134,7 +1134,7 @@ struct SmartCleanerView: View {
                                     initialDetailCategory = .systemJunk
                                     showDetailSheet = true
                                 }) {
-                                    Text("Xem chi tiết...")
+                                    Text(L("Xem chi tiết..."))
                                         .font(.system(size: 12))
                                         .foregroundColor(.white.opacity(0.8))
                                         .padding(.horizontal, 12)
@@ -1144,11 +1144,11 @@ struct SmartCleanerView: View {
                                 }
                                 .buttonStyle(.plain)
                             } else {
-                                Text("Tốt")
+                                Text(L("Tốt"))
                                     .font(.system(size: 28, weight: .light))
                                     .foregroundColor(Color.green)
                             }
-                        } else if title == ("Bảo vệ") {
+                        } else if title == L("Bảo vệ") {
                             let threats = service.virusThreats.count
                             if threats > 0 {
                                 Text("\(threats)")
@@ -1160,7 +1160,7 @@ struct SmartCleanerView: View {
                                     initialDetailCategory = .virus
                                     showDetailSheet = true
                                 }) {
-                                    Text("Xem chi tiết...")
+                                    Text(L("Xem chi tiết..."))
                                         .font(.system(size: 12))
                                         .foregroundColor(.white.opacity(0.8))
                                         .padding(.horizontal, 12)
@@ -1170,11 +1170,11 @@ struct SmartCleanerView: View {
                                 }
                                 .buttonStyle(.plain)
                             } else {
-                                Text("Tốt")
+                                Text(L("Tốt"))
                                     .font(.system(size: 28, weight: .light))
                                     .foregroundColor(Color.green)
                             }
-                        } else if title == ("Tốc độ") {
+                        } else if title == L("Tốc độ") {
                             let count = service.startupItems.count
                             if count > 0 {
                                 VStack(spacing: 0) {
@@ -1183,7 +1183,7 @@ struct SmartCleanerView: View {
                                         .foregroundColor(.white)
                                     
                                     // Text Description instead of Button (matched reference)
-                                    Text("nhiệm vụ cần chạy")
+                                    Text(L("nhiệm vụ cần chạy"))
                                         .font(.system(size: 12))
                                         .foregroundColor(.white.opacity(0.6))
                                         .padding(.top, 2)
@@ -1195,7 +1195,7 @@ struct SmartCleanerView: View {
                                 }
                                 
                             } else {
-                                Text("Tốt")
+                                Text(L("Tốt"))
                                     .font(.system(size: 28, weight: .light))
                                     .foregroundColor(Color.green)
                             }
@@ -1407,7 +1407,7 @@ struct SmartCleanerView: View {
                             .blur(radius: 2)
                         
                         // Text
-                        Text("Quét")
+                        Text(L("Quét"))
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
@@ -1483,7 +1483,7 @@ struct SmartCleanerView: View {
                         // Người dùng đã đề cập đến "Nút dừng" nhưng ảnh chụp màn hình thiết kế 3 hiển thị văn bản "Dừng" bên trong.
 
                         // 4. "Stop" Icon/Text
-                        Text("Dừng lại")
+                        Text(L("Dừng lại"))
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundColor(.white)
                     }
@@ -1516,7 +1516,7 @@ struct SmartCleanerView: View {
                         Image(systemName: "stop.fill")
                             .font(.system(size: 20))
                             .foregroundColor(.white)
-                        Text("Dừng lại")
+                        Text(L("Dừng lại"))
                             .font(.system(size: 12))
                             .foregroundColor(.white)
                     }
@@ -1595,7 +1595,7 @@ struct SmartCleanerView: View {
                         .blur(radius: 0.5)
 
                     // 6. Text
-                    Text("Chạy")
+                    Text(L("Chạy"))
                         .font(.system(size: 16, weight: .medium, design: .rounded))
                         .foregroundColor(.white)
                         .shadow(color: Color.black.opacity(0.2), radius: 2, y: 1)
@@ -1624,7 +1624,7 @@ struct SmartCleanerView: View {
                                  .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
                          )
                      
-                     Text("Quay lại")
+                     Text(L("Quay lại"))
                          .font(.system(size: 16, weight: .semibold))
                          .foregroundColor(.white)
                  }
@@ -1640,7 +1640,7 @@ struct SmartCleanerView: View {
 extension SmartCleanerView {
     private func getFinishedResultText(for category: CleanerCategory) -> String {
         if category == .systemJunk && deleteResult != nil {
-            return "Đã dọn sạch " + ByteCountFormatter.string(fromByteCount: deleteResult!.size, countStyle: .file)
+            return String(format: L("Đã dọn sạch %@"), ByteCountFormatter.string(fromByteCount: deleteResult!.size, countStyle: .file))
         }
         return getCleaningSubText(for: category)
     }
@@ -1766,11 +1766,11 @@ extension SmartCleanerView {
             .padding(.top, 8)
             
             VStack(spacing: 6) {
-                Text("Một số ứng dụng nên thoát")
+                Text(L("Một số ứng dụng nên thoát"))
                     .font(.system(size: 18, weight: .bold)) // Slightly larger
                     .foregroundColor(.white) // White text
                 
-                Text("Vui lòng thoát khỏi các ứng dụng sau để xóa tất cả các mục liên quan:")
+                Text(L("Vui lòng thoát khỏi các ứng dụng sau để xóa tất cả các mục liên quan:"))
                     .font(.system(size: 13))
                     .foregroundColor(.white.opacity(0.7)) // Secondary text
                     .multilineTextAlignment(.center)
@@ -1824,7 +1824,7 @@ extension SmartCleanerView {
                                 }
                             }
                         }) {
-                            Text("Đóng")
+                            Text(L("Đóng"))
                                 .font(.system(size: 11, weight: .medium))
                                 .foregroundColor(.white.opacity(0.9))
                                 .padding(.horizontal, 10)
@@ -1864,7 +1864,7 @@ extension SmartCleanerView {
                     showDeleteConfirmation = true
                 }
             }) {
-                Text("Bỏ qua")
+                Text(L("Bỏ qua"))
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white.opacity(0.7))
                     .frame(maxWidth: .infinity)
@@ -1890,7 +1890,7 @@ extension SmartCleanerView {
                     showDeleteConfirmation = true
                 }
             }) {
-                Text("Thoát khỏi tất cả")
+                Text(L("Thoát khỏi tất cả"))
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
@@ -1908,15 +1908,15 @@ extension SmartCleanerView {
     }
 
 private func currentScanPathInColumn(_ title: String) -> String? {
-    if title == ("Dọn dẹp") {
+    if title == L("Dọn dẹp") {
         if [.systemJunk, .duplicates, .similarPhotos, .largeFiles].contains(service.currentCategory) {
             return service.currentScanPath
         }
-    } else if title == ("Bảo vệ") {
+    } else if title == L("Bảo vệ") {
         if service.currentCategory == .virus {
             return service.currentScanPath
         }
-    } else if title == ("Tốc độ") {
+    } else if title == L("Tốc độ") {
         if [.startupItems, .performanceApps, .appUpdates].contains(service.currentCategory) {
             return service.currentScanPath
         }
@@ -1927,14 +1927,14 @@ private func currentScanPathInColumn(_ title: String) -> String? {
 
     private func getDisplayTitle(for category: CleanerCategory) -> String {
         switch category {
-        case .systemJunk: return "Rác hệ thống"
-        case .duplicates: return "trùng lặp"
-        case .similarPhotos: return "Ảnh tương tự"
-        case .largeFiles: return "Tệp lớn"
-        case .virus: return "Phòng ngừa vi-rút"
-        case .startupItems: return "Mục khởi động"
-        case .performanceApps: return "Hiệu suất"
-        case .appUpdates: return "Cập nhật ứng dụng"
+        case .systemJunk: return L("Rác hệ thống")
+        case .duplicates: return L("trùng lặp")
+        case .similarPhotos: return L("Ảnh tương tự")
+        case .largeFiles: return L("Tệp lớn")
+        case .virus: return L("Phòng ngừa vi-rút")
+        case .startupItems: return L("Mục khởi động")
+        case .performanceApps: return L("Hiệu suất")
+        case .appUpdates: return L("Cập nhật ứng dụng")
         default: return ""
         }
     }
@@ -1946,35 +1946,35 @@ private func currentScanPathInColumn(_ title: String) -> String? {
         }
         
         switch category {
-        case .virus: return service.virusThreats.isEmpty ? ("0 mối đe dọa") : "\(service.virusThreats.count) \("Mối đe dọa")"
-        case .startupItems: return "\(service.startupItems.count) \("Mặt hàng")"
-        case .performanceApps: return "\(service.performanceApps.count) \("Ứng dụng")"
-        case .appUpdates: return service.hasAppUpdates ? ("Đã cập nhật") : ("Không có cập nhật")
-        default: return "0 KB"
+        case .virus: return service.virusThreats.isEmpty ? L("0 mối đe dọa") : String(format: L("%d Mối đe dọa"), service.virusThreats.count)
+        case .startupItems: return String(format: L("%d Mặt hàng"), service.startupItems.count)
+        case .performanceApps: return String(format: L("%d Ứng dụng"), service.performanceApps.count)
+        case .appUpdates: return service.hasAppUpdates ? L("Đã cập nhật") : L("Không có cập nhật")
+        default: return L("0 KB")
         }
     }
     
     private func getSubText(for category: CleanerCategory) -> String {
         switch category {
-        case .systemJunk, .duplicates, .similarPhotos, .largeFiles: return "Có thể làm sạch"
-        case .virus: return service.virusThreats.isEmpty ? ("An toàn") : ("Có thể tháo rời")
-        case .startupItems: return "Có thể tối ưu hóa"
-        case .performanceApps: return "Để xem lại"
-        case .appUpdates: return "Để cài đặt"
+        case .systemJunk, .duplicates, .similarPhotos, .largeFiles: return L("Có thể làm sạch")
+        case .virus: return service.virusThreats.isEmpty ? L("An toàn") : L("Có thể tháo rời")
+        case .startupItems: return L("Có thể tối ưu hóa")
+        case .performanceApps: return L("Để xem lại")
+        case .appUpdates: return L("Để cài đặt")
         default: return ""
         }
     }
     
     private func getScanningTitle(for category: CleanerCategory) -> String {
         switch category {
-        case .systemJunk: return "Đang tìm kiếm rác..."
-        case .duplicates: return "Đang tìm bản sao..."
-        case .similarPhotos: return "Đang tìm thấy những bức ảnh tương tự..."
-        case .largeFiles: return "Đang quét các tệp lớn..."
-        case .virus: return "Đang quét các mối đe dọa..."
-        case .startupItems: return "Đang phân tích các mục khởi động..."
-        case .performanceApps: return "Đang kiểm tra ứng dụng nền..."
-        case .appUpdates: return "Đang kiểm tra cập nhật..."
+        case .systemJunk: return L("Đang tìm kiếm rác...")
+        case .duplicates: return L("Đang tìm bản sao...")
+        case .similarPhotos: return L("Đang tìm thấy những bức ảnh tương tự...")
+        case .largeFiles: return L("Đang quét các tệp lớn...")
+        case .virus: return L("Đang quét các mối đe dọa...")
+        case .startupItems: return L("Đang phân tích các mục khởi động...")
+        case .performanceApps: return L("Đang kiểm tra ứng dụng nền...")
+        case .appUpdates: return L("Đang kiểm tra cập nhật...")
         default: return ""
         }
     }
@@ -2004,22 +2004,22 @@ private func currentScanPathInColumn(_ title: String) -> String? {
     
     private func getCleaningSubText(for category: CleanerCategory) -> String {
         switch category {
-        case .systemJunk, .duplicates, .similarPhotos, .largeFiles: return "Đã dọn sạch"
-        case .virus: return "An toàn"
-        case .performanceApps, .startupItems: return "Tối ưu hóa"
-        case .appUpdates: return "Đã rà soát"
+        case .systemJunk, .duplicates, .similarPhotos, .largeFiles: return L("Đã dọn sạch")
+        case .virus: return L("An toàn")
+        case .performanceApps, .startupItems: return L("Tối ưu hóa")
+        case .appUpdates: return L("Đã rà soát")
         default: return ""
         }
     }
     
     private func getCleaningTitle(for category: CleanerCategory) -> String {
         switch category {
-        case .systemJunk: return "Dọn dẹp rác..."
-        case .duplicates, .similarPhotos, .largeFiles: return "Sắp xếp tập tin..."
-        case .virus: return "Loại bỏ các mối đe dọa..."
-        case .startupItems: return "Tối ưu mục khởi động..."
-        case .performanceApps: return "Tối ưu hóa hiệu suất..."
-        case .appUpdates: return "Đang kiểm tra trạng thái cập nhật..."
+        case .systemJunk: return L("Dọn dẹp rác...")
+        case .duplicates, .similarPhotos, .largeFiles: return L("Sắp xếp tập tin...")
+        case .virus: return L("Loại bỏ các mối đe dọa...")
+        case .startupItems: return L("Tối ưu mục khởi động...")
+        case .performanceApps: return L("Tối ưu hóa hiệu suất...")
+        case .appUpdates: return L("Đang kiểm tra trạng thái cập nhật...")
         default: return ""
         }
     }
@@ -2062,12 +2062,12 @@ private func currentScanPathInColumn(_ title: String) -> String? {
     
     private func getCategoryTitle(_ category: CleanerCategory) -> String {
         switch category {
-        case .systemJunk: return "Rác hệ thống"
-        case .largeFiles: return "Rác"
-        case .virus: return "Ứng dụng có thể gây hại"
-        case .startupItems: return "Làm mới bộ đệm DNS"
-        case .performanceApps: return "RAM miễn phí"
-        default: return "Task"
+        case .systemJunk: return L("Rác hệ thống")
+        case .largeFiles: return L("Rác")
+        case .virus: return L("Ứng dụng có thể gây hại")
+        case .startupItems: return L("Làm mới bộ đệm DNS")
+        case .performanceApps: return L("RAM miễn phí")
+        default: return L("Task")
         }
     }
 }
@@ -2122,7 +2122,7 @@ struct DashboardCard: View {
                 
                 Spacer()
                 
-                Button("Xem") { action() } // View Button
+                Button(L("Xem")) { action() } // View Button
                 .buttonStyle(SmallGlassButtonStyle())
             }
         }
@@ -2346,7 +2346,7 @@ struct ScanBlockView: View {
                 if let action = viewDetailsAction {
                     Button(action: action) {
                         HStack(spacing: 2) {
-                            Text("Chi tiết")
+                            Text(L("Chi tiết"))
                             Image(systemName: "chevron.right")
                         }
                         .font(.system(size: 10, weight: .bold))
@@ -2509,7 +2509,7 @@ struct CleaningBlockView: View {
                         if let action = viewDetailsAction {
                             Button(action: action) {
                                 HStack(spacing: 2) {
-                                    Text("Chi tiết")
+                                    Text(L("Chi tiết"))
                                     Image(systemName: "chevron.right")
                                 }
                                 .font(.system(size: 10, weight: .bold))
@@ -2701,7 +2701,7 @@ struct FinishedBlockView: View {
                     if let action = viewDetailsAction {
                         Button(action: action) {
                             HStack(spacing: 2) {
-                                Text("Xem chi tiết")
+                                Text(L("Xem chi tiết"))
                                 Image(systemName: "chevron.right")
                             }
                             .font(.system(size: 10, weight: .bold))

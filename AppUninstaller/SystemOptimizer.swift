@@ -43,20 +43,20 @@ enum OptimizationType: String, CaseIterable, Identifiable {
     
     var description: String {
         switch self {
-        case .freeMemory: return "Dọn bộ nhớ hệ thống và giải phóng RAM không dùng đến"
-        case .flushDNS: return "Xóa bộ đệm DNS để khắc phục sự cố mạng"
-        case .rebuildSpotlight: return "Xây dựng lại chỉ mục tìm kiếm để sửa lỗi Spotlight"
-        case .rebuildLaunchServices: return "Làm mới Launch Services để sửa menu Mở bằng"
-        case .clearFontCache: return "Xóa bộ đệm phông chữ để sửa lỗi hiển thị chữ"
-        case .repairPermissions: return "Kiểm tra và sửa quyền truy cập thư mục hệ thống"
-        case .killBackgroundApps: return "Buộc đóng các ứng dụng nền không hoạt động"
-        case .clearClipboard: return "Xóa nội dung hiện có trong khay nhớ tạm"
-        case .clearRecentItems: return "Xóa danh sách tệp gần đây trong Finder"
-        case .restartFinder: return "Khởi động lại Finder để xử lý hiện tượng treo"
-        case .restartDock: return "Khởi động lại Dock để sửa lỗi biểu tượng"
-        case .freePurgeableSpace: return "Dọn dung lượng hệ thống có thể giải phóng"
-        case .speedUpMail: return "Tối ưu cơ sở dữ liệu Mail để tăng tốc"
-        case .timeMachineThinning: return "Dọn các snapshot Time Machine cũ trên máy"
+        case .freeMemory: return L("Dọn bộ nhớ hệ thống và giải phóng RAM không dùng đến")
+        case .flushDNS: return L("Xóa bộ đệm DNS để khắc phục sự cố mạng")
+        case .rebuildSpotlight: return L("Xây dựng lại chỉ mục tìm kiếm để sửa lỗi Spotlight")
+        case .rebuildLaunchServices: return L("Làm mới Launch Services để sửa menu Mở bằng")
+        case .clearFontCache: return L("Xóa bộ đệm phông chữ để sửa lỗi hiển thị chữ")
+        case .repairPermissions: return L("Kiểm tra và sửa quyền truy cập thư mục hệ thống")
+        case .killBackgroundApps: return L("Buộc đóng các ứng dụng nền không hoạt động")
+        case .clearClipboard: return L("Xóa nội dung hiện có trong khay nhớ tạm")
+        case .clearRecentItems: return L("Xóa danh sách tệp gần đây trong Finder")
+        case .restartFinder: return L("Khởi động lại Finder để xử lý hiện tượng treo")
+        case .restartDock: return L("Khởi động lại Dock để sửa lỗi biểu tượng")
+        case .freePurgeableSpace: return L("Dọn dung lượng hệ thống có thể giải phóng")
+        case .speedUpMail: return L("Tối ưu cơ sở dữ liệu Mail để tăng tốc")
+        case .timeMachineThinning: return L("Dọn các snapshot Time Machine cũ trên máy")
         }
     }
     
@@ -163,16 +163,16 @@ class SystemOptimizer: ObservableObject {
             }
         }
         if closedCount > 0 {
-            results.append("đóng cửa \(closedCount) ứng dụng")
+            results.append(String(format: L("đóng cửa %d ứng dụng"), closedCount))
         }
         
         // 2. bộ nhớ trống
         _ = runCommand("sudo purge 2>/dev/null || true")
-        results.append("Tối ưu hóa bộ nhớ")
+        results.append(L("Tối ưu hóa bộ nhớ"))
         
         // 3. Xóa bảng nhớ tạm
         NSPasteboard.general.clearContents()
-        results.append("Đã xóa bảng nhớ tạm")
+        results.append(L("Đã xóa bảng nhớ tạm"))
         
         // 4. Làm mới danh sách ứng dụng nền
         await MainActor.run {
@@ -253,12 +253,12 @@ class SystemOptimizer: ObservableObject {
         case .killBackgroundApps:
             let count = await killBackgroundApps()
             success = true
-            message = "Đã đóng \(count) ứng dụng nền"
+            message = String(format: L("Đã đóng %d ứng dụng nền"), count)
             
         case .clearClipboard:
             NSPasteboard.general.clearContents()
             success = true
-            message = "Đã xóa bảng nhớ tạm"
+            message = L("Đã xóa bảng nhớ tạm")
             
         case .freeMemory, .flushDNS, .rebuildSpotlight, .rebuildLaunchServices, 
              .clearFontCache, .repairPermissions, .clearRecentItems, .restartFinder, .restartDock,
@@ -267,7 +267,7 @@ class SystemOptimizer: ObservableObject {
             if type.requiresAdmin {
                 let result = await executeWithAdminPrivileges(type.command)
                 success = result.success
-                message = result.success ? getSuccessMessage(for: type) : "Thực thi không thành công: \(result.output)"
+                message = result.success ? getSuccessMessage(for: type) : String(format: L("Thực thi không thành công: %@"), result.output)
             } else {
                 _ = runCommand(type.command)
                 success = true
@@ -285,20 +285,20 @@ class SystemOptimizer: ObservableObject {
     
     private func getSuccessMessage(for type: OptimizationType) -> String {
         switch type {
-        case .freeMemory: return "bộ nhớ được giải phóng"
-        case .flushDNS: return "DNS xóa bộ nhớ cache"
-        case .rebuildSpotlight: return "Spotlight Chỉ số đang được xây dựng lại"
-        case .rebuildLaunchServices: return "Cơ sở dữ liệu dịch vụ khởi động đã được xây dựng lại"
-        case .clearFontCache: return "Bộ đệm phông chữ đã bị xóa, nên khởi động lại"
-        case .repairPermissions: return "Đã hoàn tất xác minh quyền"
-        case .killBackgroundApps: return "Ứng dụng nền đã bị đóng"
-        case .clearClipboard: return "Đã xóa bảng nhớ tạm"
-        case .clearRecentItems: return "Lịch sử sử dụng gần đây đã bị xóa"
-        case .restartFinder: return "Finder Đã khởi động lại"
-        case .restartDock: return "Dock Đã khởi động lại"
-        case .freePurgeableSpace: return "Không gian có thể xóa được phát hành"
-        case .speedUpMail: return "Cơ sở dữ liệu thư đã được tối ưu hóa"
-        case .timeMachineThinning: return "Ảnh chụp nhanh cỗ máy thời gian được làm sạch"
+        case .freeMemory: return L("bộ nhớ được giải phóng")
+        case .flushDNS: return L("DNS xóa bộ nhớ cache")
+        case .rebuildSpotlight: return L("Spotlight Chỉ số đang được xây dựng lại")
+        case .rebuildLaunchServices: return L("Cơ sở dữ liệu dịch vụ khởi động đã được xây dựng lại")
+        case .clearFontCache: return L("Bộ đệm phông chữ đã bị xóa, nên khởi động lại")
+        case .repairPermissions: return L("Đã hoàn tất xác minh quyền")
+        case .killBackgroundApps: return L("Ứng dụng nền đã bị đóng")
+        case .clearClipboard: return L("Đã xóa bảng nhớ tạm")
+        case .clearRecentItems: return L("Lịch sử sử dụng gần đây đã bị xóa")
+        case .restartFinder: return L("Finder Đã khởi động lại")
+        case .restartDock: return L("Dock Đã khởi động lại")
+        case .freePurgeableSpace: return L("Không gian có thể xóa được phát hành")
+        case .speedUpMail: return L("Cơ sở dữ liệu thư đã được tối ưu hóa")
+        case .timeMachineThinning: return L("Ảnh chụp nhanh cỗ máy thời gian được làm sạch")
         }
     }
     

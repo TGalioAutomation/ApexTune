@@ -14,6 +14,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
         hideMainWindowsOnLaunch()
         registerWindowObservers()
+        openDashboardForUiTestingIfNeeded()
+    }
+
+    /// Mở sẵn bảng điều khiển khi khởi động bằng `--open-dashboard`,
+    /// phục vụ kiểm thử UI tự động không thao tác được qua status item.
+    private func openDashboardForUiTestingIfNeeded() {
+        guard CommandLine.arguments.contains("--open-dashboard") else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            MenuBarManager.shared.toggleWindow()
+        }
     }
     
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {

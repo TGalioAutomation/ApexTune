@@ -87,20 +87,20 @@ struct SpaceLensView: View {
                 VStack(alignment: .leading, spacing: 30) {
                     // Branding Header
                     HStack(spacing: 8) {
-                        Text("Ống kính không gian")
+                        Text(L("Ống kính không gian"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
-                        
+
                         // Icon + Title
                         HStack(spacing: 4) {
                             Image(systemName: "circle.hexagongrid.fill")
-                            Text("Phân tích trực quan")
+                            Text(L("Phân tích trực quan"))
                                 .font(.system(size: 20, weight: .heavy))
                         }
                         .foregroundColor(.white)
                     }
-                    
-                    Text("So sánh trực quan các thư mục và tệp để dọn dẹp nhanh chóng.\\nQuét lần cuối: Chưa bao giờ")
+
+                    Text(L("So sánh trực quan các thư mục và tệp để dọn dẹp nhanh chóng.\nQuét lần cuối: Chưa bao giờ"))
                         .font(.system(size: 13))
                         .foregroundColor(.white.opacity(0.7))
                         .lineSpacing(4)
@@ -109,20 +109,20 @@ struct SpaceLensView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         featureRow(
                             icon: "circle.hexagongrid",
-                            title: "Tổng quan về kích thước tức thì",
-                            desc: "Duyệt qua bộ nhớ và xem cái gì chiếm nhiều dung lượng nhất."
+                            title: L("Tổng quan về kích thước tức thì"),
+                            desc: L("Duyệt qua bộ nhớ và xem cái gì chiếm nhiều dung lượng nhất.")
                         )
-                        
+
                         featureRow(
                             icon: "airplane",
-                            title: "Quyết định nhanh chóng",
-                            desc: "Không lãng phí thời gian kiểm tra kích thước trước khi xóa."
+                            title: L("Quyết định nhanh chóng"),
+                            desc: L("Không lãng phí thời gian kiểm tra kích thước trước khi xóa.")
                         )
-                        
+
                         featureRow(
                             icon: "chart.pie.fill",
-                            title: "Phân tích trực quan",
-                            desc: "Nhanh chóng xác định các tệp lớn bằng biểu đồ bong bóng trực quan."
+                            title: L("Phân tích trực quan"),
+                            desc: L("Nhanh chóng xác định các tệp lớn bằng biểu đồ bong bóng trực quan.")
                         )
                     }
                     
@@ -179,7 +179,7 @@ struct SpaceLensView: View {
                             .frame(width: 74, height: 74)
                             .shadow(color: Color.black.opacity(0.3), radius: 10, y: 5)
                         
-                        Text("Quét")
+                        Text(L("Quét"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
                     }
@@ -218,12 +218,12 @@ struct SpaceLensView: View {
                 selectedDiskPath = URL(fileURLWithPath: "/")
                 selectedDiskName = "mac"
             }
-            Button("Trang chủ người dùng") {
+            Button(L("Trang chủ người dùng") ) {
                 selectedDiskPath = FileManager.default.homeDirectoryForCurrentUser
                 selectedDiskName = NSUserName() // Sử dụng tên người dùng thực tế
             }
             Divider()
-            Button("Chọn thư mục...") {
+            Button(L("Chọn thư mục...")) {
                 selectFolder()
             }
         } label: {
@@ -334,12 +334,12 @@ struct SpaceLensView: View {
             if selectedDiskName == "mac" {
                 return "mac"
             } else if selectedDiskPath == FileManager.default.homeDirectoryForCurrentUser {
-                return selectedDiskName + " " + ("Nhà của bạn")
+                return String(format: L("%@ Nhà của bạn"), selectedDiskName)
             } else {
                 return selectedDiskName
             }
         }
-        
+
         let totalSize = formatBytes(diskInfo.total)
         
         if selectedDiskName == "mac" {
@@ -348,7 +348,7 @@ struct SpaceLensView: View {
             // Đối với thư mục người dùng hoặc thư mục khác, hiển thị tên và mô tả
 
             if selectedDiskPath == FileManager.default.homeDirectoryForCurrentUser {
-                return selectedDiskName + " " + ("Nhà của bạn")
+                return String(format: L("%@ Nhà của bạn"), selectedDiskName)
             } else {
                 return selectedDiskName
             }
@@ -374,12 +374,12 @@ struct SpaceLensView: View {
 
     private var diskUsageText: String {
         guard let diskInfo = getDiskSpaceInfo() else {
-            return "Không thể lấy thông tin không gian"
+            return L("Không thể lấy thông tin không gian")
         }
-        
+
         let usedSize = formatBytes(diskInfo.used)
-        
-        return "Đã sử dụng \(usedSize)"
+
+        return String(format: L("Đã sử dụng %@"), usedSize)
     }
     
 
@@ -402,7 +402,7 @@ struct SpaceLensView: View {
                     }
                 }
                 // Scanning Status Text
-                Text("Đang xây dựng bản đồ lưu trữ của bạn...")
+                Text(L("Đang xây dựng bản đồ lưu trữ của bạn..."))
                     .font(.title2)
                     .foregroundColor(.white)
                     .padding(.top, 40)
@@ -435,7 +435,7 @@ struct SpaceLensView: View {
                                 .fill(Color.white.opacity(0.1))
                                 .frame(width: 70, height: 70)
                             
-                            Text("Dừng lại")
+                            Text(L("Dừng lại"))
                                 .foregroundColor(.white)
                         }
                     }
@@ -495,7 +495,7 @@ struct SpaceLensView: View {
                         Button(action: goBack) {
                             HStack {
                                 Image(systemName: "chevron.left")
-                                Text(navigationStack.isEmpty ? ("Khởi động lại") : navigationStack.last?.name ?? "Back")
+                                Text(navigationStack.isEmpty ? L("Khởi động lại") : navigationStack.last?.name ?? "Back")
                             }
                             .foregroundColor(.white.opacity(0.7))
                         }
@@ -563,7 +563,7 @@ struct SpaceLensView: View {
                          if let current = currentNode, !current.children.isEmpty {
                              HStack(spacing: 12) {
                                  Button(action: selectAllItems) {
-                                     Text("Chọn tất cả")
+                                     Text(L("Chọn tất cả"))
                                          .font(.system(size: 12, weight: .medium))
                                          .foregroundColor(.white)
                                          .padding(.horizontal, 12)
@@ -574,7 +574,7 @@ struct SpaceLensView: View {
                                  .buttonStyle(.plain)
                                  
                                  Button(action: deselectAllItems) {
-                                     Text("Bỏ chọn tất cả")
+                                     Text(L("Bỏ chọn tất cả"))
                                          .font(.system(size: 12, weight: .medium))
                                          .foregroundColor(.white)
                                          .padding(.horizontal, 12)
@@ -609,7 +609,7 @@ struct SpaceLensView: View {
                                          )
                                          .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
                                      
-                                     Text("Di dời")
+                                     Text(L("Di dời"))
                                          .font(.system(size: 16, weight: .semibold))
                                          .foregroundColor(.white)
                                  }
@@ -631,7 +631,7 @@ struct SpaceLensView: View {
                                      Button(action: {
                                          showSelectedItemsPopover.toggle()
                                      }) {
-                                         Text("Xem đã chọn")
+                                         Text(L("Xem đã chọn"))
                                              .font(.system(size: 13, weight: .medium))
                                              .foregroundColor(.white)
                                              .padding(.horizontal, 16)

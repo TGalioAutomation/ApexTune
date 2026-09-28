@@ -151,10 +151,10 @@ class ScanServiceManager: ObservableObject {
 
     var activeScanDescriptions: [String] {
         var descriptions: [String] = []
-        if junkCleaner.isScanning { descriptions.append("Quét rác") }
-        if largeFileScanner.isScanning { descriptions.append("Quét tệp lớn") }
-        if deepCleanScanner.isScanning { descriptions.append("Dọn sâu") }
-        if smartCleanerService.isScanning { descriptions.append("Quét thông minh") }
+        if junkCleaner.isScanning { descriptions.append(L("Quét rác")) }
+        if largeFileScanner.isScanning { descriptions.append(L("Quét tệp lớn")) }
+        if deepCleanScanner.isScanning { descriptions.append(L("Dọn sâu")) }
+        if smartCleanerService.isScanning { descriptions.append(L("Quét thông minh")) }
         return descriptions
     }
     

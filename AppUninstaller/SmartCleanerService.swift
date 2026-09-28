@@ -885,7 +885,7 @@ class SmartCleanerService: ObservableObject {
         
         // 1. Quét bộ đệm hệ thống
 
-        await updateProgress(step: currentStep, total: totalSteps, message: "Đang quét bộ đệm hệ thống...")
+        await updateProgress(step: currentStep, total: totalSteps, message: L("Đang quét bộ đệm hệ thống..."))
         let sysCache = await scanSystemCache()
         await MainActor.run { systemCacheFiles = sysCache }
         currentStep += 1
@@ -900,14 +900,14 @@ class SmartCleanerService: ObservableObject {
         
         // 3. Quét bộ nhớ đệm của người dùng
 
-        await updateProgress(step: currentStep, total: totalSteps, message: "Đang quét bộ đệm người dùng...")
+        await updateProgress(step: currentStep, total: totalSteps, message: L("Đang quét bộ đệm người dùng..."))
         let usrCache = await scanUserCache()
         await MainActor.run { userCacheFiles = usrCache }
         currentStep += 1
         
         // 3.5 Quét thùng rác
 
-        await updateProgress(step: currentStep, total: totalSteps, message: "Đang quét Thùng rác...")
+        await updateProgress(step: currentStep, total: totalSteps, message: L("Đang quét Thùng rác..."))
         let trash = await scanTrash()
         await MainActor.run { trashFiles = trash }
         
@@ -921,14 +921,14 @@ class SmartCleanerService: ObservableObject {
         
         // 5. Quét nhật ký hệ thống
 
-        await updateProgress(step: currentStep, total: totalSteps, message: "Đang quét nhật ký hệ thống...")
+        await updateProgress(step: currentStep, total: totalSteps, message: L("Đang quét nhật ký hệ thống..."))
         let sysLogs = await scanSystemLogs()
         await MainActor.run { systemLogFiles = sysLogs }
         currentStep += 1
         
         // 6. Quét nhật ký người dùng
 
-        await updateProgress(step: currentStep, total: totalSteps, message: "Đang quét nhật ký người dùng...")
+        await updateProgress(step: currentStep, total: totalSteps, message: L("Đang quét nhật ký người dùng..."))
         let usrLogs = await scanUserLogs()
         await MainActor.run { userLogFiles = usrLogs }
         currentStep += 1
@@ -980,7 +980,7 @@ class SmartCleanerService: ObservableObject {
                         if size > 0 { 
                             items.append(CleanerFileItem(
                                 url: itemURL,
-                                name: "Hệ thống: " + itemURL.lastPathComponent,
+                                name: String(format: L("Hệ thống: %@"), itemURL.lastPathComponent),
                                 size: size,
                                 groupId: "systemCache"
                             ))
@@ -1027,7 +1027,7 @@ class SmartCleanerService: ObservableObject {
                 if size > 10 * 1024 { // Giảm xuống 10KB (bộ đệm của nhà phát triển thường lớn hơn)
                     items.append(CleanerFileItem(
                         url: devCacheURL,
-                        name: "Nhà phát triển: " + devCacheURL.lastPathComponent,
+                        name: String(format: L("Nhà phát triển: %@"), devCacheURL.lastPathComponent),
                         size: size,
                         groupId: "systemCache"
                     ))
@@ -1147,7 +1147,7 @@ class SmartCleanerService: ObservableObject {
                                  let name = itemURL.lastPathComponent.replacingOccurrences(of: "com.apple.", with: "Apple ")
                                  items.append(CleanerFileItem(
                                      url: itemURL,
-                                     name: "Tệp tạm hệ thống: \(name)",
+                                     name: String(format: L("Tệp tạm hệ thống: %@"), name),
                                      size: size,
                                      groupId: "systemCache"
                                  ))
@@ -1169,7 +1169,7 @@ class SmartCleanerService: ObservableObject {
                     if size > 512 * 1024 { // 512KB
                         items.append(CleanerFileItem(
                             url: itemURL,
-                            name: "Tệp tạm: \(itemURL.lastPathComponent)",
+                                name: String(format: L("Tệp tạm: %@"), itemURL.lastPathComponent),
                             size: size,
                             groupId: "systemCache"
                         ))
@@ -1433,7 +1433,7 @@ class SmartCleanerService: ObservableObject {
                     if size > 50 * 1024 {
                         let fileItem = CleanerFileItem(
                             url: containerCacheURL,
-                            name: "\(appName) bộ đệm container",
+                            name: String(format: L("%@ bộ đệm container"), appName),
                             size: size,
                             groupId: "userCache"
                         )
@@ -1449,7 +1449,7 @@ class SmartCleanerService: ObservableObject {
                     if size > 50 * 1024 {
                         let fileItem = CleanerFileItem(
                             url: containerTmpURL,
-                            name: "\(appName) tệp tạm",
+                            name: String(format: L("%@ tệp tạm"), appName),
                             size: size,
                             groupId: "userCache"
                         )
@@ -1480,7 +1480,7 @@ class SmartCleanerService: ObservableObject {
                 if size > 5 * 1024 {
                     let fileItem = CleanerFileItem(
                         url: itemURL,
-                        name: "\(formatAppName(bundleId)) trạng thái",
+                        name: String(format: L("%@ trạng thái"), formatAppName(bundleId)),
                         size: size,
                         groupId: "userCache"
                     )
@@ -1560,7 +1560,7 @@ class SmartCleanerService: ObservableObject {
             if size > 50 * 1024 {
                 items.append(CleanerFileItem(
                     url: webkitURL,
-                    name: "Bộ đệm WebKit",
+                    name: L("Bộ đệm WebKit"),
                     size: size,
                     groupId: "userCache"
                 ))
@@ -1575,7 +1575,7 @@ class SmartCleanerService: ObservableObject {
             if size > 5 * 1024 {
                 items.append(CleanerFileItem(
                     url: httpStorageURL,
-                    name: "Lưu trữ HTTP",
+                    name: L("Lưu trữ HTTP"),
                     size: size,
                     groupId: "userCache"
                 ))
@@ -1591,7 +1591,7 @@ class SmartCleanerService: ObservableObject {
                 if size > 50 * 1024 {
                     let fileItem = CleanerFileItem(
                         url: logURL,
-                        name: "\(logURL.lastPathComponent) nhật ký",
+                        name: String(format: L("%@ nhật ký"), logURL.lastPathComponent),
                         size: size,
                         groupId: "userCache"
                     )
@@ -1676,7 +1676,7 @@ class SmartCleanerService: ObservableObject {
             if size > 1024 { // > 1KB
                 items.append(CleanerFileItem(
                     url: trashURL,
-                    name: "🗑️ Thùng rác",
+                    name: L("🗑️ Thùng rác"),
                     size: size,
                     groupId: "trash"
                 ))
@@ -2155,7 +2155,7 @@ class SmartCleanerService: ObservableObject {
         
         await MainActor.run {
             setProgress(0.3)
-            currentScanPath = "Đang tính hàm băm tệp..."
+            currentScanPath = L("Đang tính hàm băm tệp...")
         }
         
         // 3. Tính toán song song hàm băm MD5

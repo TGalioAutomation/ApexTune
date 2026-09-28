@@ -19,7 +19,7 @@ struct UpdatePopupView: View {
                         )
                     )
                 
-                Text("Phiên bản mới có sẵn")
+                Text(L("Phiên bản mới có sẵn"))
                     .font(.title2)
                     .bold()
                 
@@ -53,7 +53,7 @@ struct UpdatePopupView: View {
                 Button(action: {
                     presentationMode.wrappedValue.dismiss()
                 }) {
-                    Text("Sau đó")
+                    Text(L("Sau đó"))
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
@@ -66,7 +66,7 @@ struct UpdatePopupView: View {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }) {
-                    Text("Cập nhật ngay")
+                    Text(L("Cập nhật ngay"))
                         .fontWeight(.semibold)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 10)

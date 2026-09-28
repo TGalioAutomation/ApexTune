@@ -30,23 +30,23 @@ struct AIModelsView: View {
         }
         .background(BackgroundStyles.aiModels)
         .alert(item: $pendingDeleteItem) { item in
-            let title = item.provider == .ollama ? "Xóa model Ollama?" : "Chuyển model vào Thùng rác?"
+            let title = item.provider == .ollama ? L("Xóa model Ollama?") : L("Chuyển model vào Thùng rác?")
             let message: String
             if item.provider == .ollama {
-                message = "Model `\(item.name)` sẽ bị xóa khỏi Ollama. Hành động này không đi qua Thùng rác."
+                message = String(format: L("Model `%@` sẽ bị xóa khỏi Ollama. Hành động này không đi qua Thùng rác."), item.name)
             } else {
-                message = "Model `\(item.name)` sẽ được chuyển vào Thùng rác để có thể phục hồi sau."
+                message = String(format: L("Model `%@` sẽ được chuyển vào Thùng rác để có thể phục hồi sau."), item.name)
             }
 
             return Alert(
                 title: Text(title),
                 message: Text(message),
-                primaryButton: .destructive(Text("Xóa")) {
+                primaryButton: .destructive(Text(L("Xóa"))) {
                     manager.delete(item) { _, statusMessage in
                         feedbackMessage = statusMessage
                     }
                 },
-                secondaryButton: .cancel(Text("Hủy"))
+                secondaryButton: .cancel(Text(L("Hủy")))
             )
         }
         .onReceive(manager.$actionMessage) { message in
@@ -60,11 +60,11 @@ struct AIModelsView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Quản lý mô hình AI")
+                    Text(L("Quản lý mô hình AI"))
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.white)
 
-                    Text("Nhìn rõ dung lượng Ollama và LM Studio, mở đúng thư mục lưu model, pull thêm model mới và xóa nhanh khi ổ đĩa sắp đầy.")
+                    Text(L("Nhìn rõ dung lượng Ollama và LM Studio, mở đúng thư mục lưu model, pull thêm model mới và xóa nhanh khi ổ đĩa sắp đầy."))
                         .font(.system(size: 14))
                         .foregroundColor(.white.opacity(0.78))
                         .lineSpacing(4)
@@ -74,7 +74,7 @@ struct AIModelsView: View {
                 Spacer()
 
                 Button(action: manager.refresh) {
-                    Label("Làm mới", systemImage: "arrow.clockwise")
+                    Label(L("Làm mới"), systemImage: "arrow.clockwise")
                         .font(.system(size: 13, weight: .semibold))
                 }
                 .buttonStyle(CapsuleButtonStyle(gradient: GradientStyles.aiModels))
@@ -82,19 +82,19 @@ struct AIModelsView: View {
 
             HStack(spacing: 16) {
                 summaryChip(
-                    title: "Tổng dung lượng model",
+                    title: L("Tổng dung lượng model"),
                     value: ByteCountFormatter.string(fromByteCount: manager.totalManagedSize, countStyle: .file),
                     icon: "internaldrive.fill"
                 )
 
                 summaryChip(
-                    title: "Số model đang quản lý",
+                    title: L("Số model đang quản lý"),
                     value: "\(manager.allItems.count)",
                     icon: "shippingbox.fill"
                 )
 
                 summaryChip(
-                    title: "Provider phát hiện",
+                    title: L("Provider phát hiện"),
                     value: "\(manager.providerStates.values.filter(\.isDetected).count)/2",
                     icon: "checkmark.shield.fill"
                 )
@@ -130,10 +130,10 @@ struct AIModelsView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Model đang chiếm dung lượng")
+                    Text(L("Model đang chiếm dung lượng"))
                         .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.white)
-                    Text("Sắp xếp theo dung lượng lớn nhất để user dọn nhanh hơn.")
+                    Text(L("Sắp xếp theo dung lượng lớn nhất để user dọn nhanh hơn."))
                         .font(.system(size: 13))
                         .foregroundColor(.white.opacity(0.65))
                 }
@@ -144,7 +144,7 @@ struct AIModelsView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.white.opacity(0.55))
-                    TextField("Tìm theo tên model hoặc đường dẫn", text: $searchText)
+                    TextField(L("Tìm theo tên model hoặc đường dẫn"), text: $searchText)
                         .textFieldStyle(.plain)
                         .foregroundColor(.white)
                 }
@@ -170,7 +170,7 @@ struct AIModelsView: View {
                     Image(systemName: "shippingbox")
                         .font(.system(size: 28))
                         .foregroundColor(.white.opacity(0.5))
-                    Text("Chưa có model nào khớp bộ lọc hiện tại.")
+                    Text(L("Chưa có model nào khớp bộ lọc hiện tại."))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.white.opacity(0.78))
                 }
@@ -189,18 +189,18 @@ struct AIModelsView: View {
                 Image(systemName: "arrow.down.circle.fill")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(AIModelProvider.ollama.tint)
-                Text("Pull model với Ollama")
+                Text(L("Pull model với Ollama"))
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.white)
             }
 
-            Text("Nhập model như `llama3.2:3b`, `qwen2.5:7b` hoặc `deepseek-r1:8b` để tải trực tiếp.")
+            Text(L("Nhập model như `llama3.2:3b`, `qwen2.5:7b` hoặc `deepseek-r1:8b` để tải trực tiếp."))
                 .font(.system(size: 13))
                 .foregroundColor(.white.opacity(0.68))
                 .lineSpacing(4)
 
             HStack(spacing: 10) {
-                TextField("Ví dụ: qwen2.5:7b", text: $manager.ollamaPullName)
+                TextField(L("Ví dụ: qwen2.5:7b"), text: $manager.ollamaPullName)
                     .textFieldStyle(.plain)
                     .foregroundColor(.white)
                     .padding(.horizontal, 14)
@@ -225,7 +225,7 @@ struct AIModelsView: View {
                 .disabled(!ollamaState.canPull || manager.isPulling)
             }
 
-            Text(ollamaState.canPull ? "Ollama đã sẵn sàng." : ollamaState.status)
+            Text(ollamaState.canPull ? L("Ollama đã sẵn sàng.") : ollamaState.status)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(ollamaState.canPull ? Color.success : Color.warning)
         }
@@ -235,13 +235,13 @@ struct AIModelsView: View {
 
     private var tipsCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Gợi ý dọn dung lượng")
+            Text(L("Gợi ý dọn dung lượng"))
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.white)
 
-            tipRow(icon: "checkmark.seal.fill", text: "Model LM Studio được xóa qua Thùng rác để an toàn hơn.")
-            tipRow(icon: "exclamationmark.triangle.fill", text: "Model Ollama bị xóa trực tiếp khỏi registry local khi dùng `ollama rm`.")
-            tipRow(icon: "folder.fill", text: "Nếu chưa chắc, bấm `Mở vị trí` để xem folder trước khi xóa.")
+            tipRow(icon: "checkmark.seal.fill", text: L("Model LM Studio được xóa qua Thùng rác để an toàn hơn."))
+            tipRow(icon: "exclamationmark.triangle.fill", text: L("Model Ollama bị xóa trực tiếp khỏi registry local khi dùng `ollama rm`."))
+            tipRow(icon: "folder.fill", text: L("Nếu chưa chắc, bấm `Mở vị trí` để xem folder trước khi xóa."))
         }
         .padding(20)
         .background(Color.white.opacity(0.07), in: RoundedRectangle(cornerRadius: 20))
@@ -272,7 +272,7 @@ struct AIModelsView: View {
             }
 
             HStack(spacing: 14) {
-                providerMetric(title: "Dung lượng", value: state.formattedTotalSize)
+                providerMetric(title: L("Dung lượng"), value: state.formattedTotalSize)
                 providerMetric(title: "Model", value: "\(state.itemCount)")
             }
 
@@ -282,7 +282,7 @@ struct AIModelsView: View {
                 .lineSpacing(3)
 
             HStack(spacing: 10) {
-                Button("Mở vị trí") {
+                Button(L("Mở vị trí")) {
                     manager.openRoot(for: state.provider)
                 }
                 .buttonStyle(.plain)
@@ -401,7 +401,7 @@ struct AIModelsView: View {
             }
 
             HStack(spacing: 10) {
-                Button("Mở vị trí") {
+                Button(L("Mở vị trí")) {
                     manager.reveal(item)
                 }
                 .buttonStyle(.plain)
@@ -418,7 +418,7 @@ struct AIModelsView: View {
                             .tint(.white)
                             .frame(width: 64, height: 18)
                     } else {
-                        Text("Xóa")
+                        Text(L("Xóa"))
                             .frame(width: 64)
                     }
                 }
@@ -441,7 +441,7 @@ struct AIModelsView: View {
             totalSize: 0,
             roots: [],
             isDetected: false,
-            status: "Đang kiểm tra...",
+            status: L("Đang kiểm tra..."),
             canPull: false,
             canDelete: false
         )

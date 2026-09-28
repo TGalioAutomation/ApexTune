@@ -20,11 +20,11 @@ struct RemoveConfirmationView: View {
                 // Header
                 HStack {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Bạn sẽ xóa các tập tin!")
+                        Text(L("Bạn sẽ xóa các tập tin!"))
                             .font(.system(size: 20, weight: .bold)) // Larger bold font
                             .foregroundColor(.white)
                         
-                        Text("Lưu ý: Các tệp đã chọn sẽ biến mất vĩnh viễn. Kiểm tra cẩn thận.")
+                        Text(L("Lưu ý: Các tệp đã chọn sẽ biến mất vĩnh viễn. Kiểm tra cẩn thận."))
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.8))
                             .lineLimit(2)
@@ -80,7 +80,7 @@ struct RemoveConfirmationView: View {
                 // Actions
                 HStack(spacing: 20) {
                     Button(action: onCancel) {
-                        Text("Hủy bỏ")
+                        Text(L("Hủy bỏ"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.white.opacity(0.9))
                             .frame(maxWidth: .infinity)
@@ -91,7 +91,7 @@ struct RemoveConfirmationView: View {
                     .buttonStyle(.plain)
                     
                     Button(action: onConfirm) {
-                        Text("Di dời")
+                        Text(L("Di dời"))
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.black)
                             .frame(maxWidth: .infinity)

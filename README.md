@@ -3,76 +3,95 @@
 
   # MacOptimizer
 
-  **Bộ công cụ dọn dẹp, tối ưu và giám sát macOS với giao diện tiếng Việt**
+  **A macOS cleaner, optimizer and system monitor that lives in your menu bar**
+
+  **English** · [Tiếng Việt](README.vi.md)
 
   <p>
     <img src="https://img.shields.io/badge/macOS-13%2B-111827?style=for-the-badge&logo=apple&logoColor=white" alt="macOS 13+">
     <img src="https://img.shields.io/badge/Swift-5.9-F97316?style=for-the-badge&logo=swift&logoColor=white" alt="Swift 5.9">
-    <img src="https://img.shields.io/badge/Version-4.0.8-2563EB?style=for-the-badge" alt="Version 4.0.8">
-    <img src="https://img.shields.io/badge/UI-Ti%E1%BA%BFng%20Vi%E1%BB%87t-059669?style=for-the-badge" alt="Vietnamese UI">
+    <img src="https://img.shields.io/badge/Version-4.0.9-2563EB?style=for-the-badge" alt="Version 4.0.9">
+    <img src="https://img.shields.io/badge/UI-Vi%E1%BB%87t%20Nam%20%2F%20English-059669?style=for-the-badge" alt="UI Vietnamese / English">
     <img src="https://img.shields.io/badge/Menu%20Bar-GPU%20%2F%20CPU%20%2F%20DISK%20%2F%20RAM-7C3AED?style=for-the-badge" alt="Menu bar metrics">
   </p>
 </div>
 
 ---
 
-## Tổng quan
+## Overview
 
-MacOptimizer là app macOS viết bằng SwiftUI, tập trung vào bốn nhóm việc chính:
+MacOptimizer is a SwiftUI macOS utility that lives in the menu bar and focuses on four jobs:
 
-- dọn dẹp rác hệ thống, cache, log và file lớn,
-- gỡ cài đặt app kèm file liên quan,
-- giám sát máy trực tiếp từ menu bar với metric thời gian thực,
-- quản lý model AI local (Ollama, LM Studio) để kiểm soát dung lượng.
+- cleaning system junk, caches, logs and large files,
+- uninstalling apps together with their leftover files,
+- monitoring your Mac in real time from the menu bar,
+- managing local AI models (Ollama, LM Studio) and Docker images to reclaim disk space.
 
-Trạng thái repo hiện tại phản ánh các thay đổi gần đây:
+The UI ships in **Vietnamese and English** — on first launch the app follows your system language, and you can switch any time in Settings. Adding another language is just one JSON file (see [Languages](#languages)).
 
-- giao diện chính và các luồng menu bar/monitor đã được Việt hóa diện rộng,
-- status item trên menu bar đã hỗ trợ `GPU`, `CPU`, `DISK`, `RAM`, `Mạng`, `Pin`,
-- tooltip và trang tùy biến status item đã có sẵn,
-- app chạy dạng utility (`LSUIElement`), mặc định không hiện icon ở Dock và mở cửa sổ chính từ menu bar khi cần,
-- script build nội bộ đã xuất được `.app` và `.dmg`.
-
-Ghi chú: repo vẫn giữ checklist sweep cuối cho việc chuẩn hóa nốt text runtime còn sót trong source ở [contracts/vietnamese-only-sweep-checklist.md](contracts/vietnamese-only-sweep-checklist.md).
+The app runs as an accessory utility (`LSUIElement`): no Dock icon, everything happens from the menu bar, with a main window for detailed cleaning and admin flows.
 
 ---
 
-## Trạng thái hiện tại
+## Features
 
-### Menu bar monitoring
+### Menu bar dashboard
 
-- App chạy ở chế độ utility (`LSUIElement = true`) và không hiện icon ở Dock.
-- Status item hỗ trợ hiển thị động theo lựa chọn người dùng, không còn là text cố định.
-- Có thể bật hoặc tắt từng metric `GPU`, `CPU`, `DISK`, `RAM`, `Mạng`, `Pin`.
-- Có thể hiện hoặc ẩn icon app trên status item.
-- Tooltip được dùng để giải thích metric và trạng thái hiện tại.
-- Trang tùy biến riêng cho menu bar đã có trong nút gear của popup menu bar.
-- Detail `CPU` và `RAM` vẫn giữ luồng force-quit nhanh.
+- A popup dashboard right under the status item: a **system health score** ring (weighted CPU/RAM/disk load), compact metric tiles, tappable disk and network strips.
+- Live status item metrics: `GPU`, `CPU`, `DISK`, `RAM`, `Network`, `Battery` — toggle each one, reorder, use display presets and sampling profiles.
+- **5 banner themes** for the menu bar strip: Dark, Light, Mono, Accent, Minimal.
+- **RAM alerts** based on a system-wide threshold (configurable 60–95%), naming the heaviest app with a confirm-before-force-quit flow.
+- A **WidgetKit widget** (Small/Medium) showing the health score, CPU/RAM/disk gauges and uptime.
+- Per-metric detail windows (CPU, RAM, storage, network, battery, force-quit apps) open from the dashboard.
+- Launch at login, optional app icon on the status item.
 
-### Quản lý mô hình AI
+### Real-time protection
 
-- Module `Mô hình AI` hỗ trợ quét và quản lý model local từ **Ollama** và **LM Studio**.
-- Có thể xem tổng dung lượng, lọc model, mở vị trí lưu, pull/xóa model (theo provider hỗ trợ).
-- Smart Clean có entry nhanh sang `Mô hình AI` để dọn dung lượng theo tác vụ.
+- **Ad block & anti-tracking** via `/etc/hosts` (curated hostname lists, automatic backup & restore, clearly marked sections).
+- **Malware / adware scan** for common threat patterns.
+- **Privacy**: scan and clean browsing history, cookies, download history and developer traces.
 
-### Giám sát hệ thống
+### Cleaning & optimization toolkit
 
-- `GPU` đã được đưa vào pipeline đo đạc và hiển thị trên status item.
-- `CPU`, `RAM`, `DISK`, `Mạng`, `Pin` được cập nhật theo cadence riêng.
-- Hệ thống sampling profile và interval tùy biến đã có cho menu bar monitoring.
+| Module | Purpose |
+| --- | --- |
+| Smart Clean | Quick scan of the groups that usually need cleaning |
+| Junk Cleaner | Clean caches, logs and system junk |
+| Deep Clean | Deeper sweep for leftovers and redundant files |
+| Large Files | Find big, old and space-hungry files |
+| Duplicates / Similar photos | Find duplicate files and similar images |
+| Trash | Inspect and empty the Trash |
+| File Explorer | Browse the file system with quick actions |
+| Space Lens | Visual disk usage map |
+| Shredder | Securely erase files |
+| Maintenance | System upkeep (Spotlight, DNS, Time Machine snapshots...) |
+| Optimizer | Tune system state and startup items |
+| Background Services | Audit & disable third-party LaunchAgents/LaunchDaemons |
+| AI Models | Manage local Ollama / LM Studio models |
+| Docker | Inspect and prune Docker images |
+| App Updater | Check for app updates |
+| Uninstaller | Remove apps with their related files |
 
-### Build và đóng gói
+### App uninstaller
 
-- `./build.sh` tạo app bundle cục bộ tại `build/MacOptimizer.app` và DMG tại `build/MacOptimizer.dmg`.
-- `./build_dual_dmg.sh` tạo gói phát hành hai kiến trúc:
-  - `build_release/MacOptimizer_v4.0.8_AppleSilicon.dmg`
-  - `build_release/MacOptimizer_v4.0.8_Intel.dmg`
+- scans installed apps,
+- lists related files such as `Preferences`, `Caches`, `Logs`, `Application Support`,
+- selective removal,
+- Trash-first for safer deletes.
 
 ---
 
-## Ảnh giao diện
+## Languages
 
-### Menu bar và dashboard
+- **Vietnamese** (source language) and **English** ship built-in; switch instantly in **Settings → Language** — the whole app re-renders without a restart.
+- On first launch the app auto-detects your system language and uses it if a translation exists (English system → English UI), otherwise Vietnamese.
+- Adding a language requires **no code changes**: drop a `AppUninstaller/Languages/<code>.json` file (keys are the original Vietnamese strings) and rebuild. See [docs/LOCALIZATION.md](docs/LOCALIZATION.md); verify with `python3 scripts/validate_localizations.py`.
+
+---
+
+## Screenshots
+
+### Menu bar & dashboard
 
 <p align="center">
   <img src="AppUninstaller/system_clean_menu.png" alt="Menu bar monitoring" width="31%" />
@@ -80,7 +99,7 @@ Ghi chú: repo vẫn giữ checklist sweep cuối cho việc chuẩn hóa nốt 
   <img src="AppUninstaller/yinpan_2026.png" alt="Disk cleanup module" width="31%" />
 </p>
 
-### Dọn dẹp và tối ưu
+### Cleaning & optimization
 
 <p align="center">
   <img src="AppUninstaller/smart-scan.2f4ddf59.png" alt="Smart Scan" width="31%" />
@@ -88,7 +107,7 @@ Ghi chú: repo vẫn giữ checklist sweep cuối cho việc chuẩn hóa nốt 
   <img src="AppUninstaller/youhua.png" alt="Optimizer" width="31%" />
 </p>
 
-### Quyền riêng tư và bảo vệ
+### Privacy & protection
 
 <p align="center">
   <img src="AppUninstaller/yinsi.png" alt="Privacy" width="31%" />
@@ -96,7 +115,7 @@ Ghi chú: repo vẫn giữ checklist sweep cuối cho việc chuẩn hóa nốt 
   <img src="AppUninstaller/malware@2x.png" alt="Malware scan" width="31%" />
 </p>
 
-### Công cụ quản lý ứng dụng
+### App management
 
 <p align="center">
   <img src="AppUninstaller/Uninstaller@2x.jpg" alt="Uninstaller" width="31%" />
@@ -106,54 +125,15 @@ Ghi chú: repo vẫn giữ checklist sweep cuối cho việc chuẩn hóa nốt 
 
 ---
 
-## Tính năng chính
+## Build from source
 
-### Menu bar utility
+### Requirements
 
-| Hạng mục | Trạng thái hiện tại |
-| --- | --- |
-| Metric hỗ trợ | `GPU`, `CPU`, `DISK`, `RAM`, `Mạng`, `Pin` |
-| Kiểu hiển thị | Status item động, có thể kèm icon app |
-| Tooltip | Có ở status item và UI tùy biến |
-| Tùy biến | Bật/tắt metric, sắp thứ tự, preset, sampling profile |
-| Force quit | Có trong detail `CPU` và `RAM` |
-| Khởi động ẩn | Có, app chạy kiểu accessory utility |
-
-### Bộ công cụ dọn dẹp và tối ưu
-
-| Module | Mục đích |
-| --- | --- |
-| Smart Clean | Quét nhanh các nhóm dữ liệu thường cần dọn |
-| Deep Clean | Rà sâu hơn các file dư thừa và nhóm file lớn |
-| Junk Cleaner | Dọn cache, log và file rác hệ thống |
-| Large Files | Tìm file lớn, file cũ, file tốn dung lượng |
-| Trash | Xem và làm trống Thùng rác |
-| File Explorer | Duyệt file hệ thống và thao tác nhanh |
-| Optimizer | Tối ưu trạng thái hệ thống và mục khởi động |
-| Privacy | Dọn dữ liệu riêng tư trình duyệt và hệ thống |
-| Malware | Quét dấu hiệu rủi ro cơ bản |
-| AI Models | Quản lý model local Ollama/LM Studio |
-| App Updater | Kiểm tra cập nhật ứng dụng |
-| Uninstaller | Gỡ app kèm file liên quan |
-
-### Gỡ cài đặt ứng dụng
-
-- quét app đã cài,
-- hiển thị file liên quan như `Preferences`, `Caches`, `Logs`, `Application Support`,
-- gỡ bỏ có chọn lọc,
-- ưu tiên đưa vào Thùng rác để an toàn hơn.
-
----
-
-## Build từ source
-
-### Yêu cầu
-
-- macOS 13 trở lên
+- macOS 13 or later
 - Swift 5.9
-- Xcode hoặc Command Line Tools phù hợp
+- Xcode or matching Command Line Tools
 
-### Build nhanh
+### Quick build
 
 ```bash
 git clone git@github.com:TGalioAutomation/MacOptimizervn.git
@@ -161,96 +141,94 @@ cd MacOptimizervn
 ./build.sh
 ```
 
-Artifact sau build:
+Build artifacts:
 
 - `build/MacOptimizer.app`
 - `build/MacOptimizer.dmg`
 
-Chạy app trực tiếp:
+Run it:
 
 ```bash
 open build/MacOptimizer.app
 ```
 
-### Build gói phát hành hai kiến trúc
+### Dual-architecture release package
 
 ```bash
 ./build_dual_dmg.sh
 ```
 
-Artifact sau build:
+Build artifacts:
 
-- `build_release/MacOptimizer_v4.0.8_AppleSilicon.dmg`
-- `build_release/MacOptimizer_v4.0.8_Intel.dmg`
+- `build_release/MacOptimizer_v4.0.9_AppleSilicon.dmg`
+- `build_release/MacOptimizer_v4.0.9_Intel.dmg`
 
-### Build kiểm tra package
+### Package check
 
 ```bash
 swift build
 ```
 
-### Tái tạo App icon (.icns)
+### Regenerate the app icon (.icns)
 
 ```bash
 ./scripts/generate_app_icon.sh
 ```
 
-Nguồn icon master: `AppUninstaller/BrandAssets/AppIcon-master-1024.png`.
+Master icon source: `AppUninstaller/BrandAssets/AppIcon-master-1024.png`.
 
 ---
 
-## Cấu trúc repo
+## Repository layout
 
 ```text
 MacOptimizervn/
-├── AppUninstaller/             # Source app macOS
-│   ├── AppDelegate.swift       # Khởi động accessory utility và menu bar
+├── AppUninstaller/             # macOS app sources
+│   ├── AppDelegate.swift       # Accessory-utility startup & menu bar
 │   ├── AppUninstallerApp.swift
 │   ├── ContentView.swift
-│   ├── MenuBar/                # Menu bar popup, detail, customization
+│   ├── Languages/              # JSON translations (vi, en) — add languages here
+│   ├── MenuBar/                # Menu bar popup, details, customization, themes
 │   ├── SystemMonitorService.swift
 │   ├── SmartCleanerService.swift
 │   ├── PrivacyScannerService.swift
 │   ├── MalwareScanner.swift
 │   ├── BrandAssets/            # Master brand/icon assets
 │   └── ...
+├── WidgetExtension/            # WidgetKit widget (health score)
 ├── Sources/                    # Shared SPM modules (AIModelKit, verify tool)
 ├── Tests/                      # Unit tests
-├── contracts/                  # Contract và checklist công việc
-├── docs/                       # Technical change logs
-├── scripts/                    # Utility scripts (generate icon, ...)
-├── build.sh                    # Build cục bộ + DMG
-├── build_dual_dmg.sh           # DMG Apple Silicon + Intel
-├── CHANGELOG_v4.0.8.md         # Ghi nhận trạng thái hiện tại
+├── contracts/                  # Work contracts & checklists
+├── docs/                       # Technical docs (LOCALIZATION.md, audits...)
+├── scripts/                    # Utility scripts (icon, translation validator...)
+├── build.sh                    # Local build + DMG
+├── build_dual_dmg.sh           # Apple Silicon + Intel DMGs
 └── README.md
 ```
 
 ---
 
-## Tài liệu liên quan
+## Related docs
 
+- [docs/LOCALIZATION.md](docs/LOCALIZATION.md) — localization guide
 - [CHANGELOG_v4.0.8.md](CHANGELOG_v4.0.8.md)
 - [CHANGELOG_v4.0.7.md](CHANGELOG_v4.0.7.md)
 - [CHANGELOG_v4.0.6.md](CHANGELOG_v4.0.6.md)
 - [docs/audit-2026-04-06.md](docs/audit-2026-04-06.md)
-- [CHANGELOG_v4.0.3.md](CHANGELOG_v4.0.3.md)
-- [CHANGELOG_v4.0.2.md](CHANGELOG_v4.0.2.md)
-- [CHANGELOG_v4.0.1.md](CHANGELOG_v4.0.1.md)
-- [CHANGELOG_v4.0.0.md](CHANGELOG_v4.0.0.md)
-- [contracts/vietnamese-only-sweep-checklist.md](contracts/vietnamese-only-sweep-checklist.md)
 
 ---
 
-## Ghi chú vận hành
+## Operating notes
 
-- App hiện được tối ưu cho trải nghiệm menu bar trước, nhưng vẫn có cửa sổ chính cho các luồng dọn dẹp và quản trị chi tiết.
-- `GPU` usage phụ thuộc dữ liệu hệ thống macOS; mức chi tiết có thể khác giữa các máy.
-- Với các thao tác dọn dẹp nhạy cảm, nên rà soát danh sách file trước khi xóa hàng loạt và ưu tiên đưa vào Thùng rác nếu có thể.
-- Nên sao lưu dữ liệu quan trọng trước khi dùng các tính năng dọn dẹp sâu trên máy làm việc chính.
+- The experience is menu-bar-first; the main window is for detailed cleaning and admin flows.
+- `GPU` usage depends on what macOS reports; detail levels vary between machines.
+- Some features need permissions: **Full Disk Access** (deep scans), **Location** (Wi-Fi name), an admin password (editing `/etc/hosts`, cleaning system files).
+- For sensitive cleanup, review the file list before bulk-deleting and prefer Trash over permanent deletion; back up important data before deep cleaning on a work machine.
+- Ad block / anti-tracking edits `/etc/hosts` (auto-backed up at `/etc/hosts.macoptimizer.bak`) — turning the feature off restores the original.
 
 ---
 
 <div align="center">
   <strong>MacOptimizer</strong><br/>
-  Gọn, nhanh, theo dõi trực tiếp từ menu bar.
+  Lean, fast, always watching from the menu bar.
 </div>

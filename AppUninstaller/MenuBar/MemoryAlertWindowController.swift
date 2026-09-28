@@ -19,14 +19,28 @@ class MemoryAlertWindowController: NSObject, ObservableObject {
     
     private func setupObserver() {
         // Theo dõi các thay đổi trạng thái cảnh báo bộ nhớ
-
+        // Chỉ nổi cửa sổ riêng khi popup menu bar đang đóng để tránh hai cảnh báo hiện cùng lúc
+        
         systemMonitor.$showHighMemoryAlert
             .receive(on: DispatchQueue.main)
             .sink { [weak self] shouldShow in
-                if shouldShow {
-                    self?.showAlert()
-                } else {
-                    self?.hideAlert()
+                guard let self else { return }
+                if shouldShow && !MenuBarManager.shared.isOpen {
+                    self.showAlert()
+                } else if !shouldShow {
+                    self.hideAlert()
+                }
+            }
+            .store(in: &cancellables)
+        
+        MenuBarManager.shared.$isOpen
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isOpen in
+                guard let self else { return }
+                if isOpen {
+                    self.hideAlert()
+                } else if self.systemMonitor.showHighMemoryAlert {
+                    self.showAlert()
                 }
             }
             .store(in: &cancellables)
@@ -235,6 +249,16 @@ struct MemoryAlertFloatingView: View {
     @ObservedObject var systemMonitor: SystemMonitorService
     let onClose: () -> Void
     let onOpenApp: () -> Void
+
+    /// Nội dung cảnh báo khớp điều kiện thật: % RAM toàn hệ thống vượt ngưỡng
+    private var alertMessage: String {
+        let percent = Int(systemMonitor.memoryUsage * 100)
+        let threshold = Int(systemMonitor.memoryAlertThresholdPercent)
+        if let app = systemMonitor.highMemoryApp {
+            return String(format: L("Mac đang dùng %d%% RAM, vượt ngưỡng %d%%. Ứng dụng chiếm nhiều nhất là %@ với khoảng %.1f GB tổng bộ nhớ."), percent, threshold, app.name, app.usage)
+        }
+        return String(format: L("Mac đang dùng %d%% RAM, vượt ngưỡng %d%%. Hãy giải phóng bộ nhớ để máy chạy mượt hơn."), percent, threshold)
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -251,11 +275,11 @@ struct MemoryAlertFloatingView: View {
                 // tiêu đề
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Mức dùng bộ nhớ quá cao")
+                    Text(L("Bộ nhớ hệ thống đang cao"))
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(Color.black.opacity(0.85))
-                    
-                    Text("MacOptimizer phát hiện bộ nhớ vật lý và bộ nhớ ảo trên Mac của bạn đang bị dùng quá cao. Hãy để chúng tôi xử lý việc này.")
+
+                    Text(alertMessage)
                         .font(.system(size: 13))
                         .foregroundColor(Color.black.opacity(0.65))
                         .fixedSize(horizontal: false, vertical: true)
@@ -268,7 +292,7 @@ struct MemoryAlertFloatingView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.right.circle.fill")
                             .font(.system(size: 14))
-                        Text("Mở MacOptimizer")
+                        Text(L("Mở MacOptimizer"))
                             .font(.system(size: 13, weight: .bold))
                     }
                     .foregroundColor(Color.black)
@@ -317,9 +341,10 @@ struct MemoryAlertFloatingView: View {
                                     .font(.system(size: 13, weight: .semibold))
                                     .foregroundColor(Color.black.opacity(0.85))
                                 Spacer()
-                                Text(systemMonitor.memoryUsage > 0.9 ? "Gần đầy" : "Bình thường")
+                                let isNearFull = systemMonitor.memoryUsage > 0.9
+                                Text(isNearFull ? L("Gần đầy") : L("Bình thường"))
                                     .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(Color(hex: "FF6B6B"))
+                                    .foregroundColor(isNearFull ? Color(hex: "FF6B6B") : Color(hex: "34C759"))
                             }
                             
                             GeometryReader { geometry in
@@ -351,22 +376,22 @@ struct MemoryAlertFloatingView: View {
                     // bỏ qua menu
 
                     Menu {
-                        Button("Nhắc lại sau 10 phút") {
+                        Button(L("Nhắc lại sau 10 phút")) {
                             systemMonitor.snoozeAlert(minutes: 10)
                             onClose()
                         }
-                        Button("Nhắc lại sau 1 giờ") {
+                        Button(L("Nhắc lại sau 1 giờ")) {
                             systemMonitor.snoozeAlert(minutes: 60)
                             onClose()
                         }
                         Divider()
-                        Button("Không nhắc lại") {
+                        Button(L("Không nhắc lại")) {
                             systemMonitor.ignoreAppPermanently()
                             onClose()
                         }
                     } label: {
                         HStack(spacing: 2) {
-                            Text("Bỏ qua")
+                            Text(L("Bỏ qua"))
                             Image(systemName: "chevron.down")
                                 .font(.system(size: 8, weight: .bold))
                         }
@@ -385,10 +410,12 @@ struct MemoryAlertFloatingView: View {
                     // nút nhả
 
                     Button(action: {
-                        systemMonitor.terminateHighMemoryApp()
-                        onClose()
+                        // Chỉ đóng cảnh báo khi người dùng xác nhận buộc thoát
+                        if systemMonitor.terminateHighMemoryApp() {
+                            onClose()
+                        }
                     }) {
-                        Text("Giải phóng")
+                        Text(L("Giải phóng"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(Color.black.opacity(0.8))
                             .padding(.horizontal, 20)

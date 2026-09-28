@@ -10,7 +10,7 @@ struct ConsoleOverviewView: View {
             VStack(spacing: 24) {
                 // Header
                 HStack {
-                    Text("Tổng quan về hệ thống")
+                    Text(L("Tổng quan về hệ thống"))
                         .font(.title2)
                         .bold()
                         .foregroundColor(.white)
@@ -24,18 +24,18 @@ struct ConsoleOverviewView: View {
                     HStack {
                         Image(systemName: "memorychip")
                             .foregroundColor(.blue)
-                        Text("10 mức sử dụng bộ nhớ hàng đầu")
+                        Text(L("10 mức sử dụng bộ nhớ hàng đầu"))
                             .font(.headline)
                             .foregroundColor(.white)
                         Spacer()
                         
-                        Text("Nhấn vào đây để xem tất cả")
+                        Text(L("Nhấn vào đây để xem tất cả"))
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }
                     
                     if systemMonitor.topMemoryProcesses.isEmpty {
-                        Text("Đang tải...")
+                        Text(L("Đang tải..."))
                             .foregroundColor(.secondaryText)
                             .padding()
                     } else {
@@ -108,14 +108,14 @@ struct ConsoleOverviewView: View {
                     HStack {
                         Image(systemName: "cpu")
                             .foregroundColor(.purple)
-                        Text("10 mức sử dụng CPU hàng đầu")
+                        Text(L("10 mức sử dụng CPU hàng đầu"))
                             .font(.headline)
                             .foregroundColor(.white)
                         Spacer()
                     }
                     
                     if systemMonitor.topCPUProcesses.isEmpty {
-                        Text("Đang tải...")
+                        Text(L("Đang tải..."))
                             .foregroundColor(.secondaryText)
                             .padding()
                     } else {
@@ -183,7 +183,7 @@ struct ConsoleOverviewView: View {
                     HStack {
                         Image(systemName: "network")
                             .foregroundColor(.green)
-                        Text("Xu hướng mạng")
+                        Text(L("Xu hướng mạng"))
                             .font(.headline)
                             .foregroundColor(.white)
                         Spacer()
@@ -221,10 +221,10 @@ struct ConsoleOverviewView: View {
                     .cornerRadius(8)
                     
                     HStack {
-                        Text("Tổng số lượt tải xuống:") +
+                        Text(L("Tổng số lượt tải xuống:")) +
                         Text(systemMonitor.totalDownload).foregroundColor(.white)
                         Spacer()
-                        Text("Tổng tải lên:") +
+                        Text(L("Tổng tải lên:")) +
                         Text(systemMonitor.totalUpload).foregroundColor(.white)
                     }
                     .font(.caption)

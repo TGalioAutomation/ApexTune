@@ -270,12 +270,12 @@ class PrivacyScannerService: ObservableObject {
         
         let walPath = path.appendingPathExtension("wal")
         if let size = fileSize(at: walPath) {
-            items.append(PrivacyItem(browser: browser, type: type, path: walPath, size: size, displayPath: "\(description) (WAL)"))
+            items.append(PrivacyItem(browser: browser, type: type, path: walPath, size: size, displayPath: String(format: L("%@ (WAL)"), description)))
         }
         
         let shmPath = path.appendingPathExtension("shm")
         if let size = fileSize(at: shmPath) {
-            items.append(PrivacyItem(browser: browser, type: type, path: shmPath, size: size, displayPath: "\(description) (SHM)"))
+            items.append(PrivacyItem(browser: browser, type: type, path: shmPath, size: size, displayPath: String(format: L("%@ (SHM)"), description)))
         }
     }
     
@@ -668,12 +668,12 @@ class PrivacyScannerService: ObservableObject {
         
         // 1. History
         let historyURL = home.appendingPathComponent("Library/Safari/History.db")
-        addWithRelatedFiles(path: historyURL, type: .history, browser: .safari, description: "Safari cơ sở dữ liệu lịch sử duyệt web", to: &items)
+        addWithRelatedFiles(path: historyURL, type: .history, browser: .safari, description: L("Safari cơ sở dữ liệu lịch sử duyệt web"), to: &items)
         
         // 2. Downloads
         let downloadsURL = home.appendingPathComponent("Library/Safari/Downloads.plist")
          if let size = fileSize(at: downloadsURL) {
-            items.append(PrivacyItem(browser: .safari, type: .downloads, path: downloadsURL, size: size, displayPath: "Safari danh sách lịch sử tải xuống"))
+            items.append(PrivacyItem(browser: .safari, type: .downloads, path: downloadsURL, size: size, displayPath: L("Safari danh sách lịch sử tải xuống")))
         }
         
         // 3. Cookies - Check multiple locations for different macOS versions
@@ -690,13 +690,13 @@ class PrivacyScannerService: ObservableObject {
         
         for cookiesURL in cookiesPaths {
             if let size = fileSize(at: cookiesURL) {
-                items.append(PrivacyItem(browser: .safari, type: .cookies, path: cookiesURL, size: size, displayPath: "Safari tệp cookie"))
+                items.append(PrivacyItem(browser: .safari, type: .cookies, path: cookiesURL, size: size, displayPath: L("Safari tệp cookie")))
                 print("   ✅ Found Safari Cookies at: \(cookiesURL.path)")
                 break // Only add once
             }
             // Check if it's a directory
             if let size = folderSize(at: cookiesURL), size > 0 {
-                items.append(PrivacyItem(browser: .safari, type: .cookies, path: cookiesURL, size: size, displayPath: "Safari thư mục Cookies"))
+                items.append(PrivacyItem(browser: .safari, type: .cookies, path: cookiesURL, size: size, displayPath: L("Safari thư mục Cookies")))
                 print("   ✅ Found Safari Cookies directory at: \(cookiesURL.path)")
                 break
             }
@@ -706,68 +706,68 @@ class PrivacyScannerService: ObservableObject {
         let systemCookiesURL = URL(fileURLWithPath: "/Library/Cookies")
         if fileManager.fileExists(atPath: systemCookiesURL.path) {
             if let size = folderSize(at: systemCookiesURL), size > 0 {
-                items.append(PrivacyItem(browser: .safari, type: .cookies, path: systemCookiesURL, size: size, displayPath: "Cookies hệ thống"))
+                items.append(PrivacyItem(browser: .safari, type: .cookies, path: systemCookiesURL, size: size, displayPath: L("Cookies hệ thống")))
             }
         }
         
         // 4. LocalStorage
         let localStorageURL = home.appendingPathComponent("Library/Safari/LocalStorage")
         if let size = folderSize(at: localStorageURL), size > 0 {
-            items.append(PrivacyItem(browser: .safari, type: .history, path: localStorageURL, size: size, displayPath: "Safari lưu trữ cục bộ"))
+            items.append(PrivacyItem(browser: .safari, type: .history, path: localStorageURL, size: size, displayPath: L("Safari lưu trữ cục bộ")))
         }
         
         // 5. WebsiteData (Databases, IndexedDB, etc.)
         let websiteDataURL = home.appendingPathComponent("Library/Safari/Databases")
         if let size = folderSize(at: websiteDataURL), size > 0 {
-            items.append(PrivacyItem(browser: .safari, type: .history, path: websiteDataURL, size: size, displayPath: "Safari cơ sở dữ liệu website"))
+            items.append(PrivacyItem(browser: .safari, type: .history, path: websiteDataURL, size: size, displayPath: L("Safari cơ sở dữ liệu website")))
         }
         
         // 6. Touch Icons / Favicon Cache
         let touchIconsURL = home.appendingPathComponent("Library/Safari/Touch Icons Cache")
         if let size = folderSize(at: touchIconsURL), size > 0 {
-            items.append(PrivacyItem(browser: .safari, type: .history, path: touchIconsURL, size: size, displayPath: "Safari bộ đệm biểu tượng"))
+            items.append(PrivacyItem(browser: .safari, type: .history, path: touchIconsURL, size: size, displayPath: L("Safari bộ đệm biểu tượng")))
         }
         
         // 7. Form Values
         let formValuesURL = home.appendingPathComponent("Library/Safari/Form Values")
         if let size = fileSize(at: formValuesURL) {
-            items.append(PrivacyItem(browser: .safari, type: .history, path: formValuesURL, size: size, displayPath: "Safari dữ liệu biểu mẫu"))
+            items.append(PrivacyItem(browser: .safari, type: .history, path: formValuesURL, size: size, displayPath: L("Safari dữ liệu biểu mẫu")))
         }
         
         // 8. Safari Caches
         let safariCacheURL = home.appendingPathComponent("Library/Caches/com.apple.Safari")
         if let size = folderSize(at: safariCacheURL), size > 0 {
-            items.append(PrivacyItem(browser: .safari, type: .history, path: safariCacheURL, size: size, displayPath: "Safari bộ đệm"))
+            items.append(PrivacyItem(browser: .safari, type: .history, path: safariCacheURL, size: size, displayPath: L("Safari bộ đệm")))
         }
         
         // 9. Last Session
         let lastSessionURL = home.appendingPathComponent("Library/Safari/LastSession.plist")
         if let size = fileSize(at: lastSessionURL) {
-            items.append(PrivacyItem(browser: .safari, type: .history, path: lastSessionURL, size: size, displayPath: "Safari phiên trước"))
+            items.append(PrivacyItem(browser: .safari, type: .history, path: lastSessionURL, size: size, displayPath: L("Safari phiên trước")))
         }
         
         // 10. Top Sites
         let topSitesURL = home.appendingPathComponent("Library/Safari/TopSites.plist")
         if let size = fileSize(at: topSitesURL) {
-            items.append(PrivacyItem(browser: .safari, type: .history, path: topSitesURL, size: size, displayPath: "Safari trang web hàng đầu"))
+            items.append(PrivacyItem(browser: .safari, type: .history, path: topSitesURL, size: size, displayPath: L("Safari trang web hàng đầu")))
         }
 
         // 11. Favicon Cache
         let faviconsURL = home.appendingPathComponent("Library/Safari/Favicon Cache")
         if let size = folderSize(at: faviconsURL), size > 0 {
-            items.append(PrivacyItem(browser: .safari, type: .history, path: faviconsURL, size: size, displayPath: "Safari bộ đệm biểu tượng trang web"))
+            items.append(PrivacyItem(browser: .safari, type: .history, path: faviconsURL, size: size, displayPath: L("Safari bộ đệm biểu tượng trang web")))
         }
         
         // 12. Remote Notifications
         let remoteNotifURL = home.appendingPathComponent("Library/Safari/RemoteNotification")
         if let size = folderSize(at: remoteNotifURL), size > 0 {
-             items.append(PrivacyItem(browser: .safari, type: .history, path: remoteNotifURL, size: size, displayPath: "Safari bộ đệm thông báo từ xa"))
+             items.append(PrivacyItem(browser: .safari, type: .history, path: remoteNotifURL, size: size, displayPath: L("Safari bộ đệm thông báo từ xa")))
         }
 
         // 13. Recently Closed Tabs
         let closedTabsURL = home.appendingPathComponent("Library/Safari/RecentlyClosedTabs.plist")
         if let size = fileSize(at: closedTabsURL) {
-            items.append(PrivacyItem(browser: .safari, type: .history, path: closedTabsURL, size: size, displayPath: "Safari tab vừa đóng"))
+            items.append(PrivacyItem(browser: .safari, type: .history, path: closedTabsURL, size: size, displayPath: L("Safari tab vừa đóng")))
         }
 
         return items
@@ -813,13 +813,13 @@ class PrivacyScannerService: ObservableObject {
                 print("   ✅ \(profileName) - History: \(visits) visits, \(downloads) downloads, \(searches) searches")
                 
                 if visits > 0 {
-                    items.append(PrivacyItem(browser: .chrome, type: .history, path: historyURL, size: historySize, displayPath: "Chrome lịch sử duyệt web (\(profileName)) - \(visits) mục"))
+                    items.append(PrivacyItem(browser: .chrome, type: .history, path: historyURL, size: historySize, displayPath: String(format: L("Chrome lịch sử duyệt web (%@) - %d mục"), profileName, visits)))
                 }
                 if downloads > 0 {
-                    items.append(PrivacyItem(browser: .chrome, type: .downloads, path: historyURL, size: 0, displayPath: "Chrome lịch sử tải xuống (\(profileName)) - \(downloads) mục"))
+                    items.append(PrivacyItem(browser: .chrome, type: .downloads, path: historyURL, size: 0, displayPath: String(format: L("Chrome lịch sử tải xuống (%@) - %d mục"), profileName, downloads)))
                 }
                 if searches > 0 {
-                    items.append(PrivacyItem(browser: .chrome, type: .history, path: historyURL, size: 0, displayPath: "Chrome truy vấn tìm kiếm (\(profileName)) - \(searches) mục"))
+                    items.append(PrivacyItem(browser: .chrome, type: .history, path: historyURL, size: 0, displayPath: String(format: L("Chrome truy vấn tìm kiếm (%@) - %d mục"), profileName, searches)))
                 }
             }
             
@@ -842,7 +842,7 @@ class PrivacyScannerService: ObservableObject {
                             type: .cookies,
                             path: cookiesURL,
                             size: 0,
-                            displayPath: "\(domain) - \(count) mục"
+                            displayPath: String(format: L("%@ - %d mục"), domain, count)
                         )
                     }
                     
@@ -851,7 +851,7 @@ class PrivacyScannerService: ObservableObject {
                         type: .cookies, 
                         path: cookiesURL, 
                         size: cookieSize, 
-                        displayPath: "Chrome Cookies (\(profileName)) - \(cookieCount) mục",
+                        displayPath: String(format: L("Chrome Cookies (%@) - %d mục"), profileName, cookieCount),
                         children: children.isEmpty ? nil : children
                     ))
                 }
@@ -867,7 +867,7 @@ class PrivacyScannerService: ObservableObject {
                 print("   ✅ \(profileName) - Passwords: \(passwordCount) passwords")
                 
                 if passwordCount > 0 {
-                    items.append(PrivacyItem(browser: .chrome, type: .history, path: loginDataURL, size: loginSize, displayPath: "Chrome mật khẩu đã lưu (\(profileName)) - \(passwordCount) mục"))
+                    items.append(PrivacyItem(browser: .chrome, type: .history, path: loginDataURL, size: loginSize, displayPath: String(format: L("Chrome mật khẩu đã lưu (%@) - %d mục"), profileName, passwordCount)))
                 }
             }
             
@@ -881,38 +881,38 @@ class PrivacyScannerService: ObservableObject {
                 print("   ✅ \(profileName) - Autofill: \(autofillCount) entries")
                 
                 if autofillCount > 0 {
-                    items.append(PrivacyItem(browser: .chrome, type: .history, path: webDataURL, size: webDataSize, displayPath: "Chrome biểu mẫu tự điền (\(profileName)) - \(autofillCount) mục"))
+                    items.append(PrivacyItem(browser: .chrome, type: .history, path: webDataURL, size: webDataSize, displayPath: String(format: L("Chrome biểu mẫu tự điền (%@) - %d mục"), profileName, autofillCount)))
                 }
             }
             
             // ===== 5. Local Storage =====
             let localStorageURL = profile.appendingPathComponent("Local Storage/leveldb")
             if let size = folderSize(at: localStorageURL), size > 0 {
-                items.append(PrivacyItem(browser: .chrome, type: .history, path: localStorageURL, size: size, displayPath: "Chrome lưu trữ cục bộ (\(profileName))"))
+                items.append(PrivacyItem(browser: .chrome, type: .history, path: localStorageURL, size: size, displayPath: String(format: L("Chrome lưu trữ cục bộ (%@)"), profileName)))
             }
             
             // ===== 6. IndexedDB =====
             let indexedDBURL = profile.appendingPathComponent("IndexedDB")
             if let size = folderSize(at: indexedDBURL), size > 0 {
-                items.append(PrivacyItem(browser: .chrome, type: .history, path: indexedDBURL, size: size, displayPath: "Chrome IndexedDB (\(profileName))"))
+                items.append(PrivacyItem(browser: .chrome, type: .history, path: indexedDBURL, size: size, displayPath: String(format: L("Chrome IndexedDB (%@)"), profileName)))
             }
             
             // ===== 7. Cache =====
             let cacheURL = profile.appendingPathComponent("Cache")
             if let size = folderSize(at: cacheURL), size > 0 {
-                items.append(PrivacyItem(browser: .chrome, type: .history, path: cacheURL, size: size, displayPath: "Chrome bộ đệm (\(profileName))"))
+                items.append(PrivacyItem(browser: .chrome, type: .history, path: cacheURL, size: size, displayPath: String(format: L("Chrome bộ đệm (%@)"), profileName)))
             }
             
             // ===== 8. Service Worker =====
             let swCacheURL = profile.appendingPathComponent("Service Worker/CacheStorage")
             if let size = folderSize(at: swCacheURL), size > 0 {
-                items.append(PrivacyItem(browser: .chrome, type: .history, path: swCacheURL, size: size, displayPath: "Chrome Service Worker bộ đệm (\(profileName))"))
+                items.append(PrivacyItem(browser: .chrome, type: .history, path: swCacheURL, size: size, displayPath: String(format: L("Chrome Service Worker bộ đệm (%@)"), profileName)))
             }
             
             // ===== 9. GPU Cache =====
             let gpuCacheURL = profile.appendingPathComponent("GPUCache")
             if let size = folderSize(at: gpuCacheURL), size > 0 {
-                items.append(PrivacyItem(browser: .chrome, type: .history, path: gpuCacheURL, size: size, displayPath: "Chrome GPU bộ đệm (\(profileName))"))
+                items.append(PrivacyItem(browser: .chrome, type: .history, path: gpuCacheURL, size: size, displayPath: String(format: L("Chrome GPU bộ đệm (%@)"), profileName)))
             }
 
             // ===== 10. Session Data =====
@@ -920,7 +920,7 @@ class PrivacyScannerService: ObservableObject {
             for sFile in sessionFiles {
                 let sURL = profile.appendingPathComponent(sFile)
                 if let size = fileSize(at: sURL) {
-                    items.append(PrivacyItem(browser: .chrome, type: .history, path: sURL, size: size, displayPath: "Chrome \(sFile) (\(profileName))"))
+                    items.append(PrivacyItem(browser: .chrome, type: .history, path: sURL, size: size, displayPath: String(format: L("Chrome %@ (%@)"), sFile, profileName)))
                 }
             }
         }
@@ -967,7 +967,7 @@ class PrivacyScannerService: ObservableObject {
                         type: .history, 
                         path: placesURL,
                         size: size,
-                        displayPath: "Firefox lịch sử duyệt web (\(profileName)) - \(visitCount) mục"
+                        displayPath: String(format: L("Firefox lịch sử duyệt web (%@) - %d mục"), profileName, visitCount)
                     ))
                 }
             }
@@ -986,7 +986,7 @@ class PrivacyScannerService: ObservableObject {
                         type: .cookies,
                         path: cookiesURL,
                         size: size,
-                        displayPath: "Firefox Cookies (\(profileName)) - \(cookieCount) mục"
+                        displayPath: String(format: L("Firefox Cookies (%@) - %d mục"), profileName, cookieCount)
                     ))
                 }
             }
@@ -1005,7 +1005,7 @@ class PrivacyScannerService: ObservableObject {
                         type: .history,
                         path: formHistoryURL,
                         size: size,
-                        displayPath: "Firefox lịch sử biểu mẫu (\(profileName)) - \(formCount) mục"
+                        displayPath: String(format: L("Firefox lịch sử biểu mẫu (%@) - %d mục"), profileName, formCount)
                     ))
                 }
             }
@@ -1015,13 +1015,13 @@ class PrivacyScannerService: ObservableObject {
 
             let cacheDir = home.appendingPathComponent("Library/Caches/Firefox/Profiles/\(profileName)/cache2")
             if let size = folderSize(at: cacheDir), size > 0 {
-                items.append(PrivacyItem(browser: .firefox, type: .history, path: cacheDir, size: size, displayPath: "Firefox bộ đệm (\(profileName))"))
+                items.append(PrivacyItem(browser: .firefox, type: .history, path: cacheDir, size: size, displayPath: String(format: L("Firefox bộ đệm (%@)"), profileName)))
             }
 
             // 5. Local Storage (storage/default)
             let storageDir = profile.appendingPathComponent("storage/default")
             if let size = folderSize(at: storageDir), size > 0 {
-                 items.append(PrivacyItem(browser: .firefox, type: .history, path: storageDir, size: size, displayPath: "Firefox lưu trữ cục bộ (\(profileName))"))
+                 items.append(PrivacyItem(browser: .firefox, type: .history, path: storageDir, size: size, displayPath: String(format: L("Firefox lưu trữ cục bộ (%@)"), profileName)))
             }
         }
         
@@ -1045,9 +1045,9 @@ class PrivacyScannerService: ObservableObject {
                         let dirName = fileURL.deletingLastPathComponent().lastPathComponent
                         let displayName: String
                         if dirName.contains("ApplicationRecentDocuments") {
-                             displayName = "Tài liệu gần đây của ứng dụng: \(name.replacingOccurrences(of: ".sfl3", with: "").replacingOccurrences(of: ".sfl2", with: "").replacingOccurrences(of: "com.apple.LSSharedFileList.", with: ""))"
+                             displayName = String(format: L("Tài liệu gần đây của ứng dụng: %@"), name.replacingOccurrences(of: ".sfl3", with: "").replacingOccurrences(of: ".sfl2", with: "").replacingOccurrences(of: "com.apple.LSSharedFileList.", with: ""))
                         } else {
-                             displayName = "mục gần đây của hệ thống: \(name)"
+                             displayName = String(format: L("mục gần đây của hệ thống: %@"), name)
                         }
                         
                         items.append(PrivacyItem(browser: .system, type: .recentItems, path: fileURL, size: size, displayPath: displayName))
@@ -1064,14 +1064,14 @@ class PrivacyScannerService: ObservableObject {
         for p in plists {
             let url = home.appendingPathComponent(p)
             if fileManager.fileExists(atPath: url.path), let size = fileSize(at: url) {
-                items.append(PrivacyItem(browser: .system, type: .recentItems, path: url, size: size, displayPath: "bản ghi hệ thống chính: \(url.lastPathComponent)"))
+                items.append(PrivacyItem(browser: .system, type: .recentItems, path: url, size: size, displayPath: String(format: L("bản ghi hệ thống chính: %@"), url.lastPathComponent)))
             }
         }
         
         // Recent Servers
         let recentServersDir = home.appendingPathComponent("Library/Recent Servers")
         if let size = folderSize(at: recentServersDir), size > 0 {
-             items.append(PrivacyItem(browser: .system, type: .recentItems, path: recentServersDir, size: size, displayPath: "máy chủ truy cập gần đây"))
+             items.append(PrivacyItem(browser: .system, type: .recentItems, path: recentServersDir, size: size, displayPath: L("máy chủ truy cập gần đây")))
         }
 
         return items
@@ -1119,7 +1119,7 @@ class PrivacyScannerService: ObservableObject {
                 type: .permissions,
                 path: URL(fileURLWithPath: "/dev/null"), // đường dẫn ảo
                 size: 0, // Bản thân các quyền không có kích thước tệp
-                displayPath: "\(perm.appName) - \(perm.serviceName)"
+                displayPath: String(format: L("%@ - %@"), perm.appName, perm.serviceName)
             ))
         }
         
@@ -1139,7 +1139,7 @@ class PrivacyScannerService: ObservableObject {
                 type: .wifi,
                 path: wifiURL,
                 size: size,
-                displayPath: "cấu hình mạng Wi-Fi đã biết"
+                displayPath: L("cấu hình mạng Wi-Fi đã biết")
             ))
         }
         
@@ -1152,11 +1152,11 @@ class PrivacyScannerService: ObservableObject {
         
         // 1. iMessage
         let messagesURL = home.appendingPathComponent("Library/Messages/chat.db")
-        addWithRelatedFiles(path: messagesURL, type: .chat, browser: .system, description: "lịch sử chat iMessage", to: &items)
+        addWithRelatedFiles(path: messagesURL, type: .chat, browser: .system, description: L("lịch sử chat iMessage"), to: &items)
         
         let attachmentsURL = home.appendingPathComponent("Library/Messages/Attachments")
         if let size = folderSize(at: attachmentsURL), size > 0 {
-            items.append(PrivacyItem(browser: .system, type: .chat, path: attachmentsURL, size: size, displayPath: "tệp đính kèm iMessage"))
+            items.append(PrivacyItem(browser: .system, type: .chat, path: attachmentsURL, size: size, displayPath: L("tệp đính kèm iMessage")))
         }
         
         // 2. WeChat
@@ -1167,14 +1167,14 @@ class PrivacyScannerService: ObservableObject {
 
             let wechatDataURL = wechatContainerURL.appendingPathComponent("Data/Library/Application Support/com.tencent.xinWeChat")
             if let size = folderSize(at: wechatDataURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .chat, path: wechatDataURL, size: size, displayPath: "dữ liệu chat WeChat"))
+                items.append(PrivacyItem(browser: .system, type: .chat, path: wechatDataURL, size: size, displayPath: L("dữ liệu chat WeChat")))
             }
             
             // bộ nhớ đệm
 
             let wechatCacheURL = wechatContainerURL.appendingPathComponent("Data/Library/Caches")
             if let size = folderSize(at: wechatCacheURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .chat, path: wechatCacheURL, size: size, displayPath: "bộ đệm WeChat"))
+                items.append(PrivacyItem(browser: .system, type: .chat, path: wechatCacheURL, size: size, displayPath: L("bộ đệm WeChat")))
             }
         }
         
@@ -1183,12 +1183,12 @@ class PrivacyScannerService: ObservableObject {
         if fileManager.fileExists(atPath: qqContainerURL.path) {
             let qqDataURL = qqContainerURL.appendingPathComponent("Data/Library/Application Support/QQ")
             if let size = folderSize(at: qqDataURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .chat, path: qqDataURL, size: size, displayPath: "dữ liệu chat QQ"))
+                items.append(PrivacyItem(browser: .system, type: .chat, path: qqDataURL, size: size, displayPath: L("dữ liệu chat QQ")))
             }
             
             let qqCacheURL = qqContainerURL.appendingPathComponent("Data/Library/Caches")
             if let size = folderSize(at: qqCacheURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .chat, path: qqCacheURL, size: size, displayPath: "bộ đệm QQ"))
+                items.append(PrivacyItem(browser: .system, type: .chat, path: qqCacheURL, size: size, displayPath: L("bộ đệm QQ")))
             }
         }
         
@@ -1197,7 +1197,7 @@ class PrivacyScannerService: ObservableObject {
         if fileManager.fileExists(atPath: telegramGroupURL.path) {
             let telegramDataURL = telegramGroupURL.appendingPathComponent("stable")
             if let size = folderSize(at: telegramDataURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .chat, path: telegramDataURL, size: size, displayPath: "dữ liệu chat Telegram"))
+                items.append(PrivacyItem(browser: .system, type: .chat, path: telegramDataURL, size: size, displayPath: L("dữ liệu chat Telegram")))
             }
         }
         
@@ -1205,7 +1205,7 @@ class PrivacyScannerService: ObservableObject {
 
         let telegramCacheURL = home.appendingPathComponent("Library/Caches/ru.keepcoder.Telegram")
         if let size = folderSize(at: telegramCacheURL), size > 0 {
-            items.append(PrivacyItem(browser: .system, type: .chat, path: telegramCacheURL, size: size, displayPath: "bộ đệm Telegram"))
+            items.append(PrivacyItem(browser: .system, type: .chat, path: telegramCacheURL, size: size, displayPath: L("bộ đệm Telegram")))
         }
         
         // 5. WeChat doanh nghiệp
@@ -1214,12 +1214,12 @@ class PrivacyScannerService: ObservableObject {
         if fileManager.fileExists(atPath: weworkContainerURL.path) {
             let weworkDataURL = weworkContainerURL.appendingPathComponent("Data/Library/Application Support")
             if let size = folderSize(at: weworkDataURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .chat, path: weworkDataURL, size: size, displayPath: "Dữ liệu chat WeChat Work"))
+                items.append(PrivacyItem(browser: .system, type: .chat, path: weworkDataURL, size: size, displayPath: L("Dữ liệu chat WeChat Work")))
             }
             
             let weworkCacheURL = weworkContainerURL.appendingPathComponent("Data/Library/Caches")
             if let size = folderSize(at: weworkCacheURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .chat, path: weworkCacheURL, size: size, displayPath: "Bộ đệm WeChat Work"))
+                items.append(PrivacyItem(browser: .system, type: .chat, path: weworkCacheURL, size: size, displayPath: L("Bộ đệm WeChat Work")))
             }
         }
         
@@ -1229,42 +1229,42 @@ class PrivacyScannerService: ObservableObject {
         if fileManager.fileExists(atPath: dingtalkContainerURL.path) {
             let dingtalkDataURL = dingtalkContainerURL.appendingPathComponent("Data/Library/Application Support")
             if let size = folderSize(at: dingtalkDataURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .chat, path: dingtalkDataURL, size: size, displayPath: "dữ liệu chat DingTalk"))
+                items.append(PrivacyItem(browser: .system, type: .chat, path: dingtalkDataURL, size: size, displayPath: L("dữ liệu chat DingTalk")))
             }
         }
         
         // 7. Slack
         let slackCacheURL = home.appendingPathComponent("Library/Caches/com.tinyspeck.slackmacgap")
         if let size = folderSize(at: slackCacheURL), size > 0 {
-            items.append(PrivacyItem(browser: .system, type: .chat, path: slackCacheURL, size: size, displayPath: "bộ đệm Slack"))
+            items.append(PrivacyItem(browser: .system, type: .chat, path: slackCacheURL, size: size, displayPath: L("bộ đệm Slack")))
         }
         
         let slackDataURL = home.appendingPathComponent("Library/Application Support/Slack")
         if let size = folderSize(at: slackDataURL), size > 0 {
-            items.append(PrivacyItem(browser: .system, type: .chat, path: slackDataURL, size: size, displayPath: "dữ liệu Slack"))
+            items.append(PrivacyItem(browser: .system, type: .chat, path: slackDataURL, size: size, displayPath: L("dữ liệu Slack")))
         }
         
         // 8. Discord
         let discordCacheURL = home.appendingPathComponent("Library/Application Support/discord")
         if let size = folderSize(at: discordCacheURL), size > 0 {
-            items.append(PrivacyItem(browser: .system, type: .chat, path: discordCacheURL, size: size, displayPath: "dữ liệu Discord"))
+            items.append(PrivacyItem(browser: .system, type: .chat, path: discordCacheURL, size: size, displayPath: L("dữ liệu Discord")))
         }
         
         // 9. WhatsApp
         let whatsappCacheURL = home.appendingPathComponent("Library/Caches/net.whatsapp.WhatsApp")
         if let size = folderSize(at: whatsappCacheURL), size > 0 {
-            items.append(PrivacyItem(browser: .system, type: .chat, path: whatsappCacheURL, size: size, displayPath: "bộ đệm WhatsApp"))
+            items.append(PrivacyItem(browser: .system, type: .chat, path: whatsappCacheURL, size: size, displayPath: L("bộ đệm WhatsApp")))
         }
         
         let whatsappDataURL = home.appendingPathComponent("Library/Application Support/WhatsApp")
         if let size = folderSize(at: whatsappDataURL), size > 0 {
-            items.append(PrivacyItem(browser: .system, type: .chat, path: whatsappDataURL, size: size, displayPath: "dữ liệu WhatsApp"))
+            items.append(PrivacyItem(browser: .system, type: .chat, path: whatsappDataURL, size: size, displayPath: L("dữ liệu WhatsApp")))
         }
 
         // 10. Skype
         let skypeURL = home.appendingPathComponent("Library/Application Support/Skype")
          if let size = folderSize(at: skypeURL), size > 0 {
-            items.append(PrivacyItem(browser: .system, type: .chat, path: skypeURL, size: size, displayPath: "dữ liệu Skype"))
+            items.append(PrivacyItem(browser: .system, type: .chat, path: skypeURL, size: size, displayPath: L("dữ liệu Skype")))
         }
         
         return items
@@ -1276,11 +1276,11 @@ class PrivacyScannerService: ObservableObject {
         
         // 1. Terminal History
         let shellHistories = [
-            ".zsh_history": "Zsh lịch sử lệnh",
-            ".bash_history": "Bash lịch sử lệnh",
-            ".python_history": "Python lịch sử lệnh",
-            ".node_repl_history": "Node.js lịch sử lệnh",
-            ".mysql_history": "MySQL lịch sử lệnh"
+            ".zsh_history": L("Zsh lịch sử lệnh"),
+            ".bash_history": L("Bash lịch sử lệnh"),
+            ".python_history": L("Python lịch sử lệnh"),
+            ".node_repl_history": L("Node.js lịch sử lệnh"),
+            ".mysql_history": L("MySQL lịch sử lệnh")
         ]
         
         for (filename, displayName) in shellHistories {
@@ -1302,19 +1302,19 @@ class PrivacyScannerService: ObservableObject {
             // History
             let historyURL = vscodePath.appendingPathComponent("User/History")
             if let size = folderSize(at: historyURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .development, path: historyURL, size: size, displayPath: "VSCode lịch sử chỉnh sửa"))
+                items.append(PrivacyItem(browser: .system, type: .development, path: historyURL, size: size, displayPath: L("VSCode lịch sử chỉnh sửa")))
             }
             
             // Backups
             let backupsURL = vscodePath.appendingPathComponent("Backups")
             if let size = folderSize(at: backupsURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .development, path: backupsURL, size: size, displayPath: "VSCode bản sao lưu workspace"))
+                items.append(PrivacyItem(browser: .system, type: .development, path: backupsURL, size: size, displayPath: L("VSCode bản sao lưu workspace")))
             }
             
             // CachedData
             let cachedDataURL = vscodePath.appendingPathComponent("CachedData")
             if let size = folderSize(at: cachedDataURL), size > 0 {
-                items.append(PrivacyItem(browser: .system, type: .development, path: cachedDataURL, size: size, displayPath: "VSCode dữ liệu bộ đệm"))
+                items.append(PrivacyItem(browser: .system, type: .development, path: cachedDataURL, size: size, displayPath: L("VSCode dữ liệu bộ đệm")))
             }
         }
         
@@ -1324,7 +1324,7 @@ class PrivacyScannerService: ObservableObject {
             // IB Support
             let ibSupport = xcodeUserData.appendingPathComponent("IB Support/Simulator")
             if let size = folderSize(at: ibSupport), size > 0 {
-                 items.append(PrivacyItem(browser: .system, type: .development, path: ibSupport, size: size, displayPath: "Xcode Interface Builder bộ đệm"))
+                 items.append(PrivacyItem(browser: .system, type: .development, path: ibSupport, size: size, displayPath: L("Xcode Interface Builder bộ đệm")))
             }
         }
         
@@ -1456,60 +1456,60 @@ class PrivacyScannerService: ObservableObject {
     private func localizeService(_ service: String) -> (name: String, category: String) {
         switch service {
         case "kTCCServiceCamera":
-            return ("Máy ảnh", "Quyền riêng tư")
+            return (L("Máy ảnh"), L("Quyền riêng tư"))
         case "kTCCServiceMicrophone":
-            return ("Micrô", "Quyền riêng tư")
+            return (L("Micrô"), L("Quyền riêng tư"))
         case "kTCCServicePhotos", "kTCCServicePhotosAdd":
-            return ("Ảnh", "Quyền riêng tư")
+            return (L("Ảnh"), L("Quyền riêng tư"))
         case "kTCCServiceLocation":
-            return ("Vị trí", "Quyền riêng tư")
+            return (L("Vị trí"), L("Quyền riêng tư"))
         case "kTCCServiceContacts":
-            return ("Danh bạ", "Quyền riêng tư")
+            return (L("Danh bạ"), L("Quyền riêng tư"))
         case "kTCCServiceCalendar":
-            return ("Lịch", "Quyền riêng tư")
+            return (L("Lịch"), L("Quyền riêng tư"))
         case "kTCCServiceReminders":
-            return ("Lời nhắc", "Quyền riêng tư")
+            return (L("Lời nhắc"), L("Quyền riêng tư"))
         case "kTCCServiceAddressBook":
-            return ("Sổ địa chỉ", "Quyền riêng tư")
+            return (L("Sổ địa chỉ"), L("Quyền riêng tư"))
         case "kTCCServiceScreenCapture":
-            return ("Ghi màn hình", "Quyền riêng tư")
+            return (L("Ghi màn hình"), L("Quyền riêng tư"))
         case "kTCCServiceAccessibility":
-            return ("Trợ năng", "Quyền riêng tư")
+            return (L("Trợ năng"), L("Quyền riêng tư"))
         case "kTCCServicePostEvent":
-            return ("Giám sát đầu vào", "Quyền riêng tư")
+            return (L("Giám sát đầu vào"), L("Quyền riêng tư"))
         case "kTCCServiceSystemPolicyAllFiles":
-            return ("Toàn quyền truy cập ổ đĩa", "Quyền riêng tư")
+            return (L("Toàn quyền truy cập ổ đĩa"), L("Quyền riêng tư"))
         case "kTCCServiceSystemPolicyDesktopFolder":
-            return ("Thư mục Màn hình", "Quyền riêng tư")
+            return (L("Thư mục Màn hình"), L("Quyền riêng tư"))
         case "kTCCServiceSystemPolicyDocumentsFolder":
-            return ("Thư mục Tài liệu", "Quyền riêng tư")
+            return (L("Thư mục Tài liệu"), L("Quyền riêng tư"))
         case "kTCCServiceSystemPolicyDownloadsFolder":
-            return ("Thư mục Tải xuống", "Quyền riêng tư")
+            return (L("Thư mục Tải xuống"), L("Quyền riêng tư"))
         case "kTCCServiceSystemPolicyNetworkVolumes":
-            return ("Ổ đĩa mạng", "Quyền riêng tư")
+            return (L("Ổ đĩa mạng"), L("Quyền riêng tư"))
         case "kTCCServiceSystemPolicyRemovableVolumes":
-            return ("Ổ đĩa rời", "Quyền riêng tư")
+            return (L("Ổ đĩa rời"), L("Quyền riêng tư"))
         case "kTCCServiceFileProviderDomain":
-            return ("Trình cung cấp tệp", "Quyền riêng tư")
+            return (L("Trình cung cấp tệp"), L("Quyền riêng tư"))
         case "kTCCServiceFileProviderPresence":
-            return ("Trạng thái trình cung cấp tệp", "Quyền riêng tư")
+            return (L("Trạng thái trình cung cấp tệp"), L("Quyền riêng tư"))
         case "kTCCServiceMediaLibrary":
-            return ("Thư viện phương tiện", "Quyền riêng tư")
+            return (L("Thư viện phương tiện"), L("Quyền riêng tư"))
         case "kTCCServiceSiri":
-            return ("Siri", "Quyền riêng tư")
+            return (L("Siri"), L("Quyền riêng tư"))
         case "kTCCServiceSpeechRecognition":
-            return ("Nhận dạng giọng nói", "Quyền riêng tư")
+            return (L("Nhận dạng giọng nói"), L("Quyền riêng tư"))
         case "kTCCServiceAppleEvents":
-            return ("Tự động hóa", "Quyền riêng tư")
+            return (L("Tự động hóa"), L("Quyền riêng tư"))
         case "kTCCServiceBluetoothAlways":
-            return ("Bluetooth", "Quyền riêng tư")
+            return (L("Bluetooth"), L("Quyền riêng tư"))
         case "kTCCServiceWillow":
-            return ("HomeKit", "Quyền riêng tư")
+            return (L("HomeKit"), L("Quyền riêng tư"))
         default:
             // Loại quyền không xác định, hiển thị tên gốc
 
             let cleaned = service.replacingOccurrences(of: "kTCCService", with: "")
-            return (cleaned, "Khác")
+            return (cleaned, L("Khác"))
         }
     }
 }

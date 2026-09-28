@@ -16,14 +16,14 @@ enum MaintenanceTask: String, CaseIterable, Identifiable {
     
     var title: String {
         switch self {
-        case .freeRam: return "Giải phóng RAM"
-        case .purgeableSpace: return "Giải phóng dung lượng có thể dọn"
-        case .flushDns: return "Làm mới bộ đệm DNS"
-        case .speedUpMail: return "Tăng tốc Mail"
-        case .rebuildSpotlight: return "Xây dựng lại chỉ mục Spotlight"
-        case .repairPermissions: return "Sửa quyền ổ đĩa"
-        case .repairApps: return "Sửa ứng dụng"
-        case .timeMachine: return "Dọn snapshot Time Machine"
+        case .freeRam: return L("Giải phóng RAM")
+        case .purgeableSpace: return L("Giải phóng dung lượng có thể dọn")
+        case .flushDns: return L("Làm mới bộ đệm DNS")
+        case .speedUpMail: return L("Tăng tốc Mail")
+        case .rebuildSpotlight: return L("Xây dựng lại chỉ mục Spotlight")
+        case .repairPermissions: return L("Sửa quyền ổ đĩa")
+        case .repairApps: return L("Sửa ứng dụng")
+        case .timeMachine: return L("Dọn snapshot Time Machine")
         }
     }
     
@@ -57,42 +57,42 @@ enum MaintenanceTask: String, CaseIterable, Identifiable {
     var description: String {
         switch self {
         case .freeRam:
-            return "Bộ nhớ trên máy Mac của bạn thường xuyên đầy, làm ứng dụng và tệp đang mở phản hồi chậm. Tác vụ này giải phóng phần bộ nhớ không còn dùng tới để nhường chỗ cho công việc hiện tại."
+            return L("Bộ nhớ trên máy Mac của bạn thường xuyên đầy, làm ứng dụng và tệp đang mở phản hồi chậm. Tác vụ này giải phóng phần bộ nhớ không còn dùng tới để nhường chỗ cho công việc hiện tại.")
         case .purgeableSpace:
-            return "macOS có thể giữ lại nhiều dữ liệu có thể dọn dẹp nhưng chưa tự giải phóng. Tác vụ này buộc hệ thống thu hồi phần dung lượng đó ngay khi bạn cần."
+            return L("macOS có thể giữ lại nhiều dữ liệu có thể dọn dẹp nhưng chưa tự giải phóng. Tác vụ này buộc hệ thống thu hồi phần dung lượng đó ngay khi bạn cần.")
         case .flushDns:
-            return "macOS lưu bộ đệm DNS trong một khoảng thời gian. Khi bản ghi máy chủ thay đổi hoặc mạng hoạt động bất thường, việc làm mới bộ đệm có thể giúp kết nối ổn định lại."
+            return L("macOS lưu bộ đệm DNS trong một khoảng thời gian. Khi bản ghi máy chủ thay đổi hoặc mạng hoạt động bất thường, việc làm mới bộ đệm có thể giúp kết nối ổn định lại.")
         case .speedUpMail:
-            return "Apple Mail có thể chậm dần theo thời gian, nhất là khi hộp thư có nhiều email và tệp đính kèm. Tác vụ này tối ưu cơ sở dữ liệu Mail để tìm kiếm và duyệt thư nhanh hơn."
+            return L("Apple Mail có thể chậm dần theo thời gian, nhất là khi hộp thư có nhiều email và tệp đính kèm. Tác vụ này tối ưu cơ sở dữ liệu Mail để tìm kiếm và duyệt thư nhanh hơn.")
         case .rebuildSpotlight:
-            return "Nếu Spotlight tìm chậm hoặc bỏ sót tệp, xây dựng lại chỉ mục sẽ giúp sửa lỗi. macOS sẽ quét lại dữ liệu và tạo chỉ mục tìm kiếm mới."
+            return L("Nếu Spotlight tìm chậm hoặc bỏ sót tệp, xây dựng lại chỉ mục sẽ giúp sửa lỗi. macOS sẽ quét lại dữ liệu và tạo chỉ mục tìm kiếm mới.")
         case .repairPermissions:
-            return "Tác vụ này kiểm tra và sửa quyền truy cập của các thư mục quan trọng để ứng dụng và tệp hệ thống hoạt động bình thường."
+            return L("Tác vụ này kiểm tra và sửa quyền truy cập của các thư mục quan trọng để ứng dụng và tệp hệ thống hoạt động bình thường.")
         case .repairApps:
-            return "Quét và làm sạch các tệp tạm, bộ đệm lỗi và trạng thái lưu bị hỏng của ứng dụng để giảm hiện tượng treo hoặc crash."
+            return L("Quét và làm sạch các tệp tạm, bộ đệm lỗi và trạng thái lưu bị hỏng của ứng dụng để giảm hiện tượng treo hoặc crash.")
         case .timeMachine:
-            return "macOS có thể tạo snapshot Time Machine cục bộ và chiếm đáng kể dung lượng ổ đĩa. Bạn có thể xóa các snapshot cũ để lấy lại không gian."
+            return L("macOS có thể tạo snapshot Time Machine cục bộ và chiếm đáng kể dung lượng ổ đĩa. Bạn có thể xóa các snapshot cũ để lấy lại không gian.")
         }
     }
     
     var recommendations: [String] {
         switch self {
         case .freeRam:
-            return ["Máy phản hồi chậm", "Bạn sắp mở ứng dụng hoặc tệp lớn"]
+            return [L("Máy phản hồi chậm"), L("Bạn sắp mở ứng dụng hoặc tệp lớn")]
         case .purgeableSpace:
-            return ["Bạn cần lấy lại vài GB dung lượng", "Tác vụ này có thể mất khá lâu"]
+            return [L("Bạn cần lấy lại vài GB dung lượng"), L("Tác vụ này có thể mất khá lâu")]
         case .flushDns:
-            return ["Không truy cập được một số website", "Mạng chậm thất thường"]
+            return [L("Không truy cập được một số website"), L("Mạng chậm thất thường")]
         case .speedUpMail:
-            return ["Mail khởi động chậm", "Tìm kiếm email mất nhiều thời gian"]
+            return [L("Mail khởi động chậm"), L("Tìm kiếm email mất nhiều thời gian")]
         case .rebuildSpotlight:
-            return ["Spotlight không tìm ra tệp đã biết", "Chỉ mục Spotlight có dấu hiệu hỏng"]
+            return [L("Spotlight không tìm ra tệp đã biết"), L("Chỉ mục Spotlight có dấu hiệu hỏng")]
         case .repairPermissions:
-            return ["Ứng dụng hoạt động bất thường", "Bạn không thể di chuyển hoặc xóa một số tệp"]
+            return [L("Ứng dụng hoạt động bất thường"), L("Bạn không thể di chuyển hoặc xóa một số tệp")]
         case .repairApps:
-            return ["Ứng dụng thường xuyên crash", "Ứng dụng không khởi động đúng cách"]
+            return [L("Ứng dụng thường xuyên crash"), L("Ứng dụng không khởi động đúng cách")]
         case .timeMachine:
-            return ["Bạn cần giải phóng dung lượng ổ đĩa", "Bạn không cần giữ các snapshot Time Machine cũ"]
+            return [L("Bạn cần giải phóng dung lượng ổ đĩa"), L("Bạn không cần giữ các snapshot Time Machine cũ")]
         }
     }
     
@@ -141,7 +141,7 @@ class MaintenanceService: ObservableObject {
             formatter.locale = Locale(identifier: "vi_VN")
             return formatter.localizedString(for: date, relativeTo: Date())
         }
-        return "Chưa từng chạy"
+        return L("Chưa từng chạy")
     }
     
     // MARK: - Run Tasks
@@ -176,8 +176,8 @@ class MaintenanceService: ObservableObject {
                             taskResults.append(TaskResult(
                                 task: task,
                                 success: false,
-                                message: "Đã bỏ qua",
-                                details: "Người dùng đã hủy thao tác"
+                                message: L("Đã bỏ qua"),
+                                details: L("Người dùng đã hủy thao tác")
                             ))
                         }
                         continue
@@ -220,11 +220,11 @@ class MaintenanceService: ObservableObject {
         let message: String
         switch task {
         case .repairApps:
-            message = "Tác vụ này sẽ dọn trạng thái lưu và nhật ký crash của các ứng dụng. Đây là thao tác an toàn, nhưng một số ứng dụng có thể yêu cầu đăng nhập lại."
+            message = L("Tác vụ này sẽ dọn trạng thái lưu và nhật ký crash của các ứng dụng. Đây là thao tác an toàn, nhưng một số ứng dụng có thể yêu cầu đăng nhập lại.")
         case .timeMachine:
-            message = "Tác vụ này sẽ xóa toàn bộ snapshot Time Machine cũ và chỉ giữ lại bản mới nhất. Bạn sẽ giải phóng được dung lượng, nhưng không thể khôi phục các snapshot đã xóa."
+            message = L("Tác vụ này sẽ xóa toàn bộ snapshot Time Machine cũ và chỉ giữ lại bản mới nhất. Bạn sẽ giải phóng được dung lượng, nhưng không thể khôi phục các snapshot đã xóa.")
         default:
-            message = "Bạn có muốn tiếp tục không?"
+            message = L("Bạn có muốn tiếp tục không?")
         }
         
         confirmDialogTask = task
@@ -313,9 +313,9 @@ class MaintenanceService: ObservableObject {
         let freedMemoryGB = max(0, beforeMemory - afterMemory)
         
         if freedMemoryGB > 0.1 {
-            return (true, "Đã giải phóng \(String(format: "%.2f", freedMemoryGB)) GB bộ nhớ", "Áp lực bộ nhớ đã giảm")
+            return (true, String(format: L("Đã giải phóng %.2f GB bộ nhớ"), freedMemoryGB), L("Áp lực bộ nhớ đã giảm"))
         } else {
-            return (true, "Tối ưu bộ nhớ hoàn tất", "Bộ nhớ hệ thống hiện đang ở mức ổn định")
+            return (true, L("Tối ưu bộ nhớ hoàn tất"), L("Bộ nhớ hệ thống hiện đang ở mức ổn định"))
         }
     }
     
@@ -392,9 +392,9 @@ class MaintenanceService: ObservableObject {
         
         let cleanedGB = Double(totalCleaned) / (1024 * 1024 * 1024)
         if cleanedGB > 0.1 {
-            return (true, "Đã giải phóng \(String(format: "%.2f", cleanedGB)) GB dung lượng", "Đã xóa \(filesDeleted) tệp cũ")
+            return (true, String(format: L("Đã giải phóng %.2f GB dung lượng"), cleanedGB), String(format: L("Đã xóa %d tệp cũ"), filesDeleted))
         } else {
-            return (true, "Dọn dẹp hoàn tất", "Hệ thống khá sạch, không có nhiều dữ liệu có thể dọn")
+            return (true, L("Dọn dẹp hoàn tất"), L("Hệ thống khá sạch, không có nhiều dữ liệu có thể dọn"))
         }
     }
     
@@ -446,7 +446,7 @@ class MaintenanceService: ObservableObject {
             success = false
         }
         
-        return (success, "Đã làm mới bộ đệm DNS", "Các vấn đề kết nối mạng có thể đã được khắc phục")
+        return (success, L("Đã làm mới bộ đệm DNS"), L("Các vấn đề kết nối mạng có thể đã được khắc phục"))
     }
     
     // MARK: - Tăng tốc mail (tối ưu cơ sở dữ liệu Mail)
@@ -507,12 +507,12 @@ class MaintenanceService: ObservableObject {
         if dbOptimized {
             let cleanedMB = Double(cacheCleaned) / (1024 * 1024)
             if cleanedMB > 1 {
-                return (true, "Mail đã được tối ưu", "Cơ sở dữ liệu đã được xây dựng lại, đồng thời dọn \(String(format: "%.1f", cleanedMB)) MB bộ đệm")
+                return (true, L("Mail đã được tối ưu"), String(format: L("Cơ sở dữ liệu đã được xây dựng lại, đồng thời dọn %.1f MB bộ đệm"), cleanedMB))
             } else {
-                return (true, "Mail đã được tối ưu", "Cơ sở dữ liệu đã được lập chỉ mục lại")
+                return (true, L("Mail đã được tối ưu"), L("Cơ sở dữ liệu đã được lập chỉ mục lại"))
             }
         } else {
-            return (false, "Không tìm thấy cơ sở dữ liệu Mail", "Hãy chắc chắn ứng dụng Mail đã được cài đặt")
+            return (false, L("Không tìm thấy cơ sở dữ liệu Mail"), L("Hãy chắc chắn ứng dụng Mail đã được cài đặt"))
         }
     }
     
@@ -541,9 +541,9 @@ class MaintenanceService: ObservableObject {
 
         
         if success {
-            return (true, "Đã bắt đầu xây dựng lại chỉ mục", "Spotlight sẽ lập chỉ mục lại các tệp của bạn ở chế độ nền")
+            return (true, L("Đã bắt đầu xây dựng lại chỉ mục"), L("Spotlight sẽ lập chỉ mục lại các tệp của bạn ở chế độ nền"))
         } else {
-            return (false, "Không thể xây dựng lại chỉ mục", "Tác vụ này có thể cần quyền quản trị")
+            return (false, L("Không thể xây dựng lại chỉ mục"), L("Tác vụ này có thể cần quyền quản trị"))
         }
     }
     
@@ -602,8 +602,8 @@ class MaintenanceService: ObservableObject {
             sshFixed = true
         }
         
-        let details = sshFixed ? "Đã sửa quyền cho \(fixedCount) thư mục, bao gồm cả cấu hình SSH" : "Đã sửa quyền cho \(fixedCount) thư mục"
-        return (true, "Sửa quyền truy cập hoàn tất", details)
+        let details = sshFixed ? String(format: L("Đã sửa quyền cho %d thư mục, bao gồm cả cấu hình SSH"), fixedCount) : String(format: L("Đã sửa quyền cho %d thư mục"), fixedCount)
+        return (true, L("Sửa quyền truy cập hoàn tất"), details)
     }
     
     // Đánh dấu: - Ảnh chụp nhanh cỗ máy thời gian sạch
@@ -623,7 +623,7 @@ class MaintenanceService: ObservableObject {
         
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         guard let output = String(data: data, encoding: .utf8), !output.isEmpty else {
-            return (true, "Không có snapshot để xóa", "Không tìm thấy snapshot Time Machine cục bộ")
+            return (true, L("Không có snapshot để xóa"), L("Không tìm thấy snapshot Time Machine cục bộ"))
         }
         
         // Phân tích ngày chụp nhanh
@@ -644,7 +644,7 @@ class MaintenanceService: ObservableObject {
         }
         
         if snapshotDates.count <= 1 {
-            return (true, "Không cần dọn dẹp", "Chỉ có một snapshot và đã được giữ lại")
+            return (true, L("Không cần dọn dẹp"), L("Chỉ có một snapshot và đã được giữ lại"))
         }
         
         var deletedCount = 0
@@ -664,9 +664,9 @@ class MaintenanceService: ObservableObject {
         }
         
         if deletedCount > 0 {
-            return (true, "Đã xóa \(deletedCount) snapshot", "Đã giữ lại snapshot mới nhất")
+            return (true, String(format: L("Đã xóa %d snapshot"), deletedCount), L("Đã giữ lại snapshot mới nhất"))
         } else {
-            return (false, "Xóa snapshot thất bại", "Tác vụ này có thể cần quyền quản trị")
+            return (false, L("Xóa snapshot thất bại"), L("Tác vụ này có thể cần quyền quản trị"))
         }
     }
     
@@ -754,8 +754,8 @@ class MaintenanceService: ObservableObject {
         }
         
         let freedMB = Double(spaceFreed) / (1024 * 1024)
-        let details = "Đã xử lý \(itemsFixed) mục lỗi và giải phóng \(String(format: "%.1f", freedMB)) MB dung lượng"
-        return (true, "Sửa ứng dụng hoàn tất", details)
+        let details = String(format: L("Đã xử lý %d mục lỗi và giải phóng %.1f MB dung lượng"), itemsFixed, freedMB)
+        return (true, L("Sửa ứng dụng hoàn tất"), details)
     }
 }
 
@@ -804,7 +804,7 @@ struct MaintenanceView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 11, weight: .bold))
-                            Text("Giới thiệu")
+                            Text(L("Giới thiệu"))
                                 .font(.system(size: 12))
                         }
                         .foregroundColor(.white.opacity(0.7))
@@ -832,7 +832,7 @@ struct MaintenanceView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     // Header: Maintenance Label & Assistant
                     HStack {
-                        Text("Bảo trì")
+                        Text(L("Bảo trì"))
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.5))
                         Spacer()
@@ -841,7 +841,7 @@ struct MaintenanceView: View {
                                 Circle()
                                     .fill(Color.blue)
                                     .frame(width: 5, height: 5)
-                                Text("Trợ lý")
+                                Text(L("Trợ lý"))
                                     .font(.system(size: 11))
                             }
                             .padding(.horizontal, 8)
@@ -868,7 +868,7 @@ struct MaintenanceView: View {
                         .fixedSize(horizontal: false, vertical: true)
                     
                     // Recommendations
-                    Text("Được đề xuất cho:")
+                    Text(L("Được đề xuất cho:"))
                         .font(.system(size: 11))
                         .foregroundColor(.white.opacity(0.5))
                         .padding(.bottom, 8)
@@ -890,7 +890,7 @@ struct MaintenanceView: View {
                     // Footer: Last Run Date only (button moved to left panel)
                     HStack {
                         Spacer()
-                        Text("Lần chạy cuối cùng: \(service.getLastRunDate(for: service.selectedTask))")
+                        Text(String(format: L("Lần chạy cuối cùng: %@"), service.getLastRunDate(for: service.selectedTask)))
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.4))
                         Spacer()
@@ -934,7 +934,7 @@ struct MaintenanceView: View {
                     )
                     .frame(width: 58, height: 58)
                 
-                Text("Chạy")
+                Text(L("Chạy"))
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white)
             }
@@ -1011,7 +1011,7 @@ struct MaintenanceView: View {
             
             // tiêu đề
 
-            Text("Thực hiện các công việc bảo trì...")
+            Text(L("Thực hiện các công việc bảo trì..."))
                 .font(.title2)
                 .foregroundColor(.white)
             
@@ -1065,7 +1065,7 @@ struct MaintenanceView: View {
             
             // văn bản tiến độ
 
-            Text("\(service.completedTasks.count) / \(service.selectedTasks.count)")
+            Text(String(format: L("%d / %d"), service.completedTasks.count, service.selectedTasks.count))
                 .font(.caption)
                 .foregroundColor(.white.opacity(0.6))
             
@@ -1090,12 +1090,12 @@ struct MaintenanceView: View {
             }
             .padding(.bottom, 20)
             
-            Text("Bảo trì hoàn tất!")
+            Text(L("Bảo trì hoàn tất!"))
                 .font(.system(size: 28, weight: .bold))
                 .foregroundColor(.white)
                 .padding(.bottom, 10)
             
-            Text("Các tác vụ đã chọn đã được thực thi")
+            Text(L("Các tác vụ đã chọn đã được thực thi"))
                 .font(.system(size: 14))
                 .foregroundColor(.white.opacity(0.7))
                 .padding(.bottom, 30)
@@ -1177,7 +1177,7 @@ struct MaintenanceView: View {
                 service.taskResults.removeAll()
                 viewState = 0 
             }) {
-                Text("Xong")
+                Text(L("Xong"))
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 40)
@@ -1208,20 +1208,20 @@ struct MaintenanceLandingView: View {
                 VStack(alignment: .leading, spacing: 30) {
                     // Branding Header
                     HStack(spacing: 8) {
-                        Text("Bảo trì hệ thống")
+                        Text(L("Bảo trì hệ thống"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
                         
                         // Maintenance Icon
                         HStack(spacing: 4) {
                             Image(systemName: "wrench.and.screwdriver.fill")
-                            Text("Sửa nhanh")
+                            Text(L("Sửa nhanh"))
                                 .font(.system(size: 20, weight: .heavy))
                         }
                         .foregroundColor(.white)
                     }
                     
-                    Text("Chạy một tập lệnh để nhanh chóng tối ưu hóa hiệu suất hệ thống.\nLần bảo trì cuối cùng: Không bao giờ")
+                    Text(L("Chạy một tập lệnh để nhanh chóng tối ưu hóa hiệu suất hệ thống.\nLần bảo trì cuối cùng: Không bao giờ"))
                         .font(.system(size: 13))
                         .foregroundColor(.white.opacity(0.7))
                         .lineSpacing(4)
@@ -1230,26 +1230,26 @@ struct MaintenanceLandingView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         featureRow(
                             icon: "gauge",
-                            title: "Cải thiện hiệu suất ổ đĩa",
-                            desc: "Bảo trì đĩa để đảm bảo hệ thống tập tin và tình trạng vật lý của nó tốt."
+                            title: L("Cải thiện hiệu suất ổ đĩa"),
+                            desc: L("Bảo trì đĩa để đảm bảo hệ thống tập tin và tình trạng vật lý của nó tốt.")
                         )
-                        
+
                         featureRow(
                             icon: "exclamationmark.triangle",
-                            title: "Sửa lỗi ứng dụng",
-                            desc: "Khắc phục hành vi ứng dụng không đúng bằng cách sửa chữa các quyền và chạy các tập lệnh bảo trì."
+                            title: L("Sửa lỗi ứng dụng"),
+                            desc: L("Khắc phục hành vi ứng dụng không đúng bằng cách sửa chữa các quyền và chạy các tập lệnh bảo trì.")
                         )
-                        
+
                         featureRow(
                             icon: "magnifyingglass",
-                            title: "Cải thiện hiệu suất tìm kiếm",
-                            desc: "Xây dựng lại cơ sở dữ liệu Spotlight để cải thiện tốc độ và độ chính xác khi tìm kiếm."
+                            title: L("Cải thiện hiệu suất tìm kiếm"),
+                            desc: L("Xây dựng lại cơ sở dữ liệu Spotlight để cải thiện tốc độ và độ chính xác khi tìm kiếm.")
                         )
                     }
                     
                     // View Tasks Button
                     Button(action: { viewState = 0 }) {
-                        Text("Xem 7 nhiệm vụ...")
+                        Text(L("Xem 7 nhiệm vụ..."))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.black)
                             .padding(.horizontal, 16)
@@ -1329,7 +1329,7 @@ struct MaintenanceLandingView: View {
                             .frame(width: 74, height: 74)
                             .shadow(color: Color.black.opacity(0.3), radius: 10, y: 5)
                         
-                        Text("Bắt đầu")
+                        Text(L("Bắt đầu"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
                     }
@@ -1381,7 +1381,7 @@ struct MaintenanceConfirmDialog: View {
                             .font(.system(size: 20))
                         
                             
-                        Text("Xác nhận hành động")
+                        Text(L("Xác nhận hành động"))
                             .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.white)
                     }
@@ -1439,7 +1439,7 @@ struct MaintenanceConfirmDialog: View {
             // Task Details
             VStack(alignment: .leading, spacing: 12) {
                 if let task = service.confirmDialogTask {
-                    Text("Các thao tác cần thực hiện:")
+                    Text(L("Các thao tác cần thực hiện:"))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.white)
                     
@@ -1471,7 +1471,7 @@ struct MaintenanceConfirmDialog: View {
                     service.cancelAction()
                     dismiss()
                 }) {
-                    Text("Hủy bỏ")
+                    Text(L("Hủy bỏ"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.white.opacity(0.8))
                         .padding(.horizontal, 20)
@@ -1486,7 +1486,7 @@ struct MaintenanceConfirmDialog: View {
                     service.confirmAction()
                     dismiss()
                 }) {
-                    Text("Tiếp tục")
+                    Text(L("Tiếp tục"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)
@@ -1524,18 +1524,18 @@ struct MaintenanceConfirmDialog: View {
         switch task {
         case .repairApps:
             return [
-                "Dọn toàn bộ nhật ký sự cố của ứng dụng",
-                "Xóa trạng thái đã lưu của ứng dụng, một số ứng dụng có thể cần đăng nhập lại",
-                "Dọn tệp tạm của ứng dụng",
-                "Đặt lại cơ sở dữ liệu Launch Services",
-                "Dọn bộ đệm Core Services"
+                L("Dọn toàn bộ nhật ký sự cố của ứng dụng"),
+                L("Xóa trạng thái đã lưu của ứng dụng, một số ứng dụng có thể cần đăng nhập lại"),
+                L("Dọn tệp tạm của ứng dụng"),
+                L("Đặt lại cơ sở dữ liệu Launch Services"),
+                L("Dọn bộ đệm Core Services")
             ]
             
         case .timeMachine:
             return [
-                "Liệt kê toàn bộ snapshot Time Machine cục bộ",
-                "Xóa snapshot cũ, giữ lại snapshot mới nhất",
-                "Giải phóng dung lượng ổ đĩa"
+                L("Liệt kê toàn bộ snapshot Time Machine cục bộ"),
+                L("Xóa snapshot cũ, giữ lại snapshot mới nhất"),
+                L("Giải phóng dung lượng ổ đĩa")
             ]
             
         default:

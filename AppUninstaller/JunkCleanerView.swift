@@ -105,15 +105,15 @@ struct JunkCleanerView: View {
                 }
             }
         )
-        .alert("Một số tệp yêu cầu đặc quyền quản trị viên", isPresented: $showRetryWithAdmin) {
-            Button("Xóa với quản trị viên", role: .destructive) {
+        .alert(L("Một số tệp yêu cầu đặc quyền quản trị viên"), isPresented: $showRetryWithAdmin) {
+            Button(L("Xóa với quản trị viên"), role: .destructive) {
                  showCleaningFinished = true
             }
             Button(loc.L("cancel"), role: .cancel) {
                 showCleaningFinished = true
             }
         } message: {
-            Text("Không thể xóa một số tệp do không đủ quyền.")
+            Text(L("Không thể xóa một số tệp do không đủ quyền."))
         }
         // Giám sát quá trình quét hoàn tất và phát âm thanh nhắc nhở
 
@@ -151,7 +151,7 @@ struct JunkCleanerView: View {
                         .stroke(LinearGradient(colors: [.white.opacity(0.6), .white.opacity(0.1)], startPoint: .top, endPoint: .bottom), lineWidth: 1)
                         .frame(width: 50, height: 50)
                     
-                    Text("Quét")
+                    Text(L("Quét"))
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundColor(.white)
                 }
@@ -189,7 +189,7 @@ struct JunkCleanerView: View {
                             .fill(LinearGradient(colors: [Color.white.opacity(0.2), Color.white.opacity(0.1)], startPoint: .top, endPoint: .bottom))
                             .frame(width: 48, height: 48)
                         
-                        Text("Dừng lại")
+                        Text(L("Dừng lại"))
                             .font(.system(size: 11))
                             .foregroundColor(.white)
                     }
@@ -211,7 +211,7 @@ struct JunkCleanerView: View {
                     showCleaningFinished = false
                     showingDetails = true
                 }) {
-                    Text("Ôn tập") // Shortened
+                    Text(L("Ôn tập")) // Shortened
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.white)
                         .frame(width: 60, height: 60)
@@ -241,7 +241,7 @@ struct JunkCleanerView: View {
                                  .stroke(LinearGradient(colors: [.white.opacity(0.8), .white.opacity(0.2)], startPoint: .top, endPoint: .bottom), lineWidth: 1)
                                  .frame(width: 50, height: 50)
                              
-                             Text("Lau dọn")
+                             Text(L("Lau dọn"))
                                  .font(.system(size: 12, weight: .semibold, design: .rounded))
                                  .foregroundColor(.white)
                          }
@@ -263,7 +263,7 @@ struct JunkCleanerView: View {
                 showCleaningFinished = false
                 showingDetails = true
             }) {
-                Text("Ôn tập")
+                Text(L("Ôn tập"))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.white)
                     .frame(width: 60, height: 60)
@@ -286,11 +286,11 @@ struct JunkCleanerView: View {
             HStack(spacing: 60) {
                 // Left Side: Text and Features
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Rác hệ thống")
+                    Text(L("Rác hệ thống"))
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.white)
                     
-                    Text("Dọn dẹp hệ thống của bạn để tối đa hóa hiệu suất và giải phóng không gian.")
+                    Text(L("Dọn dẹp hệ thống của bạn để tối đa hóa hiệu suất và giải phóng không gian."))
                         .font(.system(size: 14))
                         .foregroundColor(.white.opacity(0.8))
                         .fixedSize(horizontal: false, vertical: true)
@@ -311,10 +311,10 @@ struct JunkCleanerView: View {
                             )
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Tối ưu hóa hệ thống")
+                            Text(L("Tối ưu hóa hệ thống"))
                                 .font(.system(size: 14, weight: .bold))
                                 .foregroundColor(.white)
-                            Text("Xóa các tập tin tạm thời để giải phóng dung lượng, cải thiện hiệu suất máy Mac.")
+                            Text(L("Xóa các tập tin tạm thời để giải phóng dung lượng, cải thiện hiệu suất máy Mac."))
                                 .font(.system(size: 12))
                                 .foregroundColor(.white.opacity(0.6))
                                 .fixedSize(horizontal: false, vertical: true)
@@ -334,10 +334,10 @@ struct JunkCleanerView: View {
                             )
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Sửa tất cả các loại lỗi")
+                            Text(L("Sửa tất cả các loại lỗi"))
                                 .font(.system(size: 14, weight: .bold))
                                 .foregroundColor(.white)
-                            Text("Xóa các mục bị hỏng khác nhau có thể gây ra sự bất thường của ứng dụng.")
+                            Text(L("Xóa các mục bị hỏng khác nhau có thể gây ra sự bất thường của ứng dụng."))
                                 .font(.system(size: 12))
                                 .foregroundColor(.white.opacity(0.6))
                                 .fixedSize(horizontal: false, vertical: true)
@@ -374,7 +374,7 @@ struct JunkCleanerView: View {
         VStack {
             HStack {
                  Spacer()
-                 Text("Rác hệ thống")
+                 Text(L("Rác hệ thống"))
                      .foregroundColor(.white.opacity(0.7))
                  Spacer()
             }
@@ -395,7 +395,7 @@ struct JunkCleanerView: View {
             .padding(.bottom, 40)
             
             // Status Text
-            Text("Hệ thống phân tích...")
+            Text(L("Hệ thống phân tích..."))
                 .font(.title2)
                 .foregroundColor(.white)
                 .padding(.bottom, 8)
@@ -429,20 +429,20 @@ struct JunkCleanerView: View {
                 Button(action: { cleaner.reset(); showCleaningFinished = false }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("Bắt đầu lại")
+                        Text(L("Bắt đầu lại"))
                     }
                     .foregroundColor(.white.opacity(0.8))
                 }
                 .buttonStyle(.plain)
                 Spacer()
-                Text("Rác hệ thống")
+                Text(L("Rác hệ thống"))
                     .foregroundColor(.white.opacity(0.8))
                 Spacer()
                 // Assistant Pill
                 Button(action: { /* Help */ }) {
                     HStack(spacing: 6) {
                         Circle().fill(Color(hex: "40C4FF")).frame(width: 6, height: 6)
-                        Text("Trợ lý")
+                        Text(L("Trợ lý"))
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.white)
@@ -472,7 +472,7 @@ struct JunkCleanerView: View {
                 // Bên phải: Văn bản kết quả - Hiển thị động các danh mục đã chọn
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Quét hoàn tất")
+                    Text(L("Quét hoàn tất"))
                         .font(.system(size: 28, weight: .medium))
                         .foregroundColor(.white)
                     
@@ -481,7 +481,7 @@ struct JunkCleanerView: View {
                             .font(.system(size: 60, weight: .light))
                             .foregroundColor(Color(hex: "40C4FF"))
                         
-                        Text("Đã chọn")
+                        Text(L("Đã chọn"))
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -489,7 +489,7 @@ struct JunkCleanerView: View {
                     // Hiển thị động danh sách danh mục đã chọn
 
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Bao gồm")
+                        Text(L("Bao gồm"))
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.6))
                         
@@ -498,7 +498,7 @@ struct JunkCleanerView: View {
                         ForEach(selectedCategories, id: \.self) { category in
                             HStack(spacing: 6) {
                                 Text("•")
-                                Text(category.rawValue)
+                                Text(L(category.rawValue))
                             }
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.8))
@@ -509,7 +509,7 @@ struct JunkCleanerView: View {
                     
                     HStack(spacing: 30) {
                         Button(action: { withAnimation { showingDetails = true } }) {
-                            Text("Xem chi tiết")
+                            Text(L("Xem chi tiết"))
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 20)
@@ -519,7 +519,7 @@ struct JunkCleanerView: View {
                         }
                         .buttonStyle(.plain)
                         
-                        Text("Đã tìm thấy \(ByteCountFormatter.string(fromByteCount: cleaner.totalSize, countStyle: .file))")
+                        Text(String(format: L("Đã tìm thấy %@"), ByteCountFormatter.string(fromByteCount: cleaner.totalSize, countStyle: .file)))
                             .font(.system(size: 13))
                             .foregroundColor(.white.opacity(0.5))
                     }
@@ -556,7 +556,7 @@ struct JunkCleanerView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("Quay lại")
+                        Text(L("Quay lại"))
                     }
                     .foregroundColor(.secondaryText)
                 }
@@ -564,14 +564,14 @@ struct JunkCleanerView: View {
                 
                 Spacer()
                 
-                Text("Rác hệ thống")
+                Text(L("Rác hệ thống"))
                     .foregroundColor(.white)
                 
                 Spacer()
                 
                 HStack {
                      Image(systemName: "magnifyingglass").foregroundColor(.secondaryText)
-                     TextField("Tìm kiếm", text: $searchText)
+                     TextField(L("Tìm kiếm"), text: $searchText)
                          .textFieldStyle(.plain)
                          .frame(width: 100)
                 }
@@ -608,7 +608,7 @@ struct JunkCleanerView: View {
 
                 HStack {
                     Spacer()
-                    Text("Rác hệ thống")
+                    Text(L("Rác hệ thống"))
                         .foregroundColor(.white.opacity(0.8))
                     Spacer()
                 }
@@ -648,7 +648,7 @@ struct JunkCleanerView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         // Tiêu đề - Thêm phần đệm trên cùng để làm cho nó chìm xuống, căn chỉnh gần bằng hoặc hơi thấp hơn phần trên cùng của hình ảnh bên trái
 
-                        Text("Đang dọn hệ thống...")
+                        Text(L("Đang dọn hệ thống..."))
                             .font(.system(size: 26, weight: .semibold)) // Làm cho phông chữ lớn hơn và đậm hơn
                             .foregroundColor(.white)
                             .padding(.bottom, 32) // Tăng tiêu đề lên khoảng cách dưới cùng
@@ -707,7 +707,7 @@ struct JunkCleanerView: View {
                             .fill(Color.white.opacity(0.05))
                             .frame(width: 72, height: 72)
                         
-                        Text("Dừng lại")
+                        Text(L("Dừng lại"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white.opacity(0.9))
                     }
@@ -741,7 +741,7 @@ struct JunkCleanerView: View {
                     Button(action: { cleaner.reset(); showCleaningFinished = false }) {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
-                            Text("Bắt đầu lại")
+                            Text(L("Bắt đầu lại"))
                         }
                         .foregroundColor(.white.opacity(0.8))
                     }
@@ -749,7 +749,7 @@ struct JunkCleanerView: View {
                     
                     Spacer()
                     
-                    Text("Rác hệ thống")
+                    Text(L("Rác hệ thống"))
                         .foregroundColor(.white.opacity(0.8))
                     
                     Spacer()
@@ -759,7 +759,7 @@ struct JunkCleanerView: View {
                     Button(action: {}) {
                         HStack(spacing: 6) {
                             Circle().fill(Color(hex: "40C4FF")).frame(width: 6, height: 6)
-                            Text("Trợ lý")
+                            Text(L("Trợ lý"))
                         }
                         .font(.system(size: 12))
                         .foregroundColor(.white)
@@ -792,7 +792,7 @@ struct JunkCleanerView: View {
                     // Phải: Thông tin kết quả làm sạch
 
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Dọn dẹp hoàn tất")
+                        Text(L("Dọn dẹp hoàn tất"))
                             .font(.system(size: 28, weight: .medium))
                             .foregroundColor(.white)
                         
@@ -807,7 +807,7 @@ struct JunkCleanerView: View {
                                 .font(.system(size: 36, weight: .light))
                                 .foregroundColor(Color(hex: "40C4FF"))
                             
-                            Text("Đã dọn sạch")
+                            Text(L("Đã dọn sạch"))
                                 .font(.system(size: 14))
                                 .foregroundColor(.white.opacity(0.6))
                         }
@@ -815,11 +815,11 @@ struct JunkCleanerView: View {
                         // Thông tin dung lượng còn lại của đĩa
 
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Bạn đã lấy lại \(ByteCountFormatter.string(fromByteCount: cleanedAmount, countStyle: .file)) trên ổ khởi động.")
+                            Text(String(format: L("Bạn đã lấy lại %@ trên ổ khởi động."), ByteCountFormatter.string(fromByteCount: cleanedAmount, countStyle: .file)))
                                 .font(.system(size: 14))
                                 .foregroundColor(.white.opacity(0.7))
                             
-                            Text("Kiểm tra các mục còn lại để phục hồi thêm dung lượng.")
+                            Text(L("Kiểm tra các mục còn lại để phục hồi thêm dung lượng."))
                                 .font(.system(size: 14))
                                 .foregroundColor(.white.opacity(0.5))
                         }
@@ -847,7 +847,7 @@ struct JunkCleanerView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "exclamationmark.triangle")
                                 .font(.system(size: 12))
-                            Text("Xem nhật ký")
+                            Text(L("Xem nhật ký"))
                                 .font(.system(size: 13))
                         }
                         .foregroundColor(.yellow.opacity(0.8))
@@ -907,7 +907,7 @@ struct JunkSidebarView: View {
                     cleaner.junkItems.forEach { $0.isSelected = !allSelected }
                     cleaner.objectWillChange.send()
                 }) {
-                    Text(cleaner.junkItems.allSatisfy { $0.isSelected } ? ("Bỏ chọn tất cả") : ("Chọn tất cả"))
+                    Text(cleaner.junkItems.allSatisfy { $0.isSelected } ? (L("Bỏ chọn tất cả")) : (L("Chọn tất cả")))
                         .font(.system(size: 13))
                         .foregroundColor(.white.opacity(0.8))
                 }
@@ -916,7 +916,7 @@ struct JunkSidebarView: View {
                 Spacer()
                 
                 HStack(spacing: 4) {
-                    Text("Sắp xếp theo kích thước")
+                    Text(L("Sắp xếp theo kích thước"))
                         .font(.system(size: 13))
                         .foregroundColor(.white.opacity(0.6))
                     Image(systemName: "chevron.down")
@@ -972,7 +972,7 @@ struct JunkDetailContentView: View {
                 
                 // Content Header
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(type.rawValue)
+                    Text(L(type.rawValue))
                         .font(.system(size: 24, weight: .bold)) // Larger Title
                         .foregroundColor(.white)
                     
@@ -987,7 +987,7 @@ struct JunkDetailContentView: View {
                 // Sort by Size (Right Aligned)
                  HStack {
                      Spacer()
-                     Text("Sắp xếp theo kích thước")
+                     Text(L("Sắp xếp theo kích thước"))
                          .font(.system(size: 13))
                          .foregroundColor(.white.opacity(0.6))
                      Image(systemName: "triangle.fill")
@@ -1010,7 +1010,7 @@ struct JunkDetailContentView: View {
             } else {
                 // Empty State
                 Spacer()
-                Text("Chọn danh mục để xem chi tiết")
+                Text(L("Chọn danh mục để xem chi tiết"))
                     .foregroundColor(.white.opacity(0.6))
                 Spacer()
             }
@@ -1159,7 +1159,7 @@ struct JunkCategoryRow: View {
                 }
                 .padding(.leading, 8)
                 
-                Text(type.rawValue)
+                Text(L(type.rawValue))
                     .foregroundColor(.white)
                     .font(.system(size: 14))
                     .padding(.leading, 4)
@@ -1195,7 +1195,7 @@ struct JunkCategoryRow: View {
                 cleaner.objectWillChange.send()
             } label: {
                 Label(
-                    "Chọn tất cả \"\(type.rawValue)\"",
+                    String(format: L("Chọn tất cả \"%@\""), type.rawValue),
                     systemImage: "checkmark.circle.fill"
                 )
             }
@@ -1208,7 +1208,7 @@ struct JunkCategoryRow: View {
                 cleaner.objectWillChange.send()
             } label: {
                 Label(
-                    "Bỏ chọn tất cả \"\(type.rawValue)\"",
+                    String(format: L("Bỏ chọn tất cả \"%@\""), type.rawValue),
                     systemImage: "circle"
                 )
             }
@@ -1291,8 +1291,8 @@ struct JunkItemRow: View {
             } label: {
                 Label(
                     item.isSelected ? 
-                        ("Bỏ chọn \"\(item.name)\"") :
-                        ("Chọn \"\(item.name)\""),
+                        (String(format: L("Bỏ chọn \"%@\""), item.name)) :
+                        (String(format: L("Chọn \"%@\""), item.name)),
                     systemImage: item.isSelected ? "checkmark.circle.fill" : "circle"
                 )
             }
@@ -1305,7 +1305,7 @@ struct JunkItemRow: View {
                 NSWorkspace.shared.activateFileViewerSelecting([item.path])
             } label: {
                 Label(
-                    "Hiển thị trong Finder",
+                    L("Hiển thị trong Finder"),
                     systemImage: "folder"
                 )
             }
@@ -1316,7 +1316,7 @@ struct JunkItemRow: View {
                 quickLookFile()
             } label: {
                 Label(
-                    "Xem nhanh \"\(item.name)\"",
+                    String(format: L("Xem nhanh \"%@\""), item.name),
                     systemImage: "eye"
                 )
             }
@@ -1466,7 +1466,7 @@ struct CleaningCategoryRow: View {
             
             // Tên danh mục
 
-            Text(category.rawValue)
+            Text(L(category.rawValue))
                 .font(.system(size: 15, weight: .medium))
                 .foregroundColor(.white)
             

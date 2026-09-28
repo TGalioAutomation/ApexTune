@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import AppKit
+import CoreWLAN
 
 struct HighMemoryApp: Identifiable {
     let id: pid_t
@@ -19,19 +20,19 @@ enum SamplingProfile: String, CaseIterable, Identifiable, Codable {
     
     var title: String {
         switch self {
-        case .economy: return "Tiết kiệm"
-        case .balanced: return "Cân bằng"
-        case .live: return "Theo dõi sát"
-        case .custom: return "Tùy chỉnh"
+        case .economy: return L("Tiết kiệm")
+        case .balanced: return L("Cân bằng")
+        case .live: return L("Theo dõi sát")
+        case .custom: return L("Tùy chỉnh")
         }
     }
     
     var subtitle: String {
         switch self {
-        case .economy: return "Ưu tiên giảm tác động nền"
-        case .balanced: return "Mặc định, đủ mượt cho hầu hết máy"
-        case .live: return "Cập nhật nhanh hơn khi cần quan sát sát"
-        case .custom: return "Bạn tự đặt nhịp lấy mẫu cho từng loại"
+        case .economy: return L("Ưu tiên giảm tác động nền")
+        case .balanced: return L("Mặc định, đủ mượt cho hầu hết máy")
+        case .live: return L("Cập nhật nhanh hơn khi cần quan sát sát")
+        case .custom: return L("Bạn tự đặt nhịp lấy mẫu cho từng loại")
         }
     }
 }
@@ -50,27 +51,27 @@ enum SamplingMetricKind: String, CaseIterable, Identifiable, Codable {
     
     var title: String {
         switch self {
-        case .storage: return "Ổ đĩa"
+        case .storage: return L("Ổ đĩa")
         case .gpu: return "GPU"
         case .cpu: return "CPU"
         case .memory: return "RAM"
-        case .network: return "Mạng"
-        case .battery: return "Pin"
-        case .processes: return "Top tiến trình"
-        case .alerts: return "Cảnh báo RAM"
+        case .network: return L("Mạng")
+        case .battery: return L("Pin")
+        case .processes: return L("Top tiến trình")
+        case .alerts: return L("Cảnh báo RAM")
         }
     }
     
     var subtitle: String {
         switch self {
-        case .storage: return "Dùng cho DISK trên thanh menu và panel ổ đĩa"
-        case .gpu: return "Mức tải GPU hiện tại"
-        case .cpu: return "Tải CPU tổng cho status item và widget"
-        case .memory: return "Mức dùng RAM tổng và thống kê bộ nhớ"
-        case .network: return "Tốc độ mạng và lịch sử truyền nhận"
-        case .battery: return "Mức pin và trạng thái sạc"
-        case .processes: return "Danh sách app nặng để force quit"
-        case .alerts: return "Quét app dùng RAM vượt ngưỡng"
+        case .storage: return L("Dùng cho DISK trên thanh menu và panel ổ đĩa")
+        case .gpu: return L("Mức tải GPU hiện tại")
+        case .cpu: return L("Tải CPU tổng cho status item và widget")
+        case .memory: return L("Mức dùng RAM tổng và thống kê bộ nhớ")
+        case .network: return L("Tốc độ mạng và lịch sử truyền nhận")
+        case .battery: return L("Mức pin và trạng thái sạc")
+        case .processes: return L("Danh sách app nặng để force quit")
+        case .alerts: return L("Quét app dùng RAM vượt ngưỡng")
         }
     }
     
@@ -253,8 +254,10 @@ class SystemMonitorService: ObservableObject {
     // High Memory Alert
     @Published var highMemoryApp: HighMemoryApp?
     @Published var showHighMemoryAlert: Bool = false
-    // Threshold set to 2GB as requested
-    private let memoryThresholdGB: Double = 2.0 
+    /// Ngưỡng % RAM toàn hệ thống để bật cảnh báo (cấu hình được trong tùy chỉnh)
+    @Published private(set) var memoryAlertThresholdPercent: Double = 85
+    private let memoryAlertThresholdKey = "MemoryMonitor.AlertThresholdPercent"
+    /// PID người dùng đã chọn "Không nhắc lại" cho phiên hiện tại
     private var ignoredPids: Set<pid_t> = []
     
     // Mới: nhắc nhở theo lịch trình và bỏ qua vĩnh viễn
@@ -276,7 +279,7 @@ class SystemMonitorService: ObservableObject {
     // Battery Monitoring
     @Published var batteryLevel: Double = 1.0
     @Published var isCharging: Bool = false
-    @Published var batteryState: String = "Không xác định" 
+    @Published var batteryState: String = L("Không xác định") 
     @Published var gpuUsage: Double = 0.0
     @Published var gpuName: String = "GPU"
     @Published private(set) var samplingProfile: SamplingProfile = .balanced
@@ -296,6 +299,11 @@ class SystemMonitorService: ObservableObject {
     
     // UI Update Batching
     private let uiUpdater = BatchedUIUpdater(debounceDelay: 0.05)
+    
+    // Hàng đợi nối tiếp cho toàn bộ việc lấy mẫu: mọi subprocess (ps, vm_stat, netstat,
+    // ioreg, pmset) chạy ở đây để không bao giờ chặn main thread
+    
+    private let samplingQueue = DispatchQueue(label: "com.macoptimizer.systemmonitor.sampling", qos: .utility)
 
     // Process Monitoring
     struct AppProcess: Identifiable {
@@ -316,9 +324,9 @@ class SystemMonitorService: ObservableObject {
     
     // WiFi Info
     @Published var wifiSSID: String = "Wi-Fi"
-    @Published var wifiSecurity: String = "WPA2 Personal" // Default/Mock for now
-    @Published var wifiSignalStrength: String = "Tốt"
-    @Published var connectionDuration: String = "0 giờ 0 phút 0 giây"
+    @Published var wifiSecurity: String = L("Không xác định")
+    @Published var wifiSignalStrength: String = L("Tốt")
+    @Published var connectionDuration: String = L("0 giờ 0 phút 0 giây")
     private var connectionStartTime: Date = Date()
     
     // Total Traffic
@@ -327,128 +335,126 @@ class SystemMonitorService: ObservableObject {
     
     // ... updateStats logic ...
     
-    private func fetchUserProcesses() {
-        // 1. Get User Apps from NSWorkspace (GUI Apps)
-        let runningApps = NSWorkspace.shared.runningApplications.filter { $0.activationPolicy == .regular }
-        
-        // 2. Scan ALL user processes to build a process tree
-        // ps -x -o pid,ppid,%cpu,rss,comm
+    /// Chạy lệnh hệ thống và trả về stdout. CHỈ gọi từ samplingQueue.
+    
+    private func runCommand(_ launchPath: String, _ arguments: [String]) -> String? {
         let task = Process()
-        task.launchPath = "/bin/bash"
-        task.arguments = ["-c", "ps -x -o pid,ppid,%cpu,rss,comm | tail -n +2"]
-        
+        task.launchPath = launchPath
+        task.arguments = arguments
         let pipe = Pipe()
         task.standardOutput = pipe
-        
         do {
             try task.run()
             let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8) {
-                // Parse all processes
-                struct ProcessInfo {
-                    let pid: Int32
-                    let ppid: Int32
-                    let cpu: Double
-                    let rss: Double // GB
-                    let name: String
+            task.waitUntilExit()
+            return String(data: data, encoding: .utf8)
+        } catch {
+            print("Command Error [\(launchPath)]: \(error)")
+            return nil
+        }
+    }
+    
+    private func fetchUserProcesses() {
+        // NSWorkspace.runningApplications chỉ an toàn ở main thread nên danh sách app GUI
+        // được chụp tại đây trước, rồi phần quét ps nặng mới chạy trên hàng đợi nền
+        
+        struct AppSnapshot {
+            let pid: pid_t
+            let name: String
+            let icon: NSImage?
+        }
+        let snapshots = NSWorkspace.shared.runningApplications
+            .filter { $0.activationPolicy == .regular }
+            .map { AppSnapshot(pid: $0.processIdentifier, name: $0.localizedName ?? L("Không rõ"), icon: $0.icon) }
+        
+        samplingQueue.async { [weak self] in
+            guard let self else { return }
+            guard let output = self.runCommand("/bin/ps", ["-x", "-o", "pid,ppid,%cpu,rss,comm"]) else { return }
+            
+            struct ProcessInfo {
+                let pid: Int32
+                let ppid: Int32
+                let cpu: Double
+                let rss: Double // GB
+                let name: String
+            }
+            
+            var allProcesses: [Int32: ProcessInfo] = [:]
+            var childrenMap: [Int32: [Int32]] = [:] // Parent -> [Children]
+            
+            for line in output.components(separatedBy: "\n").dropFirst() {
+                let parts = line.trimmingCharacters(in: .whitespaces).split(separator: " ").map(String.init)
+                if parts.count >= 5,
+                   let pid = Int32(parts[0]),
+                   let ppid = Int32(parts[1]),
+                   let cpu = Double(parts[2]),
+                   let rssKB = Double(parts[3]) {
+                    
+                    let nameParts = parts.dropFirst(4)
+                    let fullPath = nameParts.joined(separator: " ")
+                    let name = URL(fileURLWithPath: fullPath).lastPathComponent
+                    
+                    let info = ProcessInfo(pid: pid, ppid: ppid, cpu: cpu, rss: rssKB / 1024.0 / 1024.0, name: name)
+                    allProcesses[pid] = info
+                    
+                    childrenMap[ppid, default: []].append(pid)
+                }
+            }
+            
+            func getAggregatedStats(for pid: Int32, visited: inout Set<Int32>) -> (cpu: Double, mem: Double) {
+                if visited.contains(pid) { return (0, 0) }
+                visited.insert(pid)
+                
+                var totalCPU = 0.0
+                var totalMem = 0.0
+                
+                if let process = allProcesses[pid] {
+                    totalCPU += process.cpu
+                    totalMem += process.rss
                 }
                 
-                var allProcesses: [Int32: ProcessInfo] = [:]
-                var childrenMap: [Int32: [Int32]] = [:] // Parent -> [Children]
-                
-                let lines = output.components(separatedBy: "\n")
-                for line in lines {
-                    let parts = line.trimmingCharacters(in: .whitespaces).components(separatedBy: .whitespaces).filter { !$0.isEmpty }
-                    if parts.count >= 5,
-                       let pid = Int32(parts[0]),
-                       let ppid = Int32(parts[1]),
-                       let cpu = Double(parts[2]),
-                       let rssKB = Double(parts[3]) {
-                        
-                        // Extract name (rest of the line)
-                        let nameParts = parts.dropFirst(4)
-                        let fullPath = nameParts.joined(separator: " ")
-                        let name = URL(fileURLWithPath: fullPath).lastPathComponent
-                        
-                        let info = ProcessInfo(pid: pid, ppid: ppid, cpu: cpu, rss: rssKB / 1024.0 / 1024.0, name: name)
-                        allProcesses[pid] = info
-                        
-                        // Build tree
-                        childrenMap[ppid, default: []].append(pid)
+                if let children = childrenMap[pid] {
+                    for child in children {
+                        let childStats = getAggregatedStats(for: child, visited: &visited)
+                        totalCPU += childStats.cpu
+                        totalMem += childStats.mem
                     }
                 }
                 
-                // Helper to calculate total stats recursively
-                func getAggregatedStats(for pid: Int32, visited: inout Set<Int32>) -> (cpu: Double, mem: Double) {
-                    if visited.contains(pid) { return (0, 0) }
-                    visited.insert(pid)
-                    
-                    var totalCPU = 0.0
-                    var totalMem = 0.0
-                    
-                    if let process = allProcesses[pid] {
-                        totalCPU += process.cpu
-                        totalMem += process.rss
-                    }
-                    
-                    if let children = childrenMap[pid] {
-                        for child in children {
-                            let childStats = getAggregatedStats(for: child, visited: &visited)
-                            totalCPU += childStats.cpu
-                            totalMem += childStats.mem
-                        }
-                    }
-                    
-                    return (totalCPU, totalMem)
-                }
-                
-                // 3. Aggregate stats for each App
-                var appProcesses: [AppProcess] = []
-
-                
-                for app in runningApps {
-                    let pid = app.processIdentifier
-                    // Only process if valid and not already counted (though unlikely for main apps to duplicate)
-                    
-                    var visited = Set<Int32>() // Visited for this app's tree
-                    let stats = getAggregatedStats(for: pid, visited: &visited)
-                    
-                    // Add app stats
-                    appProcesses.append(AppProcess(
-                        id: pid,
-                        name: app.localizedName ?? "Không rõ",
-                        icon: app.icon,
-                        cpu: stats.cpu,
-                        memory: stats.mem
-                    ))
-                    
-                    // Mark these PIDs as processed if we want to avoid double counting if we were scanning all processes.
-                    // But here we only care about the Apps list from NSWorkspace.
-                }
-                
-                // Sort and Update
-                let sortedByMem = appProcesses.sorted { $0.memory > $1.memory }.prefix(10)
-                let sortedByCPU = appProcesses.sorted { $0.cpu > $1.cpu }.prefix(10)
-                
-                DispatchQueue.main.async {
+                return (totalCPU, totalMem)
+            }
+            
+            var appProcesses: [AppProcess] = []
+            for snapshot in snapshots {
+                var visited = Set<Int32>()
+                let stats = getAggregatedStats(for: snapshot.pid, visited: &visited)
+                appProcesses.append(AppProcess(
+                    id: snapshot.pid,
+                    name: snapshot.name,
+                    icon: snapshot.icon,
+                    cpu: stats.cpu,
+                    memory: stats.mem
+                ))
+            }
+            
+            let sortedByMem = appProcesses.sorted { $0.memory > $1.memory }.prefix(10)
+            let sortedByCPU = appProcesses.sorted { $0.cpu > $1.cpu }.prefix(10)
+            
+            Task {
+                await self.uiUpdater.batch {
                     self.topMemoryProcesses = Array(sortedByMem)
                     self.topCPUProcesses = Array(sortedByCPU)
                 }
             }
-        } catch {
-            print("User Process Scan Error: \(error)")
         }
     }
     
     func runSpeedTest() {
-        guard !isTestingSpeed else { return }
+        guard !isTestingSpeed,
+              let url = URL(string: "https://speed.cloudflare.com/__down?bytes=10000000") else { return }
         isTestingSpeed = true
         speedTestResult = 0
         speedTestProgress = 0
-        
-        // Simple download test (download a 10MB file or similar)
-        // Using a reliable CDN test file (e.g., Cloudflare)
-        guard let url = URL(string: "https://speed.cloudflare.com/__down?bytes=10000000") else { return }
         
         let startTime = Date()
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
@@ -477,7 +483,21 @@ class SystemMonitorService: ObservableObject {
         snoozedUntil = Date().addingTimeInterval(30)
         
         loadIgnoredApps()
+        loadMemoryAlertThreshold()
         loadSamplingPreferences()
+    }
+    
+    private func loadMemoryAlertThreshold() {
+        let saved = UserDefaults.standard.double(forKey: memoryAlertThresholdKey)
+        if saved > 0 {
+            memoryAlertThresholdPercent = min(max(saved, 60), 95)
+        }
+    }
+    
+    /// Đặt ngưỡng % RAM toàn hệ thống để bật cảnh báo (60–95%)
+    func updateMemoryAlertThreshold(_ percent: Double) {
+        memoryAlertThresholdPercent = min(max(percent, 60), 95)
+        UserDefaults.standard.set(memoryAlertThresholdPercent, forKey: memoryAlertThresholdKey)
     }
     
     deinit {
@@ -549,9 +569,9 @@ class SystemMonitorService: ObservableObject {
     func formattedSamplingInterval(for kind: SamplingMetricKind) -> String {
         let seconds = menuBarSamplingConfiguration.interval(for: kind)
         if seconds.rounded(.towardZero) == seconds {
-            return "\(Int(seconds)) giây"
+            return String(format: L("%d giây"), Int(seconds))
         }
-        return String(format: "%.1f giây", seconds)
+        return String(format: L("%.1f giây"), seconds)
     }
     
     func applySamplingProfile(_ profile: SamplingProfile) {
@@ -664,62 +684,51 @@ class SystemMonitorService: ObservableObject {
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
             action()
         }
+        // Cho phép hệ thống dồn lịch để tiết kiệm pin; độ trễ tối đa 10% chu kỳ là chấp nhận được với giám sát
+        timer?.tolerance = min(interval * 0.1, 1.0)
     }
     
     private func sampleCPUUsage() {
-        let cpuTask = Process()
-        cpuTask.launchPath = "/bin/bash"
-        cpuTask.arguments = ["-c", "ps -A -o %cpu | awk '{s+=$1} END {print s}'"]
-        
-        let pipe = Pipe()
-        cpuTask.standardOutput = pipe
-        
-        do {
-            try cpuTask.run()
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
-               let totalCPU = Double(output) {
-                let coreCount = Double(ProcessInfo.processInfo.activeProcessorCount)
-                let cpuUsageValue = min((totalCPU / coreCount) / 100.0, 1.0)
-                
-                Task {
-                    await self.uiUpdater.batch {
-                        self.cpuUsage = cpuUsageValue
-                    }
+        samplingQueue.async { [weak self] in
+            guard let self else { return }
+            // Tính tổng %CPU ngay trong Swift thay vì pipe qua bash + awk
+            
+            guard let output = self.runCommand("/bin/ps", ["-A", "-o", "%cpu"]) else { return }
+            
+            var totalCPU: Double = 0
+            for line in output.components(separatedBy: "\n").dropFirst() {
+                if let value = Double(line.trimmingCharacters(in: .whitespaces)) {
+                    totalCPU += value
                 }
             }
-        } catch {
-            print("CPU Scan Error: \(error)")
+            let coreCount = Double(ProcessInfo.processInfo.activeProcessorCount)
+            let cpuUsageValue = min((totalCPU / coreCount) / 100.0, 1.0)
+            
+            Task {
+                await self.uiUpdater.batch {
+                    self.cpuUsage = cpuUsageValue
+                }
+            }
         }
     }
 
     private func sampleGPUUsage() {
-        let gpuTask = Process()
-        gpuTask.launchPath = "/usr/sbin/ioreg"
-        gpuTask.arguments = ["-r", "-d", "1", "-w", "0", "-c", "IOAccelerator"]
-        
-        let pipe = Pipe()
-        gpuTask.standardOutput = pipe
-        
-        do {
-            try gpuTask.run()
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8) {
-                let deviceUtilization = extractIntegerValue(for: "\"Device Utilization %\"", in: output)
-                let rendererUtilization = extractIntegerValue(for: "\"Renderer Utilization %\"", in: output)
-                let tilerUtilization = extractIntegerValue(for: "\"Tiler Utilization %\"", in: output)
-                let usage = deviceUtilization ?? max(rendererUtilization ?? 0, tilerUtilization ?? 0)
-                let name = extractQuotedValue(for: "\"model\"", in: output) ?? gpuName
-                
-                Task {
-                    await self.uiUpdater.batch {
-                        self.gpuUsage = Double(usage) / 100.0
-                        self.gpuName = name
-                    }
+        samplingQueue.async { [weak self] in
+            guard let self else { return }
+            guard let output = self.runCommand("/usr/sbin/ioreg", ["-r", "-d", "1", "-w", "0", "-c", "IOAccelerator"]) else { return }
+            
+            let deviceUtilization = self.extractIntegerValue(for: "\"Device Utilization %\"", in: output)
+            let rendererUtilization = self.extractIntegerValue(for: "\"Renderer Utilization %\"", in: output)
+            let tilerUtilization = self.extractIntegerValue(for: "\"Tiler Utilization %\"", in: output)
+            let usage = deviceUtilization ?? max(rendererUtilization ?? 0, tilerUtilization ?? 0)
+            let name = self.extractQuotedValue(for: "\"model\"", in: output) ?? self.gpuName
+            
+            Task {
+                await self.uiUpdater.batch {
+                    self.gpuUsage = Double(usage) / 100.0
+                    self.gpuName = name
                 }
             }
-        } catch {
-            print("GPU Scan Error: \(error)")
         }
     }
     
@@ -740,130 +749,137 @@ class SystemMonitorService: ObservableObject {
     }
     
     private func sampleMemoryUsage(includeDetailedStats: Bool) {
-        let memTask = Process()
-        memTask.launchPath = "/usr/bin/vm_stat"
-        
-        let memPipe = Pipe()
-        memTask.standardOutput = memPipe
-        
-        do {
-            try memTask.run()
-            let data = memPipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8) {
-                let lines = output.components(separatedBy: "\n")
-                var pageSize: UInt64 = 16384
-                var pagesActive: UInt64 = 0
-                var pagesInactive: UInt64 = 0
-                var pagesSpeculative: UInt64 = 0
-                var pagesWired: UInt64 = 0
-                var pagesCompressed: UInt64 = 0
-                
-                for line in lines {
-                    if line.contains("page size of") {
-                        if let match = line.range(of: "\\d+", options: .regularExpression),
-                           let size = UInt64(line[match]) {
-                            pageSize = size
-                        }
-                    } else if line.hasPrefix("Pages active:") {
-                        pagesActive = extractPageCount(line)
-                    } else if line.hasPrefix("Pages inactive:") {
-                        pagesInactive = extractPageCount(line)
-                    } else if line.hasPrefix("Pages speculative:") {
-                        pagesSpeculative = extractPageCount(line)
-                    } else if line.hasPrefix("Pages wired down:") {
-                        pagesWired = extractPageCount(line)
-                    } else if line.hasPrefix("Pages occupied by compressor:") {
-                        pagesCompressed = extractPageCount(line)
+        samplingQueue.async { [weak self] in
+            guard let self else { return }
+            guard let output = self.runCommand("/usr/bin/vm_stat", []) else { return }
+            
+            let lines = output.components(separatedBy: "\n")
+            var pageSize: UInt64 = 16384
+            var pagesActive: UInt64 = 0
+            var pagesInactive: UInt64 = 0
+            var pagesSpeculative: UInt64 = 0
+            var pagesWired: UInt64 = 0
+            var pagesCompressed: UInt64 = 0
+            
+            for line in lines {
+                if line.contains("page size of") {
+                    if let match = line.range(of: "\\d+", options: .regularExpression),
+                       let size = UInt64(line[match]) {
+                        pageSize = size
                     }
-                }
-                
-                let totalRAM = ProcessInfo.processInfo.physicalMemory
-                let usedPages = pagesActive + pagesWired + pagesCompressed + pagesSpeculative
-                let usedRAM = usedPages * pageSize
-                
-                let memoryUsageValue = Double(usedRAM) / Double(totalRAM)
-                let memoryUsedStringValue = ByteCountFormatter.string(fromByteCount: Int64(usedRAM), countStyle: .memory)
-                let memoryTotalStringValue = ByteCountFormatter.string(fromByteCount: Int64(totalRAM), countStyle: .memory)
-                
-                Task {
-                    await self.uiUpdater.batch {
-                        self.memoryUsage = memoryUsageValue
-                        self.memoryUsedString = memoryUsedStringValue
-                        self.memoryTotalString = memoryTotalStringValue
-                    }
-                }
-                
-                if includeDetailedStats {
-                    self.updateDetailedStats(
-                        pagesActive: pagesActive + pagesInactive + pagesSpeculative,
-                        pagesWired: pagesWired,
-                        pagesCompressed: pagesCompressed,
-                        pageSize: pageSize,
-                        totalRAM: totalRAM
-                    )
+                } else if line.hasPrefix("Pages active:") {
+                    pagesActive = self.extractPageCount(line)
+                } else if line.hasPrefix("Pages inactive:") {
+                    pagesInactive = self.extractPageCount(line)
+                } else if line.hasPrefix("Pages speculative:") {
+                    pagesSpeculative = self.extractPageCount(line)
+                } else if line.hasPrefix("Pages wired down:") {
+                    pagesWired = self.extractPageCount(line)
+                } else if line.hasPrefix("Pages occupied by compressor:") {
+                    pagesCompressed = self.extractPageCount(line)
                 }
             }
-        } catch {
-            print("Memory Scan Error: \(error)")
+            
+            let totalRAM = ProcessInfo.processInfo.physicalMemory
+            // Trang speculative là cache có thể thu hồi ngay nên không tính vào RAM đã dùng
+            // (khớp với cách Activity Monitor đếm "Memory Used")
+            
+            let usedPages = pagesActive + pagesWired + pagesCompressed
+            let usedRAM = usedPages * pageSize
+            
+            let memoryUsageValue = Double(usedRAM) / Double(totalRAM)
+            let memoryUsedStringValue = ByteCountFormatter.string(fromByteCount: Int64(usedRAM), countStyle: .memory)
+            let memoryTotalStringValue = ByteCountFormatter.string(fromByteCount: Int64(totalRAM), countStyle: .memory)
+            
+            Task {
+                await self.uiUpdater.batch {
+                    self.memoryUsage = memoryUsageValue
+                    self.memoryUsedString = memoryUsedStringValue
+                    self.memoryTotalString = memoryTotalStringValue
+                }
+            }
+            
+            if includeDetailedStats {
+                self.updateDetailedStats(
+                    pagesActive: pagesActive + pagesInactive + pagesSpeculative,
+                    pagesWired: pagesWired,
+                    pagesCompressed: pagesCompressed,
+                    pageSize: pageSize,
+                    totalRAM: totalRAM
+                )
+            }
         }
     }
     
     private func sampleNetworkUsage(includeDetails: Bool) {
-        let netTask = Process()
-        netTask.launchPath = "/bin/bash"
-        netTask.arguments = ["-c", "netstat -ib | awk '/en0/ && $7 > 0 {print $7, $10; exit}'"]
-        
-        let netPipe = Pipe()
-        netTask.standardOutput = netPipe
-        
-        do {
-            try netTask.run()
-            let data = netPipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
-               !output.isEmpty {
-                let parts = output.components(separatedBy: " ").filter { !$0.isEmpty }
-                if parts.count >= 2,
-                   let bytesIn = UInt64(parts[0]),
-                   let bytesOut = UInt64(parts[1]) {
-                    
-                    let now = Date()
-                    let timeDiff = now.timeIntervalSince(lastNetworkCheck)
-                    
-                    if timeDiff > 0 && lastBytesReceived > 0 {
-                        let downloadDelta = bytesIn > lastBytesReceived ? Double(bytesIn - lastBytesReceived) : 0
-                        let uploadDelta = bytesOut > lastBytesSent ? Double(bytesOut - lastBytesSent) : 0
-                        
-                        let downloadRate = downloadDelta / timeDiff
-                        let uploadRate = uploadDelta / timeDiff
-                        let totalDownloadStr = ByteCountFormatter.string(fromByteCount: Int64(bytesIn), countStyle: .file)
-                        let totalUploadStr = ByteCountFormatter.string(fromByteCount: Int64(bytesOut), countStyle: .file)
-                        
-                        Task {
-                            await self.uiUpdater.batch {
-                                self.downloadSpeed = downloadRate
-                                self.uploadSpeed = uploadRate
-                                self.totalDownload = totalDownloadStr
-                                self.totalUpload = totalUploadStr
-                                self.downloadSpeedHistory.removeFirst()
-                                self.downloadSpeedHistory.append(downloadRate)
-                                self.uploadSpeedHistory.removeFirst()
-                                self.uploadSpeedHistory.append(uploadRate)
-                            }
-                        }
-                    }
-                    
-                    lastBytesReceived = bytesIn
-                    lastBytesSent = bytesOut
-                    lastNetworkCheck = now
+        samplingQueue.async { [weak self] in
+            guard let self else { return }
+            guard let output = self.runCommand("/bin/netstat", ["-ib"]) else { return }
+            
+            // netstat in nhiều dòng cho cùng một interface (mỗi loại địa chỉ một dòng)
+            // nên chỉ lấy dòng đầu tiên của từng interface
+            
+            var byInterface: [String: (rx: UInt64, tx: UInt64)] = [:]
+            var interfaceOrder: [String] = []
+            
+            for line in output.components(separatedBy: "\n").dropFirst() {
+                let parts = line.split(separator: " ").map(String.init)
+                guard parts.count >= 10,
+                      let rx = UInt64(parts[6]),
+                      let tx = UInt64(parts[9]) else { continue }
+                let name = parts[0]
+                if byInterface[name] == nil {
+                    byInterface[name] = (rx, tx)
+                    interfaceOrder.append(name)
                 }
             }
-        } catch {
-            print("Network Scan Error: \(error)")
-        }
-        
-        if includeDetails {
-            fetchWiFiInfo()
-            updateConnectionDuration()
+            
+            // Cộng dồn các interface vật lý en*; VPN chạy qua utun sẽ bị đếm trùng
+            // trên en* bên dưới nên không tính
+            
+            let physical = interfaceOrder.filter { $0.hasPrefix("en") && $0.dropFirst(2).allSatisfy(\.isNumber) }
+            let targets = physical.isEmpty
+                ? interfaceOrder.filter { !$0.hasPrefix("lo") }
+                : physical
+            guard !targets.isEmpty else { return }
+            
+            let bytesIn = targets.reduce(UInt64(0)) { $0 + (byInterface[$1]?.rx ?? 0) }
+            let bytesOut = targets.reduce(UInt64(0)) { $0 + (byInterface[$1]?.tx ?? 0) }
+            
+            let now = Date()
+            let timeDiff = now.timeIntervalSince(self.lastNetworkCheck)
+            
+            if timeDiff > 0 && self.lastBytesReceived > 0 {
+                let downloadDelta = bytesIn > self.lastBytesReceived ? Double(bytesIn - self.lastBytesReceived) : 0
+                let uploadDelta = bytesOut > self.lastBytesSent ? Double(bytesOut - self.lastBytesSent) : 0
+                
+                let downloadRate = downloadDelta / timeDiff
+                let uploadRate = uploadDelta / timeDiff
+                let totalDownloadStr = ByteCountFormatter.string(fromByteCount: Int64(bytesIn), countStyle: .file)
+                let totalUploadStr = ByteCountFormatter.string(fromByteCount: Int64(bytesOut), countStyle: .file)
+                
+                Task {
+                    await self.uiUpdater.batch {
+                        self.downloadSpeed = downloadRate
+                        self.uploadSpeed = uploadRate
+                        self.totalDownload = totalDownloadStr
+                        self.totalUpload = totalUploadStr
+                        self.downloadSpeedHistory.removeFirst()
+                        self.downloadSpeedHistory.append(downloadRate)
+                        self.uploadSpeedHistory.removeFirst()
+                        self.uploadSpeedHistory.append(uploadRate)
+                    }
+                }
+            }
+            
+            self.lastBytesReceived = bytesIn
+            self.lastBytesSent = bytesOut
+            self.lastNetworkCheck = now
+            
+            if includeDetails {
+                self.fetchWiFiInfo()
+                self.updateConnectionDuration()
+            }
         }
     }
     
@@ -874,34 +890,17 @@ class SystemMonitorService: ObservableObject {
         }
     }
     
-    // Fetch WiFi Info using airport utility
+    // Lấy SSID qua CoreWLAN; binary airport đã bị Apple xoá khỏi macOS 14.4+
+    // và không thể đọc SSID nếu người dùng không cấp quyền Vị trí
+    
     private func fetchWiFiInfo() {
-        let task = Process()
-        task.launchPath = "/bin/bash"
-        // Use standard path for airport utility on macOS
-        task.arguments = ["-c", "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | awk -F': ' '/ SSID/ {print $2}'"]
+        let interface = CWWiFiClient.shared().interface()
+        let ssid = interface?.ssid() ?? interface?.interfaceName
         
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        
-        do {
-            try task.run()
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines), !output.isEmpty {
-                Task {
-                    await uiUpdater.batch {
-                        self.wifiSSID = output
-                    }
-                }
-            } else {
-                 Task {
-                    await uiUpdater.batch {
-                        self.wifiSSID = "Wi-Fi Not Connected"
-                    }
-                }
+        Task {
+            await uiUpdater.batch {
+                self.wifiSSID = ssid ?? "Wi-Fi"
             }
-        } catch {
-             // Fallback
         }
     }
     
@@ -911,7 +910,7 @@ class SystemMonitorService: ObservableObject {
         let minutes = (Int(duration) % 3600) / 60
         let seconds = Int(duration) % 60
         
-        let connectionDurationValue = String(format: "%d giờ %d phút %d giây", hours, minutes, seconds)
+        let connectionDurationValue = String(format: L("%d giờ %d phút %d giây"), hours, minutes, seconds)
         
         Task {
             await uiUpdater.batch {
@@ -922,62 +921,50 @@ class SystemMonitorService: ObservableObject {
     
     private func updateBatteryStatus() {
         // Use pmset -g batt
-        let task = Process()
-        task.launchPath = "/usr/bin/pmset"
-        task.arguments = ["-g", "batt"]
-        
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        
-        do {
-            try task.run()
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8) {
-                // Example output:
-                // Now drawing from 'AC Power'
-                // -InternalBattery-0 (id=1234567)	98%; charging; 0:10 remaining present: true
-                
-                let lines = output.components(separatedBy: "\n")
-                if lines.count >= 2 {
-                    let statusLine = lines[1]
-                    
-                    // Parse Percentage
-                    var batteryLevelValue: Double = 1.0
-                    var isChargingValue = false
-                    var batteryStateValue = "Không xác định"
-                    
-                    if let range = statusLine.range(of: "\\d+%", options: .regularExpression) {
-                        let percentString = String(statusLine[range]).dropLast()
-                        if let percent = Double(percentString) {
-                            batteryLevelValue = percent / 100.0
-                        }
-                    }
-                    
-                    // Parse Charging State
-                    if output.contains("AC Power") {
-                        isChargingValue = true
-                        if statusLine.contains("charging") {
-                            batteryStateValue = "Đang sạc"
-                        } else {
-                            batteryStateValue = "Đã cắm nguồn"
-                        }
-                    } else {
-                        isChargingValue = false
-                        batteryStateValue = "Đang dùng pin"
-                    }
-                    
-                    // Batch battery status update
-                    Task {
-                        await self.uiUpdater.batch {
-                            self.batteryLevel = batteryLevelValue
-                            self.isCharging = isChargingValue
-                            self.batteryState = batteryStateValue
-                        }
-                    }
+        samplingQueue.async { [weak self] in
+            guard let self else { return }
+            guard let output = self.runCommand("/usr/bin/pmset", ["-g", "batt"]) else { return }
+            // Example output:
+            // Now drawing from 'AC Power'
+            // -InternalBattery-0 (id=1234567)	98%; charging; 0:10 remaining present: true
+            
+            let lines = output.components(separatedBy: "\n")
+            guard lines.count >= 2 else { return }
+            let statusLine = lines[1]
+            
+            // Parse Percentage
+            var batteryLevelValue: Double = 1.0
+            var isChargingValue = false
+            var batteryStateValue = L("Không xác định")
+            
+            if let range = statusLine.range(of: "\\d+%", options: .regularExpression) {
+                let percentString = String(statusLine[range]).dropLast()
+                if let percent = Double(percentString) {
+                    batteryLevelValue = percent / 100.0
                 }
             }
-        } catch {
-            print("Battery Scan Error: \(error)")
+            
+            // Parse Charging State
+            if output.contains("AC Power") {
+                isChargingValue = true
+                if statusLine.contains("charging") {
+                    batteryStateValue = L("Đang sạc")
+                } else {
+                    batteryStateValue = L("Đã cắm nguồn")
+                }
+            } else {
+                isChargingValue = false
+                batteryStateValue = L("Đang dùng pin")
+            }
+            
+            // Batch battery status update
+            Task {
+                await self.uiUpdater.batch {
+                    self.batteryLevel = batteryLevelValue
+                    self.isCharging = isChargingValue
+                    self.batteryState = batteryStateValue
+                }
+            }
         }
     }
     
@@ -989,82 +976,97 @@ class SystemMonitorService: ObservableObject {
             return  // Không phát hiện được khi tạm dừng
         }
         
-        // Use ps to get pid and rss
-        let task = Process()
-        task.launchPath = "/bin/bash"
-        task.arguments = ["-c", "ps -aceo pid,rss,comm"]
+        // Cảnh báo chỉ đúng khi TOÀN HỆ THỐNG thật sự hết RAM (memoryUsage vừa được
+        // sample trong cùng tick bởi alertTimer), chứ không phải khi một app đơn lẻ vượt fixed 2GB
         
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        
-        do {
-            try task.run()
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8) {
-                let lines = output.components(separatedBy: "\n")
-                // Skip header (PID RSS COMM)
-                
-                var maxRSS: Double = 0
-                var maxPID: pid_t = 0
-                var maxName: String = ""
-                
-                for line in lines.dropFirst() {
-                    let parts = line.trimmingCharacters(in: .whitespaces).components(separatedBy: .whitespaces).filter { !$0.isEmpty }
-                    if parts.count >= 3 {
-                        if let pid = pid_t(parts[0]),
-                           let rssKB = Double(parts[1]) {
-                            
-                            // Check ignore list and self
-                            if pid == ProcessInfo.processInfo.processIdentifier { continue }
-                            if ignoredPids.contains(pid) { continue }
-                            
-                            // Nhận tên ứng dụng để kiểm tra danh sách bỏ qua vĩnh viễn
-
-                            let tempName = parts[2...].joined(separator: " ")
-                            var appName = tempName
-                            if let app = NSRunningApplication(processIdentifier: pid) {
-                                appName = app.localizedName ?? tempName
-                            }
-                            
-                            // Kiểm tra xem nó có nằm trong danh sách bỏ qua vĩnh viễn không
-
-                            if permanentlyIgnoredApps.contains(appName) {
-                                continue
-                            }
-                                                        
-                            let rssGB = rssKB / 1024.0 / 1024.0
-                            
-                            if rssGB > memoryThresholdGB && rssGB > maxRSS {
-                                maxRSS = rssGB
-                                maxPID = pid
-                                maxName = appName
-                            }
-                        }
-                    }
-                }
-                
-                if maxRSS > 0 {
-                    // Batch high memory app update
-                    Task {
-                        await self.uiUpdater.batch { [weak self] in
-                            guard let self = self else { return }
-                            // Only update if it's a new alert or different app
-                            if self.highMemoryApp?.id != maxPID {
-                                var appIcon: NSImage?
-                                
-                                if let app = NSRunningApplication(processIdentifier: maxPID) {
-                                    appIcon = app.icon
-                                }
-                                
-                                self.highMemoryApp = HighMemoryApp(id: maxPID, name: maxName, usage: maxRSS, icon: appIcon)
-                                self.showHighMemoryAlert = true
-                            }
-                        }
+        let threshold = memoryAlertThresholdPercent / 100.0
+        guard memoryUsage >= threshold else {
+            if showHighMemoryAlert || highMemoryApp != nil {
+                // Hết áp lực thì tự ẩn cảnh báo
+                Task {
+                    await uiUpdater.batch {
+                        self.highMemoryApp = nil
+                        self.showHighMemoryAlert = false
                     }
                 }
             }
-        } catch {
-            print("Process Scan Error: \(error)")
+            return
+        }
+        
+        // Chỉ xét app GUI của người dùng; RSS được cộng dồn cả tiến trình con
+        // để con số hiển thị khớp với những gì người dùng thấy ở Activity Monitor
+        
+        struct AppSnapshot {
+            let pid: pid_t
+            let name: String
+            let icon: NSImage?
+        }
+        let snapshots = NSWorkspace.shared.runningApplications
+            .filter { $0.activationPolicy == .regular }
+            .filter { $0.processIdentifier != ProcessInfo.processInfo.processIdentifier }
+            .map { AppSnapshot(pid: $0.processIdentifier, name: $0.localizedName ?? L("Không rõ"), icon: $0.icon) }
+        
+        samplingQueue.async { [weak self] in
+            guard let self else { return }
+            guard let output = self.runCommand("/bin/ps", ["-axo", "pid,ppid,rss,comm"]) else { return }
+            
+            var rssByPid: [Int32: Double] = [:]     // GB
+            var childrenMap: [Int32: [Int32]] = [:]
+            
+            for line in output.components(separatedBy: "\n").dropFirst() {
+                let parts = line.trimmingCharacters(in: .whitespaces).split(separator: " ").map(String.init)
+                if parts.count >= 3,
+                   let pid = Int32(parts[0]),
+                   let ppid = Int32(parts[1]),
+                   let rssKB = Double(parts[2]) {
+                    rssByPid[pid] = rssKB / 1024.0 / 1024.0
+                    childrenMap[ppid, default: []].append(pid)
+                }
+            }
+            
+            // Dọn các PID đã thoát để tránh PID bị tái sử dụng làm mất cảnh báo oan
+            self.ignoredPids = self.ignoredPids.filter { rssByPid[$0] != nil }
+            
+            func aggregateRSS(for pid: Int32, visited: inout Set<Int32>) -> Double {
+                if visited.contains(pid) { return 0 }
+                visited.insert(pid)
+                var total = rssByPid[pid] ?? 0
+                if let children = childrenMap[pid] {
+                    for child in children {
+                        total += aggregateRSS(for: child, visited: &visited)
+                    }
+                }
+                return total
+            }
+            
+            var maxRSS: Double = 0
+            var maxSnapshot: AppSnapshot?
+            
+            for snapshot in snapshots {
+                if self.ignoredPids.contains(snapshot.pid) { continue }
+                if self.permanentlyIgnoredApps.contains(snapshot.name) { continue }
+                
+                var visited = Set<Int32>()
+                let totalGB = aggregateRSS(for: snapshot.pid, visited: &visited)
+                if totalGB > maxRSS {
+                    maxRSS = totalGB
+                    maxSnapshot = snapshot
+                }
+            }
+            
+            guard let snapshot = maxSnapshot else { return }
+            let targetPid = snapshot.pid
+            
+            Task {
+                await self.uiUpdater.batch { [weak self] in
+                    guard let self = self else { return }
+                    // Only update if it's a new alert or different app
+                    if self.highMemoryApp?.id != targetPid {
+                        self.highMemoryApp = HighMemoryApp(id: targetPid, name: snapshot.name, usage: maxRSS, icon: snapshot.icon)
+                        self.showHighMemoryAlert = true
+                    }
+                }
+            }
         }
     }
     
@@ -1086,7 +1088,8 @@ class SystemMonitorService: ObservableObject {
     /// - Tham số phút: Số phút tạm dừng
 
     func snoozeAlert(minutes: Int) {
-        snoozedUntil = Date().addingTimeInterval(TimeInterval(minutes * 60))
+        let until = Date().addingTimeInterval(TimeInterval(minutes * 60))
+        snoozedUntil = until
         
         // Tạm thời tắt cảnh báo hiện tại
 
@@ -1097,7 +1100,7 @@ class SystemMonitorService: ObservableObject {
             }
         }
         
-        print("[MemoryMonitor] Snoozed for \(minutes) minutes until \(snoozedUntil!)")
+        print("[MemoryMonitor] Snoozed for \(minutes) minutes until \(until)")
     }
     
     /// Bỏ qua vĩnh viễn ứng dụng có bộ nhớ cao hiện tại
@@ -1144,9 +1147,24 @@ class SystemMonitorService: ObservableObject {
         saveIgnoredApps()
     }
     
-    func terminateHighMemoryApp() {
-        guard let app = highMemoryApp else { return }
+    @discardableResult
+    func terminateHighMemoryApp() -> Bool {
+        guard let app = highMemoryApp else { return false }
+        guard confirmTermination(of: app) else { return false }
         forceQuitProcess(app.id, dismissAlert: true)
+        return true
+    }
+    
+    /// Hộp thoại xác nhận trước khi buộc thoát để người dùng không mất dữ liệu chưa lưu
+    
+    private func confirmTermination(of app: HighMemoryApp) -> Bool {
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = String(format: L("Buộc thoát %@?"), app.name)
+        alert.informativeText = String(format: L("Ứng dụng đang dùng khoảng %.1f GB bộ nhớ. Buộc thoát có thể làm mất dữ liệu chưa lưu trong ứng dụng này."), app.usage)
+        alert.addButton(withTitle: L("Buộc thoát"))
+        alert.addButton(withTitle: L("Hủy"))
+        return alert.runModal() == .alertFirstButtonReturn
     }
     
     func forceQuitProcess(_ pid: pid_t, dismissAlert: Bool = false) {
@@ -1186,9 +1204,9 @@ class SystemMonitorService: ObservableObject {
     @Published var memoryPressure: Double = 0.0 // Percentage
     @Published var memorySwapUsed: String = "0 B"
     @Published var memorySwapTotal: String = "0 B"
-    @Published var batteryHealth: String = "Good"
+    @Published var batteryHealth: String = L("Đang đo")
     @Published var batteryCycleCount: Int = 0
-    @Published var batteryCondition: String = "Normal"
+    @Published var batteryCondition: String = L("Đang kiểm tra")
     
     // ... existing extractPageCount ...
     private func extractPageCount(_ line: String) -> UInt64 {
@@ -1229,135 +1247,119 @@ class SystemMonitorService: ObservableObject {
     }
     
     private func updateMemoryPressureAndSwap() {
-        // Memory Pressure
-        let pressureTask = Process()
-        pressureTask.launchPath = "/usr/bin/memory_pressure"
-        pressureTask.arguments = ["-Q"]
+        // Memory Pressure — chạy trên samplingQueue (nối tiếp) để các lần đo không chồng lên nhau
         
-        let pressurePipe = Pipe()
-        pressureTask.standardOutput = pressurePipe
-        
-        DispatchQueue.global(qos: .background).async {
-            do {
-                try pressureTask.run()
-                let data = pressurePipe.fileHandleForReading.readDataToEndOfFile()
-                if let output = String(data: data, encoding: .utf8) {
-                    // Output: "System-wide memory free percentage: 48%"
-                    if let range = output.range(of: "\\d+%", options: .regularExpression) {
-                        let percentString = String(output[range]).dropLast()
-                        if let freePercent = Double(percentString) {
-                            let memoryPressureValue = (100.0 - freePercent) / 100.0
-                            
-                            // Batch pressure update
-                            Task {
-                                await self.uiUpdater.batch {
-                                    self.memoryPressure = memoryPressureValue
-                                }
-                            }
+        samplingQueue.async { [weak self] in
+            guard let self else { return }
+            guard let output = self.runCommand("/usr/bin/memory_pressure", ["-Q"]) else { return }
+            
+            // Output: "System-wide memory free percentage: 48%"
+            if let range = output.range(of: "\\d+%", options: .regularExpression) {
+                let percentString = String(output[range]).dropLast()
+                if let freePercent = Double(percentString) {
+                    let memoryPressureValue = (100.0 - freePercent) / 100.0
+                    
+                    // Batch pressure update
+                    Task {
+                        await self.uiUpdater.batch {
+                            self.memoryPressure = memoryPressureValue
                         }
                     }
                 }
-            } catch {
-                print("Memory Pressure Error: \(error)")
             }
         }
         
-        // Swap Usage
-        // sysctl vm.swapusage
-        let swapTask = Process()
-        swapTask.launchPath = "/usr/sbin/sysctl"
-        swapTask.arguments = ["vm.swapusage"]
-        
-        let swapPipe = Pipe()
-        swapTask.standardOutput = swapPipe
-        
-        DispatchQueue.global(qos: .background).async {
-            do {
-                try swapTask.run()
-                let data = swapPipe.fileHandleForReading.readDataToEndOfFile()
-                if let output = String(data: data, encoding: .utf8) {
-                    // vm.swapusage: total = 5120.00M  used = 4426.56M  free = 693.44M  (encrypted)
-                    let components = output.components(separatedBy: " ")
-                    var usedStr = ""
-                    
-                    for (index, comp) in components.enumerated() {
-                        if comp == "used" && index + 2 < components.count {
-                             // index+1 is "=", index+2 is value
-                             usedStr = components[index + 2]
-                        }
-                    }
-                    
-                    // Batch swap update
-                    if !usedStr.isEmpty {
-                        Task {
-                            await self.uiUpdater.batch {
-                                self.memorySwapUsed = usedStr
-                            }
-                        }
+        // Swap Usage — sysctl vm.swapusage
+        samplingQueue.async { [weak self] in
+            guard let self else { return }
+            guard let output = self.runCommand("/usr/sbin/sysctl", ["vm.swapusage"]) else { return }
+            
+            // vm.swapusage: total = 5120.00M  used = 4426.56M  free = 693.44M  (encrypted)
+            let components = output.components(separatedBy: " ")
+            var usedStr = ""
+            
+            for (index, comp) in components.enumerated() {
+                if comp == "used" && index + 2 < components.count {
+                     // index+1 is "=", index+2 is value
+                     usedStr = components[index + 2]
+                }
+            }
+            
+            // Batch swap update
+            if !usedStr.isEmpty {
+                Task {
+                    await self.uiUpdater.batch {
+                        self.memorySwapUsed = usedStr
                     }
                 }
-            } catch {
-                print("Swap Usage Error: \(error)")
             }
         }
     }
+    
+    private var isUpdatingBatteryDetails = false
     
     private func updateBatteryDetails() {
-         let task = Process()
-         task.launchPath = "/usr/sbin/system_profiler"
-         task.arguments = ["SPPowerDataType"]
-         
-         let pipe = Pipe()
-         task.standardOutput = pipe
-         
-         // Run asynchronously to avoid blocking main thread heavy task
-         DispatchQueue.global(qos: .background).async {
-             do {
-                 try task.run()
-                 let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                 if let output = String(data: data, encoding: .utf8) {
-                     // Parse Cycle Count and Condition
-                     // "Cycle Count: 123"
-                     // "Condition: Normal"
-                     var cycleCount = 0
-                     var condition = "Normal"
-                     var maxCapacity = 100
-                     
-                     let lines = output.components(separatedBy: "\n")
-                     for line in lines {
-                         if line.contains("Cycle Count:") {
-                             if let val = Int(line.components(separatedBy: ":").last?.trimmingCharacters(in: .whitespaces) ?? "") {
-                                 cycleCount = val
-                             }
-                         } else if line.contains("Condition:") {
-                             condition = line.components(separatedBy: ":").last?.trimmingCharacters(in: .whitespaces) ?? "Normal"
-                         } else if line.contains("Maximum Capacity:") {
-                              if let val = Int(line.components(separatedBy: ":").last?.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "%", with: "") ?? "") {
-                                 maxCapacity = val
-                             }
-                         }
-                     }
-                     
-                     // Batch battery details update
-                     Task {
-                         await self.uiUpdater.batch {
-                             self.batteryCycleCount = cycleCount
-                             self.batteryCondition = condition
-                             self.batteryHealth = "\(maxCapacity)%"
-                         }
-                     }
-                 }
-             } catch {
-                 print("Battery Detail Error: \(error)")
-             }
+        // system_profiler mất vài giây nên chặn chạy chồng giữa các lần lấy mẫu
+        guard !isUpdatingBatteryDetails else { return }
+        isUpdatingBatteryDetails = true
+        
+        let task = Process()
+        task.launchPath = "/usr/sbin/system_profiler"
+        task.arguments = ["SPPowerDataType"]
+        
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            defer { self?.isUpdatingBatteryDetails = false }
+            do {
+                try task.run()
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                if let output = String(data: data, encoding: .utf8) {
+                    // Parse Cycle Count and Condition
+                    // "Cycle Count: 123"
+                    // "Condition: Normal"
+                    var cycleCount = 0
+                    var condition = L("Bình thường")
+                    var maxCapacity = 100
+                    
+                    let lines = output.components(separatedBy: "\n")
+                    for line in lines {
+                        if line.contains("Cycle Count:") {
+                            if let val = Int(line.components(separatedBy: ":").last?.trimmingCharacters(in: .whitespaces) ?? "") {
+                                cycleCount = val
+                            }
+                        } else if line.contains("Condition:") {
+                            let raw = line.components(separatedBy: ":").last?.trimmingCharacters(in: .whitespaces) ?? ""
+                            condition = SystemMonitorService.localizedBatteryCondition(raw)
+                        } else if line.contains("Maximum Capacity:") {
+                            if let val = Int(line.components(separatedBy: ":").last?.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "%", with: "") ?? "") {
+                                maxCapacity = val
+                            }
+                        }
+                    }
+                    
+                    // Batch battery details update
+                    Task {
+                        await self?.uiUpdater.batch {
+                            self?.batteryCycleCount = cycleCount
+                            self?.batteryCondition = condition
+                            self?.batteryHealth = "\(maxCapacity)%"
+                        }
+                    }
+                }
+            } catch {
+                print("Battery Detail Error: \(error)")
+            }
+        }
     }
     
-    func formatSpeed(_ bytes: Double) -> String {
-        let formatter = ByteCountFormatter()
-        formatter.allowedUnits = [.useKB, .useMB, .useGB]
-        formatter.countStyle = .file
-        formatter.zeroPadsFractionDigits = true
-        return formatter.string(fromByteCount: Int64(bytes)) + "/s"
+    private static func localizedBatteryCondition(_ raw: String) -> String {
+        switch raw {
+        case "Normal": return L("Bình thường")
+        case "Service Recommended": return L("Nên bảo dưỡng")
+        case "Replace Soon": return L("Sắp cần thay")
+        default: return raw.isEmpty ? L("Không xác định") : raw
+        }
     }
-}
 }

@@ -152,7 +152,7 @@ class AppUpdaterService: ObservableObject {
                             newVersion: newVer,
                             size: info.fileSizeBytes.flatMap { Int64($0).map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) } } ?? "120 MB",
                             releaseDate: self.formatDate(info.currentVersionReleaseDate),
-                            releaseNotes: info.releaseNotes ?? "Bug fixes and performance improvements.",
+                            releaseNotes: info.releaseNotes ?? L("Bug fixes and performance improvements."),
                             screenshotUrls: info.screenshotUrls.compactMap { URL(string: $0) },
                             artworkUrl: URL(string: info.artworkUrl512),
                             appStoreId: info.trackId
@@ -188,9 +188,9 @@ class AppUpdaterService: ObservableObject {
         return AppUpdateItem(
             app: app,
             newVersion: info.version,
-            size: info.fileSizeBytes.flatMap { Int64($0).map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) } } ?? "Unknown",
+            size: info.fileSizeBytes.flatMap { Int64($0).map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) } } ?? L("Unknown"),
             releaseDate: formatDate(info.currentVersionReleaseDate),
-            releaseNotes: info.releaseNotes ?? "Update details not available.",
+            releaseNotes: info.releaseNotes ?? L("Update details not available."),
             screenshotUrls: info.screenshotUrls.compactMap { URL(string: $0) },
             artworkUrl: URL(string: info.artworkUrl512),
             appStoreId: info.trackId
@@ -280,7 +280,7 @@ class AppUpdaterService: ObservableObject {
         guard let masPath = getMasPath() else {
             await MainActor.run {
                 isUpdating = false
-                updateError = "Không tìm thấy `mas-cli`"
+                updateError = L("Không tìm thấy `mas-cli`")
             }
             return
         }
@@ -306,7 +306,7 @@ class AppUpdaterService: ObservableObject {
                 // Check if it is a MAS app
                 if !app.app.isAppStore {
                      await MainActor.run {
-                        appUpdateStatuses[app.id] = .failed("Không phải bản App Store nên không thể cập nhật tự động")
+                        appUpdateStatuses[app.id] = .failed(L("Không phải bản App Store nên không thể cập nhật tự động"))
                     }
                     continue
                 }
@@ -316,7 +316,7 @@ class AppUpdaterService: ObservableObject {
                 }
                 let (success, errorMsg) = await updateWithMas(masPath: masPath, appStoreId: appStoreId)
                 await MainActor.run {
-                    appUpdateStatuses[app.id] = success ? .completed : .failed(errorMsg ?? "Cập nhật thất bại")
+                    appUpdateStatuses[app.id] = success ? .completed : .failed(errorMsg ?? L("Cập nhật thất bại"))
                 }
             }
         }
@@ -350,11 +350,11 @@ class AppUpdaterService: ObservableObject {
             if task.terminationStatus != 0 {
                 let data = pipe.fileHandleForReading.readDataToEndOfFile()
                 var output = String(data: data, encoding: .utf8) ?? ""
-                if output.isEmpty { output = "Lỗi không xác định (mã thoát: \(task.terminationStatus))" }
+                if output.isEmpty { output = String(format: L("Lỗi không xác định (mã thoát: %d)"), task.terminationStatus) }
                 
                 // Friendly error mapping
                 if output.contains("sudo: a password is required") || output.contains("sudo: a terminal is required") {
-                    return (false, "Cần quyền quản trị. Hãy cập nhật ứng dụng trong App Store")
+                    return (false, L("Cần quyền quản trị. Hãy cập nhật ứng dụng trong App Store"))
                 }
                 
                 // Clean up output (mas output can be verbose)
@@ -363,7 +363,7 @@ class AppUpdaterService: ObservableObject {
             
             return (true, nil)
         } catch {
-            return (false, "Lỗi thực thi: \(error.localizedDescription)")
+            return (false, String(format: L("Lỗi thực thi: %@"), error.localizedDescription))
         }
     }
     
@@ -421,20 +421,20 @@ struct AppUpdaterView: View {
                 VStack(alignment: .leading, spacing: 30) {
                     // Branding Header
                     HStack(spacing: 8) {
-                        Text("Cập nhật ứng dụng")
+                        Text(L("Cập nhật ứng dụng"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
                         
                         // Update Icon
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
-                            Text("Luôn cập nhật")
+                            Text(L("Luôn cập nhật"))
                                 .font(.system(size: 20, weight: .heavy))
                         }
                         .foregroundColor(.white)
                     }
                     
-                    Text("Luôn cập nhật tất cả các ứng dụng của bạn với các phiên bản mới nhất.\nKiểm tra lần cuối: Không bao giờ")
+                    Text(L("Luôn cập nhật tất cả các ứng dụng của bạn với các phiên bản mới nhất.\nKiểm tra lần cuối: Không bao giờ"))
                         .font(.system(size: 13))
                         .foregroundColor(.white.opacity(0.7))
                         .lineSpacing(4)
@@ -443,20 +443,20 @@ struct AppUpdaterView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         featureRow(
                             icon: "arrow.triangle.2.circlepath",
-                            title: "Tự động kiểm tra cập nhật",
-                            subtitle: "Hãy để Mac Optimizer kiểm tra và cập nhật phần mềm cho bạn."
+                            title: L("Tự động kiểm tra cập nhật"),
+                            subtitle: L("Hãy để Mac Optimizer kiểm tra và cập nhật phần mềm cho bạn.")
                         )
                         
                         featureRow(
                             icon: "exclamationmark.shield",
-                            title: "Tránh sự không tương thích",
-                            subtitle: "Không còn vấn đề tương thích do ứng dụng lỗi thời gây ra."
+                            title: L("Tránh sự không tương thích"),
+                            subtitle: L("Không còn vấn đề tương thích do ứng dụng lỗi thời gây ra.")
                         )
                         
                         featureRow(
                             icon: "checkmark.seal.fill",
-                            title: "An toàn & đáng tin cậy",
-                            subtitle: "Chỉ cập nhật ứng dụng từ các kênh App Store chính thức."
+                            title: L("An toàn & đáng tin cậy"),
+                            subtitle: L("Chỉ cập nhật ứng dụng từ các kênh App Store chính thức.")
                         )
                     }
                     
@@ -470,7 +470,7 @@ struct AppUpdaterView: View {
                                 }
                             }
                         }) {
-                            Text("Xem các bản cập nhật...")
+                            Text(L("Xem các bản cập nhật..."))
                                 .font(.system(size: 13, weight: .semibold))
                                 .foregroundColor(.black)
                                 .padding(.horizontal, 16)
@@ -543,7 +543,7 @@ struct AppUpdaterView: View {
                                 .scaleEffect(1.2)
                                 .tint(.white)
                         }
-                        Text("Đang kiểm tra...")
+                        Text(L("Đang kiểm tra..."))
                             .font(.system(size: 12))
                             .foregroundColor(.white.opacity(0.8))
                     }
@@ -568,7 +568,7 @@ struct AppUpdaterView: View {
                                 .frame(width: 74, height: 74)
                                 .shadow(color: Color.black.opacity(0.3), radius: 10, y: 5)
                             
-                            Text("Kiểm tra")
+                            Text(L("Kiểm tra"))
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.white)
                         }
@@ -613,7 +613,7 @@ struct AppUpdaterView: View {
                         Button(action: { withAnimation { viewState = 0 }}) {
                             HStack(spacing: 4) {
                                 Image(systemName: "chevron.left")
-                                Text("Trình cập nhật")
+                                Text(L("Trình cập nhật"))
                             }
                             .font(.system(size: 12))
                             .foregroundColor(.white.opacity(0.7))
@@ -626,7 +626,7 @@ struct AppUpdaterView: View {
                         Button(action: {
                             service.selectAll()
                         }) {
-                            Text("Chọn tất cả")
+                            Text(L("Chọn tất cả"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.white.opacity(0.7))
                                 .padding(.horizontal, 8)
@@ -660,7 +660,7 @@ struct AppUpdaterView: View {
                                     // Search Bar Mock
                                     HStack {
                                         Image(systemName: "magnifyingglass")
-                                        Text("Tìm kiếm")
+                                        Text(L("Tìm kiếm"))
                                     }
                                     .padding(6)
                                     .background(Color.black.opacity(0.2))
@@ -679,7 +679,7 @@ struct AppUpdaterView: View {
                                 
                                 // Version Info Line
                                 HStack(spacing: 12) {
-                                    Text("Phiên bản \(item.app.version ?? "?")")
+                                    Text(String(format: L("Phiên bản %@"), item.app.version ?? "?"))
                                         .foregroundColor(.white.opacity(0.6))
                                     Image(systemName: "arrow.right")
                                         .font(.system(size: 10))
@@ -729,11 +729,11 @@ struct AppUpdaterView: View {
                                 
                                 // Release Notes
                                 VStack(alignment: .leading, spacing: 8) {
-                                    Text("Có gì mới:")
+                                    Text(L("Có gì mới:"))
                                         .font(.system(size: 14, weight: .bold))
                                         .foregroundColor(.white)
                                     
-                                    Text(item.releaseNotes ?? ("Không có ghi chú cập nhật nào"))
+                                    Text(item.releaseNotes ?? (L("Không có ghi chú cập nhật nào")))
                                         .font(.system(size: 13))
                                         .foregroundColor(.white.opacity(0.8))
                                         .lineSpacing(4)
@@ -764,7 +764,7 @@ struct AppUpdaterView: View {
                                     .frame(width: 58, height: 58)
                                 
                                 VStack(spacing: 0) {
-                                    Text("Cập nhật")
+                                    Text(L("Cập nhật"))
                                         .font(.system(size: 12, weight: .medium))
                                         .foregroundColor(.white)
                                     
@@ -819,7 +819,7 @@ struct AppUpdaterView: View {
                     Text(item.app.name)
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.white)
-                    Text("Phiên bản \(item.app.version ?? "Không rõ")")
+                    Text(String(format: L("Phiên bản %@"), item.app.version ?? L("Không rõ")))
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.6))
                 }
@@ -854,7 +854,7 @@ struct AppUpdaterView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("Trình cập nhật")
+                        Text(L("Trình cập nhật"))
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(service.updateComplete ? 0.8 : 0.4))
@@ -865,8 +865,8 @@ struct AppUpdaterView: View {
                 Spacer()
                 
                 Text(service.updateComplete ? 
-                     ("Hoàn thành") :
-                     ("Đang cập nhật..."))
+                     (L("Hoàn thành")) :
+                     (L("Đang cập nhật...")))
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white)
                 
@@ -880,7 +880,7 @@ struct AppUpdaterView: View {
 
             if !service.updateComplete && !service.currentlyUpdatingAppName.isEmpty {
                 VStack(spacing: 8) {
-                    Text("Đang cập nhật")
+                    Text(L("Đang cập nhật"))
                         .font(.system(size: 14))
                         .foregroundColor(.white.opacity(0.6))
                     Text(service.currentlyUpdatingAppName)
@@ -895,13 +895,13 @@ struct AppUpdaterView: View {
 
             if service.updateComplete {
                 HStack(spacing: 0) {
-                    tabButton(title: "Tất cả", 
+                    tabButton(title: L("Tất cả"), 
                               count: service.updates.filter { $0.isSelected }.count, 
                               isSelected: selectedTab == 0, action: { selectedTab = 0 })
-                    tabButton(title: "Thành công", 
+                    tabButton(title: L("Thành công"), 
                               count: successCount, isSelected: selectedTab == 1, 
                               action: { selectedTab = 1 }, color: .green)
-                    tabButton(title: "Thất bại", 
+                    tabButton(title: L("Thất bại"), 
                               count: failedCount, isSelected: selectedTab == 2, 
                               action: { selectedTab = 2 }, color: .red)
                 }
@@ -931,7 +931,7 @@ struct AppUpdaterView: View {
                             Text("\(successCount)")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.green)
-                            Text("Thành công")
+                            Text(L("Thành công"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.white.opacity(0.6))
                         }
@@ -939,7 +939,7 @@ struct AppUpdaterView: View {
                             Text("\(failedCount)")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(failedCount > 0 ? .red : .white.opacity(0.5))
-                            Text("Thất bại")
+                            Text(L("Thất bại"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.white.opacity(0.6))
                         }
@@ -953,7 +953,7 @@ struct AppUpdaterView: View {
                             Task { await service.scanForUpdates() }
                         }
                     }) {
-                        Text("Xong")
+                        Text(L("Xong"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.white)
                             .padding(.horizontal, 40)
@@ -1018,7 +1018,7 @@ struct AppUpdaterView: View {
                 Image(nsImage: item.app.icon).resizable().frame(width: 40, height: 40)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(item.app.name).font(.system(size: 14, weight: .medium)).foregroundColor(.white)
-                    Text("Phiên bản \(item.app.version ?? "Không rõ")")
+                    Text(String(format: L("Phiên bản %@"), item.app.version ?? L("Không rõ")))
                         .font(.system(size: 12)).foregroundColor(.white.opacity(0.6))
                 }
                 Spacer()
@@ -1040,11 +1040,11 @@ struct AppUpdaterView: View {
 
             if let s = service.appUpdateStatuses[item.id], case .failed(let error) = s, expandedFailedItems.contains(item.id) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Lý do:")
+                    Text(L("Lý do:"))
                         .font(.system(size: 12, weight: .medium)).foregroundColor(.red.opacity(0.9))
                     Text(error).font(.system(size: 11)).foregroundColor(.white.opacity(0.7))
                     Button(action: { Task { await retryUpdate(for: item) } }) {
-                        Text("Thử lại")
+                        Text(L("Thử lại"))
                             .font(.system(size: 11, weight: .medium)).foregroundColor(.cyan)
                             .padding(.horizontal, 12).padding(.vertical, 4)
                             .background(Color.cyan.opacity(0.15)).cornerRadius(4)
@@ -1062,37 +1062,37 @@ struct AppUpdaterView: View {
             if let status = service.appUpdateStatuses[item.id] {
                 switch status {
                 case .pending:
-                    Text("Chưa giải quyết")
+                    Text(L("Chưa giải quyết"))
                         .font(.system(size: 12)).foregroundColor(.white.opacity(0.5))
                 case .downloading:
                     HStack(spacing: 6) {
                         ProgressView().scaleEffect(0.6).progressViewStyle(.circular)
-                        Text("Đang tải xuống")
+                        Text(L("Đang tải xuống"))
                             .font(.system(size: 12)).foregroundColor(.cyan)
                     }
                 case .installing:
                     HStack(spacing: 6) {
                         ProgressView().scaleEffect(0.6).progressViewStyle(.circular)
-                        Text("Đang cài đặt")
+                        Text(L("Đang cài đặt"))
                             .font(.system(size: 12)).foregroundColor(.orange)
                     }
                 case .completed:
                     HStack(spacing: 4) {
                         Image(systemName: "checkmark.circle.fill").foregroundColor(.green)
-                        Text("Xong")
+                        Text(L("Xong"))
                             .font(.system(size: 12)).foregroundColor(.green)
                     }
                 case .failed(_):
                     HStack(spacing: 4) {
                         Image(systemName: "xmark.circle.fill").foregroundColor(.red)
-                        Text("Thất bại")
+                        Text(L("Thất bại"))
                             .font(.system(size: 12)).foregroundColor(.red)
                         Image(systemName: expandedFailedItems.contains(item.id) ? "chevron.up" : "chevron.down")
                             .font(.system(size: 10)).foregroundColor(.red.opacity(0.6))
                     }
                 }
             } else {
-                Text("Chưa giải quyết")
+                Text(L("Chưa giải quyết"))
                     .font(.system(size: 12)).foregroundColor(.white.opacity(0.5))
             }
         }
@@ -1106,7 +1106,7 @@ struct AppUpdaterView: View {
         }
         let (success, errorMsg) = await service.updateWithMas(masPath: masPath, appStoreId: appStoreId)
         await MainActor.run {
-            service.appUpdateStatuses[item.id] = success ? .completed : .failed(errorMsg ?? "Thử lại thất bại")
+            service.appUpdateStatuses[item.id] = success ? .completed : .failed(errorMsg ?? L("Thử lại thất bại"))
         }
     }
 }

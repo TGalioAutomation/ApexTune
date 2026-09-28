@@ -1,6 +1,7 @@
 import SwiftUI
 import AppKit
 import Combine
+import WidgetKit
 
 enum MenuBarStatusMetric: String, CaseIterable, Identifiable {
     case gpu
@@ -15,22 +16,22 @@ enum MenuBarStatusMetric: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .gpu: return "GPU"
-        case .storage: return "Ổ đĩa"
+        case .storage: return L("Ổ đĩa")
         case .memory: return "RAM"
         case .cpu: return "CPU"
-        case .network: return "Mạng"
+        case .network: return L("Mạng")
         case .battery: return "Pin"
         }
     }
     
     var tooltipDescription: String {
         switch self {
-        case .gpu: return "Mức tải GPU hiện tại"
-        case .storage: return "Dung lượng trống và đã dùng của ổ đĩa"
-        case .memory: return "Phần trăm RAM đang được sử dụng"
-        case .cpu: return "Mức tải CPU hiện tại"
-        case .network: return "Tốc độ tải xuống và tải lên hiện tại"
-        case .battery: return "Phần trăm pin hiện tại"
+        case .gpu: return L("Mức tải GPU hiện tại")
+        case .storage: return L("Dung lượng trống và đã dùng của ổ đĩa")
+        case .memory: return L("Phần trăm RAM đang được sử dụng")
+        case .cpu: return L("Mức tải CPU hiện tại")
+        case .network: return L("Tốc độ tải xuống và tải lên hiện tại")
+        case .battery: return L("Phần trăm pin hiện tại")
         }
     }
     
@@ -60,6 +61,10 @@ public enum MenuBarRoute {
 class MenuBarManager: NSObject, ObservableObject {
     static let shared = MenuBarManager()
     
+    /// Kích thước popup "Bảng điều khiển hệ thống" — dùng chung cho view và cửa sổ.
+    /// Chiều cao 720 để toàn bộ nội dung (kể cả footer điều hướng) hiển thị không cần cuộn.
+    static let popupSize = CGSize(width: 390, height: 720)
+    
     var statusItem: NSStatusItem?
     var popoverWindow: MenuBarWindow?
     var detailWindow: MenuBarWindow?
@@ -73,14 +78,25 @@ class MenuBarManager: NSObject, ObservableObject {
     @Published var currentDetailRoute: MenuBarRoute? = nil
     @Published var selectedStatusMetrics: [MenuBarStatusMetric] = [.gpu, .cpu, .storage, .memory]
     @Published var showsStatusIcon: Bool = true
+    /// Giao diện dải số liệu trên thanh menu (xem MenuBarBannerTheme).
+    @Published var bannerTheme: MenuBarBannerTheme = .dark {
+        didSet {
+            guard oldValue != bannerTheme else { return }
+            UserDefaults.standard.set(bannerTheme.rawValue, forKey: bannerThemeKey)
+            updateStatusItemAppearance()
+        }
+    }
     
     // Cờ đã hoàn thành khởi tạo hay chưa
 
     private var isSetupComplete = false
     private var cancellables = Set<AnyCancellable>()
     private var diskRefreshTimer: Timer?
+    /// Làm mới timeline widget theo định kỳ (widget tự đo lại mỗi 15 phút, app đôn thêm).
+    private var widgetRefreshTimer: Timer?
     private let statusMetricsKey = "MenuBar.StatusMetrics"
     private let statusIconKey = "MenuBar.ShowsStatusIcon"
+    private let bannerThemeKey = "MenuBar.BannerTheme"
     /// Leading mark in the menu bar banner; matches sidebar `AppBrandMark` (SF Symbol).
     private lazy var statusBarIconImage: NSImage? = {
         let config = NSImage.SymbolConfiguration(pointSize: 11, weight: .semibold, scale: .medium)
@@ -93,6 +109,9 @@ class MenuBarManager: NSObject, ObservableObject {
         fallback?.isTemplate = true
         return fallback
     }()
+
+    /// Cache icon đã tô màu theo tint (theme nền sáng).
+    private var tintedIconCache: [String: NSImage] = [:]
     
     override init() {
         super.init()
@@ -118,6 +137,14 @@ class MenuBarManager: NSObject, ObservableObject {
         bindStatusBarUpdates()
         systemMonitor.startMonitoring()
         setupAutoClose()
+        startWidgetRefresh()
+    }
+
+    /// Đôn WidgetKit làm mới timeline: mỗi 10 phút và mỗi lần mở bảng điều khiển.
+    private func startWidgetRefresh() {
+        widgetRefreshTimer = Timer.scheduledTimer(withTimeInterval: 600, repeats: true) { _ in
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
     
     ///Phương thức công khai: Đảm bảo rằng cài đặt đã hoàn tất (đối với các trường hợp yêu cầu sử dụng ngay)
@@ -141,10 +168,54 @@ class MenuBarManager: NSObject, ObservableObject {
         
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem?.button {
-            button.action = #selector(toggleWindow)
+            // Chuột trái mở popup, chuột phải mở menu (bao gồm Thoát MacOptimizer)
+            button.action = #selector(statusItemClicked)
             button.target = self
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
             updateStatusItemAppearance()
         }
+    }
+    
+    @objc private func statusItemClicked() {
+        if let event = NSApp.currentEvent, event.type == .rightMouseUp || event.modifierFlags.contains(.option) {
+            showStatusMenu()
+        } else {
+            toggleWindow()
+        }
+    }
+    
+    /// Menu chuột phải của status item — nơi duy nhất có đường Thoát app
+    private func showStatusMenu() {
+        let menu = NSMenu()
+        
+        let openPanel = NSMenuItem(title: L("Mở bảng điều khiển"), action: #selector(toggleWindow), keyEquivalent: "")
+        openPanel.target = self
+        menu.addItem(openPanel)
+        
+        let openApp = NSMenuItem(title: L("Mở MacOptimizer"), action: #selector(openMainAppFromMenu), keyEquivalent: "")
+        openApp.target = self
+        menu.addItem(openApp)
+        
+        menu.addItem(.separator())
+        
+        let quit = NSMenuItem(title: L("Thoát MacOptimizer"), action: #selector(quitApp), keyEquivalent: "q")
+        quit.target = self
+        menu.addItem(quit)
+        
+        // Gắn menu tạm thời để click hiển thị menu hệ thống, sau đó gỡ ra
+        // để chuột trái tiếp tục mở popup như thường lệ
+        
+        statusItem?.menu = menu
+        statusItem?.button?.performClick(nil)
+        statusItem?.menu = nil
+    }
+    
+    @objc private func openMainAppFromMenu() {
+        openMainApp()
+    }
+    
+    @objc private func quitApp() {
+        NSApp.terminate(nil)
     }
     
     private func setupWindow() {
@@ -159,7 +230,7 @@ class MenuBarManager: NSObject, ObservableObject {
         let window = MenuBarWindow(contentViewController: hostingController)
         self.popoverWindow = window
         window.level = .floating
-        window.setContentSize(NSSize(width: 390, height: 690))
+        window.setContentSize(NSSize(width: Self.popupSize.width, height: Self.popupSize.height))
         
         // Khởi tạo bộ điều khiển cảnh báo bộ nhớ
 
@@ -182,13 +253,19 @@ class MenuBarManager: NSObject, ObservableObject {
     private func showWindow(relativeTo button: NSStatusBarButton) {
         guard let window = popoverWindow else { return }
         
-        // Position Logic
+        // Neo popup vào chính giữa icon status item thay vì mặc định ở góc phải màn hình
         let padding: CGFloat = 12
-        if let screen = NSScreen.main {
+        if let screen = button.window?.screen ?? NSScreen.main {
             let screenFrame = screen.visibleFrame
             let windowSize = window.frame.size
             
-            let xPos = screenFrame.maxX - windowSize.width - padding
+            var anchorX = screenFrame.maxX - windowSize.width / 2 - padding
+            if let buttonWindow = button.window {
+                let buttonFrame = buttonWindow.convertToScreen(button.convert(button.bounds, to: nil))
+                anchorX = buttonFrame.midX
+            }
+            
+            let xPos = min(max(anchorX - windowSize.width / 2, screenFrame.minX + padding), screenFrame.maxX - windowSize.width - padding)
             let yPos = screenFrame.maxY - windowSize.height - 5
             
             window.setFrameOrigin(NSPoint(x: xPos, y: yPos))
@@ -403,6 +480,7 @@ extension MenuBarManager {
     func resetStatusBarPreferences() {
         selectedStatusMetrics = [.gpu, .cpu, .storage, .memory]
         showsStatusIcon = true
+        bannerTheme = .dark
     }
     
     func setStatusMetrics(_ metrics: [MenuBarStatusMetric]) {
@@ -418,14 +496,14 @@ extension MenuBarManager {
     
     var statusMetricsSummary: String {
         if selectedStatusMetrics.isEmpty {
-            return "Chỉ biểu tượng"
+            return L("Chỉ biểu tượng")
         }
         return selectedStatusMetrics.map(\.title).joined(separator: ", ")
     }
     
     var statusItemPreviewText: String {
         let segments = selectedStatusMetrics.map { formattedValueText(for: $0) }.filter { !$0.isEmpty }
-        return segments.isEmpty ? "Chỉ biểu tượng" : segments.joined(separator: "   ")
+        return segments.isEmpty ? L("Chỉ biểu tượng") : segments.joined(separator: "   ")
     }
     
     var statusItemTooltipText: String {
@@ -450,11 +528,16 @@ extension MenuBarManager {
         if UserDefaults.standard.object(forKey: statusIconKey) != nil {
             showsStatusIcon = UserDefaults.standard.bool(forKey: statusIconKey)
         }
+        if let raw = UserDefaults.standard.string(forKey: bannerThemeKey),
+           let theme = MenuBarBannerTheme(rawValue: raw) {
+            bannerTheme = theme
+        }
     }
-    
+
     private func saveStatusBarPreferences() {
         UserDefaults.standard.set(selectedStatusMetrics.map(\.rawValue), forKey: statusMetricsKey)
         UserDefaults.standard.set(showsStatusIcon, forKey: statusIconKey)
+        UserDefaults.standard.set(bannerTheme.rawValue, forKey: bannerThemeKey)
     }
     
     private func bindStatusBarUpdates() {
@@ -517,6 +600,13 @@ extension MenuBarManager {
                 guard let self = self else { return }
                 self.systemMonitor.configureMenuBarSampling(statusMetrics: self.selectedStatusMetrics, detailRoute: self.currentDetailRoute, isMenuBarWindowOpen: isOpen)
                 self.configureDiskRefreshTimer()
+                // Mỗi lần mở popup làm mới số liệu các thẻ tổng hợp
+                if isOpen {
+                    HostsProtectionManager.shared.refresh()
+                    BackgroundItemsManager.shared.refresh()
+                    DashboardInsights.shared.refresh()
+                    WidgetCenter.shared.reloadAllTimelines()
+                }
             }
             .store(in: &cancellables)
         
@@ -578,7 +668,9 @@ extension MenuBarManager {
         case .gpu:
             return "\(Int(systemMonitor.gpuUsage * 100))%"
         case .storage:
-            return "F:\(shortByteString(diskManager.freeSize)) U:\(shortByteString(diskManager.usedSize))"
+            // Dùng "đã dùng/tổng" để đồng nhất ngữ nghĩa với RAM/CPU (mức dùng)
+            // và với thẻ Ổ đĩa trong panel ("Đã dùng X / Y").
+            return "\(compactByteString(diskManager.usedSize))/\(compactByteString(diskManager.totalSize))"
         case .memory:
             return "\(Int(systemMonitor.memoryUsage * 100))%"
         case .cpu:
@@ -604,6 +696,7 @@ extension MenuBarManager {
     private func makeStatusItemImage(from displays: [StatusMetricDisplay]) -> NSImage? {
         let segments = displays.map(statusBannerSegment(for:))
         let shouldShowLeadingIcon = showsStatusIcon || segments.isEmpty
+        let palette = bannerTheme.palette
         let bannerHeight: CGFloat = 20
         let iconWidth: CGFloat = shouldShowLeadingIcon ? 22 : 0
         let spacing: CGFloat = 5
@@ -643,13 +736,29 @@ extension MenuBarManager {
         
         if shouldShowLeadingIcon {
             let iconRect = NSRect(x: 0, y: 0, width: iconWidth, height: bannerHeight)
-            drawStatusBannerCapsule(in: iconRect, accent: NSColor(calibratedRed: 0.87, green: 0.46, blue: 0.80, alpha: 1.0))
-            drawStatusBannerIcon(in: iconRect.insetBy(dx: 4, dy: 3))
+            if let iconFills = palette.iconFills {
+                drawStatusBannerCapsule(in: iconRect, fills: iconFills, stroke: palette.iconStroke, inner: palette.innerHighlight)
+                drawStatusBannerIcon(in: iconRect.insetBy(dx: 4, dy: 3), tintOverride: palette.iconTintOverride)
+            } else {
+                // Theme tối giản: icon nổi không nền, cần bóng đổ để đọc được
+                setBannerShadow(palette.textShadow)
+                drawStatusBannerIcon(in: iconRect.insetBy(dx: 4, dy: 3), tintOverride: palette.iconTintOverride)
+                setBannerShadow(nil)
+            }
         }
-        
+
         for (segment, rect) in zip(segments, chipRects) {
-            drawStatusBannerCapsule(in: rect, accent: segment.accentColor)
-            drawStatusBannerText(segment, in: rect, labelFont: labelFont, valueFont: valueFont, horizontalInset: horizontalInset)
+            if palette.hasChipBackground {
+                drawStatusBannerCapsule(
+                    in: rect,
+                    fills: palette.chipFills(segment.accentColor),
+                    stroke: palette.chipStroke(segment.accentColor),
+                    inner: palette.innerHighlight
+                )
+            }
+            setBannerShadow(palette.textShadow)
+            drawStatusBannerText(segment, in: rect, labelFont: labelFont, valueFont: valueFont, horizontalInset: horizontalInset, palette: palette)
+            setBannerShadow(nil)
         }
         
         image.unlockFocus()
@@ -670,30 +779,60 @@ extension MenuBarManager {
         return ceil(labelWidth + valueWidth + horizontalInset * 2 + 8)
     }
 
-    private func drawStatusBannerCapsule(in rect: NSRect, accent: NSColor) {
+    private func drawStatusBannerCapsule(in rect: NSRect, fills: [NSColor], stroke: NSColor?, inner: NSColor?) {
         let path = NSBezierPath(roundedRect: rect, xRadius: rect.height / 2, yRadius: rect.height / 2)
-        let gradient = NSGradient(
-            colors: [
-                NSColor(calibratedRed: 0.24, green: 0.29, blue: 0.43, alpha: 0.94),
-                NSColor(calibratedRed: 0.17, green: 0.20, blue: 0.31, alpha: 0.94)
-            ]
-        )
-        gradient?.draw(in: path, angle: 0)
-        
-        accent.withAlphaComponent(0.26).setStroke()
-        path.lineWidth = 1
-        path.stroke()
-        
-        let highlight = NSBezierPath(roundedRect: rect.insetBy(dx: 0.5, dy: 0.5), xRadius: (rect.height - 1) / 2, yRadius: (rect.height - 1) / 2)
-        NSColor.white.withAlphaComponent(0.06).setStroke()
-        highlight.lineWidth = 0.5
-        highlight.stroke()
+        if let gradient = NSGradient(colors: fills) {
+            gradient.draw(in: path, angle: 0)
+        }
+
+        if let stroke {
+            stroke.setStroke()
+            path.lineWidth = 1
+            path.stroke()
+        }
+
+        if let inner {
+            let highlight = NSBezierPath(roundedRect: rect.insetBy(dx: 0.5, dy: 0.5), xRadius: (rect.height - 1) / 2, yRadius: (rect.height - 1) / 2)
+            inner.setStroke()
+            highlight.lineWidth = 0.5
+            highlight.stroke()
+        }
     }
 
-    private func drawStatusBannerIcon(in rect: NSRect) {
+    private func drawStatusBannerIcon(in rect: NSRect, tintOverride: NSColor?) {
+        let insetRect = rect
+        if let tint = tintOverride {
+            tintedStatusBarIcon(tint: tint)?.draw(in: insetRect, from: .zero, operation: .sourceOver, fraction: 1.0)
+            return
+        }
         guard let icon = statusBarIconImage?.copy() as? NSImage else { return }
         icon.isTemplate = true
-        icon.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1.0)
+        icon.draw(in: insetRect, from: .zero, operation: .sourceOver, fraction: 1.0)
+    }
+
+    /// Icon đã tô màu (dùng cho theme nền sáng), cache theo tint để tránh vẽ lại mỗi lần làm mới.
+    private func tintedStatusBarIcon(tint: NSColor) -> NSImage? {
+        if let cached = tintedIconCache[String(describing: tint)] { return cached }
+        guard let base = statusBarIconImage else { return nil }
+        let size = base.size
+        let image = NSImage(size: size)
+        image.lockFocus()
+        tint.set()
+        NSRect(origin: .zero, size: size).fill(using: .copy)
+        base.draw(in: NSRect(origin: .zero, size: size), from: .zero, operation: .destinationIn, fraction: 1)
+        image.unlockFocus()
+        image.isTemplate = false
+        tintedIconCache[String(describing: tint)] = image
+        return image
+    }
+
+    /// Bật/tắt bóng đổ trong ngữ cảnh vẽ hiện tại (nil = tắt).
+    private func setBannerShadow(_ shadow: NSShadow?) {
+        if let shadow {
+            shadow.set()
+        } else {
+            NSShadow().set()
+        }
     }
 
     private func drawStatusBannerText(
@@ -701,15 +840,16 @@ extension MenuBarManager {
         in rect: NSRect,
         labelFont: NSFont,
         valueFont: NSFont,
-        horizontalInset: CGFloat
+        horizontalInset: CGFloat,
+        palette: MenuBarBannerPalette
     ) {
         let labelAttributes: [NSAttributedString.Key: Any] = [
             .font: labelFont,
-            .foregroundColor: segment.accentColor.withAlphaComponent(0.96)
+            .foregroundColor: palette.labelColor(segment.accentColor)
         ]
         let valueAttributes: [NSAttributedString.Key: Any] = [
             .font: valueFont,
-            .foregroundColor: NSColor.white
+            .foregroundColor: palette.valueColor
         ]
         
         let labelSize = (segment.label as NSString).size(withAttributes: labelAttributes)
@@ -741,7 +881,7 @@ extension MenuBarManager {
             return StatusBannerSegment(
                 metric: .storage,
                 label: "DISK",
-                value: "\(compactByteString(diskManager.freeSize))/\(compactByteString(diskManager.totalSize))",
+                value: display.text,
                 accentColor: NSColor(calibratedRed: 0.55, green: 0.80, blue: 1.0, alpha: 1.0)
             )
         case .memory:
@@ -752,7 +892,7 @@ extension MenuBarManager {
             return StatusBannerSegment(
                 metric: .network,
                 label: "NET",
-                value: "\(shortSpeedString(systemMonitor.downloadSpeed))/\(shortSpeedString(systemMonitor.uploadSpeed))",
+                value: display.text,
                 accentColor: NSColor(calibratedRed: 0.58, green: 0.92, blue: 1.0, alpha: 1.0)
             )
         case .battery:
@@ -819,17 +959,13 @@ extension MenuBarManager {
         NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
             guard let self = self, self.isOpen else { return event }
             
-            if let window = event.window, (window == self.popoverWindow || window == self.detailWindow) {
-                // Clicked inside one of our windows, do nothing
+            // Click vào chính icon status item do toggleWindow xử lý, không đóng ở đây
+            // để tránh vòng lặp đóng/mở giữa monitor và action của nút
+            
+            if let window = event.window,
+               (window == self.popoverWindow || window == self.detailWindow || window == self.statusItem?.button?.window) {
                 return event
             }
-            
-            // Clicked outside?
-            // "transient" collectionBehavior handles some of this, but not perfectly for custom windows.
-            // Actually, the main issue usually is focus.
-            
-            // Let's rely on standard popup behavior: if user clicks elsewhere, we close.
-            // But we have TWO windows.
             
             self.closeWindow()
             return event

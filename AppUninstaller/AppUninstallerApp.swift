@@ -5,10 +5,13 @@ struct AppUninstallerApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     // Hold a strong reference to the manager (Keep it, but access via shared in AppDelegate if needed)
     @StateObject var menuBarManager = MenuBarManager.shared
-    
+    @ObservedObject private var loc = LocalizationManager.shared
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                // Đổi ngôn ngữ → dựng lại toàn bộ cây view để L(...) cập nhật.
+                .id(loc.currentLanguage)
                 .frame(minWidth: 1100, minHeight: 750)
                 .preferredColorScheme(.dark)
                 .task {

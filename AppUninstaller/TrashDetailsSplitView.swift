@@ -28,7 +28,7 @@ struct TrashDetailsSplitView: View {
                         }) {
                             HStack(spacing: 4) {
                                 Image(systemName: "chevron.left")
-                                Text("Quay lại")
+                                Text(L("Quay lại"))
                             }
                             .foregroundColor(.white.opacity(0.8))
                         }
@@ -44,9 +44,9 @@ struct TrashDetailsSplitView: View {
                             let allSelected = scanner.items.allSatisfy { $0.isSelected }
                             scanner.toggleAllSelection(!allSelected)
                         }) {
-                            Text(scanner.items.allSatisfy { $0.isSelected } ? 
-                                 ("Bỏ chọn tất cả") : 
-                                 ("Chọn tất cả"))
+                            Text(scanner.items.allSatisfy { $0.isSelected } ?
+                                 (L("Bỏ chọn tất cả")) :
+                                 (L("Chọn tất cả")))
                         }
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.8))
@@ -54,7 +54,7 @@ struct TrashDetailsSplitView: View {
                         Spacer()
                         
                         HStack(spacing: 2) {
-                            Text("Sắp xếp theo kích thước")
+                            Text(L("Sắp xếp theo kích thước"))
                             Image(systemName: "chevron.down")
                             .font(.system(size: 8))
                         }
@@ -69,7 +69,7 @@ struct TrashDetailsSplitView: View {
                     ScrollView {
                         VStack(spacing: 2) {
                             ForEach(categories, id: \.self) { category in
-                                categoryRow(title: "Thùng rác trên máy Mac", size: scanner.formattedSelectedSize, isSelected: selectedCategory == category)
+                                categoryRow(title: L("Thùng rác trên máy Mac"), size: scanner.formattedSelectedSize, isSelected: selectedCategory == category)
                                     .onTapGesture {
                                         selectedCategory = category
                                     }
@@ -89,7 +89,7 @@ struct TrashDetailsSplitView: View {
                     HStack {
                         Spacer()
                         
-                        Text("Thùng rác")
+                        Text(L("Thùng rác"))
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding(.leading, 40) // Balance
@@ -102,7 +102,7 @@ struct TrashDetailsSplitView: View {
                             Image(systemName: "magnifyingglass")
                             // ...
                             .foregroundColor(.white.opacity(0.6))
-                            TextField("Tìm kiếm", text: $searchText)
+                            TextField(L("Tìm kiếm"), text: $searchText)
                                 .textFieldStyle(.plain)
                                 .foregroundColor(.white)
                         }
@@ -116,7 +116,7 @@ struct TrashDetailsSplitView: View {
                         Button(action: {}) {
                             HStack(spacing: 4) {
                                 Circle().fill(Color.white).frame(width: 6, height: 6)
-                                Text("Trợ lý")
+                                Text(L("Trợ lý"))
                             }
                             .font(.caption)
                             .foregroundColor(.white)
@@ -132,11 +132,11 @@ struct TrashDetailsSplitView: View {
                     // Khu vực tiêu đề danh sách
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Thùng rác trên máy Mac")
+                        Text(L("Thùng rác trên máy Mac"))
                             .font(.system(size: 28, weight: .bold)) // Large Title
                             .foregroundColor(.white)
                         
-                        Text("Thùng rác hệ thống vẫn giữ các mục đã xóa và tiếp tục chiếm dung lượng.")
+                        Text(L("Thùng rác hệ thống vẫn giữ các mục đã xóa và tiếp tục chiếm dung lượng."))
                             .font(.system(size: 13))
                             .foregroundColor(.white.opacity(0.8))
                     }
@@ -148,7 +148,7 @@ struct TrashDetailsSplitView: View {
 
                     HStack {
                         Spacer()
-                        Text("Sắp xếp theo kích thước")
+                        Text(L("Sắp xếp theo kích thước"))
                             .font(.caption)
                             .foregroundColor(.white.opacity(0.7))
                         Image(systemName: "triangle.fill")
@@ -199,7 +199,7 @@ struct TrashDetailsSplitView: View {
                                 .shadow(color: Color.black.opacity(0.2), radius: 10, y: 5)
                             
                             VStack(spacing: 2) {
-                                Text("Dọn sạch")
+                                Text(L("Dọn sạch"))
                                     .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(scanner.selectedSize > 0 ? .white : .white.opacity(0.5))
                             }
@@ -225,7 +225,7 @@ struct TrashDetailsSplitView: View {
             }
             Button(loc.L("cancel"), role: .cancel) {}
         } message: {
-            Text("Điều này không thể hoàn tác được.")
+            Text(L("Điều này không thể hoàn tác được."))
         }
     }
     

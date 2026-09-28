@@ -79,6 +79,12 @@ struct ContentView: View {
                         case .aiModels:
                             AIModelsView()
                                 .transition(.opacity.combined(with: .move(edge: .trailing)))
+                        case .docker:
+                            DockerView()
+                                .transition(.opacity.combined(with: .move(edge: .trailing)))
+                        case .backgroundItems:
+                            BackgroundItemsView()
+                                .transition(.opacity.combined(with: .move(edge: .trailing)))
                         case .trash:
                             TrashView()
                                 .transition(.opacity.combined(with: .move(edge: .trailing)))
@@ -158,7 +164,7 @@ struct IntroVideoView: View {
                 HStack {
                     Spacer()
                     Button(action: onComplete) {
-                        Text("Bỏ qua")
+                        Text(L("Bỏ qua"))
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.7))
                             .padding(.horizontal, 16)
@@ -282,7 +288,7 @@ struct AppListView: View {
             // Thanh công cụ tiêu đề
 
             HStack {
-                Text("Danh sách ứng dụng")
+                Text(L("Danh sách ứng dụng"))
                     .font(.headline)
                     .foregroundColor(.white)
                 
@@ -315,7 +321,7 @@ struct AppListView: View {
                 Spacer()
                 ProgressView()
                     .scaleEffect(0.8)
-                Text("Đang quét ứng dụng...")
+                Text(L("Đang quét ứng dụng..."))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.top, 8)
@@ -338,7 +344,7 @@ struct AppListView: View {
             // thống kê dưới cùng
 
             HStack {
-                Text("\(apps.count) ứng dụng")
+                Text(String(format: L("%d ứng dụng"), apps.count))
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Spacer()
@@ -360,7 +366,7 @@ struct EmptySelectionView: View {
             Image(systemName: "app.square")
                 .font(.system(size: 64))
                 .foregroundColor(.white.opacity(0.1))
-            Text("Chọn một ứng dụng để xem chi tiết")
+            Text(L("Chọn một ứng dụng để xem chi tiết"))
                 .font(.title3)
                 .foregroundColor(.white.opacity(0.3))
         }

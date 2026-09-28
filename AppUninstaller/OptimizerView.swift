@@ -39,27 +39,27 @@ enum OptimizerTask: String, CaseIterable, Identifiable {
         }
     }
     
-    func title(for language: AppLanguage) -> String {
+    var localizedTitle: String {
         switch self {
-        case .networkOptimize: return "Tối ưu mạng"
-        case .bootOptimize: return "Tăng tốc khởi động"
-        case .memoryOptimize: return "Tối ưu bộ nhớ"
-        case .appAccelerate: return "Tăng tốc ứng dụng"
-        case .heavyConsumers: return "Tiến trình dùng nhiều tài nguyên"
-        case .launchAgents: return "Tác vụ khởi động"
-        case .hungApps: return "Ứng dụng treo"
+        case .networkOptimize: return L("Tối ưu mạng")
+        case .bootOptimize: return L("Tăng tốc khởi động")
+        case .memoryOptimize: return L("Tối ưu bộ nhớ")
+        case .appAccelerate: return L("Tăng tốc ứng dụng")
+        case .heavyConsumers: return L("Tiến trình dùng nhiều tài nguyên")
+        case .launchAgents: return L("Tác vụ khởi động")
+        case .hungApps: return L("Ứng dụng treo")
         }
     }
-    
-    func description(for language: AppLanguage) -> String {
+
+    var localizedDescription: String {
         switch self {
-        case .networkOptimize: return "Làm mới bộ đệm DNS và dọn bộ đệm mạng để xử lý lỗi kết nối và phân giải DNS."
-        case .bootOptimize: return "Tắt các launch agent và mục đăng nhập không cần thiết để tăng tốc khởi động Mac."
-        case .memoryOptimize: return "Giải phóng RAM và đóng ứng dụng dùng nhiều bộ nhớ để hệ thống phản hồi nhanh hơn."
-        case .appAccelerate: return "Dọn bộ đệm ứng dụng và tối ưu cơ sở dữ liệu để ứng dụng mở nhanh hơn."
-        case .heavyConsumers: return "Một số tiến trình chạy nền có thể tiêu thụ quá nhiều tài nguyên Mac. Hãy xác định và đóng chúng nếu bạn không cần."
-        case .launchAgents: return "Đây thường là các ứng dụng trợ giúp được cài cùng phần mềm khác. Trong một số trường hợp bạn có thể tắt hoặc gỡ chúng."
-        case .hungApps: return "Nếu ứng dụng không phản hồi, bạn có thể buộc đóng nó để giải phóng tài nguyên."
+        case .networkOptimize: return L("Làm mới bộ đệm DNS và dọn bộ đệm mạng để xử lý lỗi kết nối và phân giải DNS.")
+        case .bootOptimize: return L("Tắt các launch agent và mục đăng nhập không cần thiết để tăng tốc khởi động Mac.")
+        case .memoryOptimize: return L("Giải phóng RAM và đóng ứng dụng dùng nhiều bộ nhớ để hệ thống phản hồi nhanh hơn.")
+        case .appAccelerate: return L("Dọn bộ đệm ứng dụng và tối ưu cơ sở dữ liệu để ứng dụng mở nhanh hơn.")
+        case .heavyConsumers: return L("Một số tiến trình chạy nền có thể tiêu thụ quá nhiều tài nguyên Mac. Hãy xác định và đóng chúng nếu bạn không cần.")
+        case .launchAgents: return L("Đây thường là các ứng dụng trợ giúp được cài cùng phần mềm khác. Trong một số trường hợp bạn có thể tắt hoặc gỡ chúng.")
+        case .hungApps: return L("Nếu ứng dụng không phản hồi, bạn có thể buộc đóng nó để giải phóng tài nguyên.")
         }
     }
     
@@ -803,7 +803,7 @@ struct OptimizerView: View {
                         Button(action: { viewState = 0 }) {
                             HStack(spacing: 4) {
                                 Image(systemName: "chevron.left")
-                                Text("giới thiệu")
+                                Text(L("giới thiệu"))
                             }
                             .foregroundColor(.white.opacity(0.7))
                             .font(.system(size: 13))
@@ -844,7 +844,7 @@ struct OptimizerView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         // Header
                         HStack {
-                            Text("Tối ưu hóa")
+                            Text(L("Tối ưu hóa"))
                                 .font(.system(size: 11))
                                 .foregroundColor(.white.opacity(0.6))
                             Spacer()
@@ -854,7 +854,7 @@ struct OptimizerView: View {
                                 Image(systemName: "magnifyingglass")
                                     .font(.system(size: 10))
                                     .foregroundColor(.white.opacity(0.5))
-                                Text("Tìm kiếm")
+                                Text(L("Tìm kiếm"))
                                     .font(.system(size: 10))
                                     .foregroundColor(.white.opacity(0.3))
                                 Spacer()
@@ -871,11 +871,11 @@ struct OptimizerView: View {
                         
                         // Title & Desc
                         VStack(alignment: .leading, spacing: 6) {
-                            Text(service.selectedTask.title(for: loc.currentLanguage))
+                            Text(service.selectedTask.localizedTitle)
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
                             
-                            Text(service.selectedTask.description(for: loc.currentLanguage))
+                            Text(service.selectedTask.localizedDescription)
                                 .font(.system(size: 11))
                                 .lineSpacing(3)
                                 .foregroundColor(.white.opacity(0.8))
@@ -906,11 +906,11 @@ struct OptimizerView: View {
                                         // Tin nhắn nhắc nhở
 
                                         VStack(spacing: 8) {
-                                            Text("Nhấp vào nút bên dưới để bắt đầu tối ưu hóa")
+                                            Text(L("Nhấp vào nút bên dưới để bắt đầu tối ưu hóa"))
                                                 .font(.system(size: 14, weight: .medium))
                                                 .foregroundColor(.white.opacity(0.7))
                                             
-                                            Text("Hoạt động này an toàn và có thể chạy bất cứ lúc nào")
+                                            Text(L("Hoạt động này an toàn và có thể chạy bất cứ lúc nào"))
                                                 .font(.system(size: 12))
                                                 .foregroundColor(.white.opacity(0.5))
                                         }
@@ -926,7 +926,7 @@ struct OptimizerView: View {
                                     }
                                 } else if service.selectedTask == .hungApps {
                                     if service.hungApps.isEmpty {
-                                        Text("Không tìm thấy ứng dụng bị treo")
+                                        Text(L("Không tìm thấy ứng dụng bị treo"))
                                             .foregroundColor(.white.opacity(0.5))
                                             .padding(.top, 40)
                                             .frame(maxWidth: .infinity, alignment: .center)
@@ -972,7 +972,7 @@ struct OptimizerView: View {
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     } else {
-                        Text("Chạy")
+                        Text(L("Chạy"))
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.white)
                     }
@@ -994,7 +994,7 @@ struct OptimizerView: View {
             
             // tiêu đề
 
-            Text("Thực hiện các nhiệm vụ tối ưu hóa...")
+            Text(L("Thực hiện các nhiệm vụ tối ưu hóa..."))
                 .font(.title2)
                 .foregroundColor(.white)
             
@@ -1017,7 +1017,7 @@ struct OptimizerView: View {
                         
                         // Tên nhiệm vụ
 
-                        Text(task.title(for: loc.currentLanguage))
+                        Text(task.localizedTitle)
                             .font(.system(size: 13))
                             .foregroundColor(.white)
                         
@@ -1048,7 +1048,7 @@ struct OptimizerView: View {
             
             // văn bản tiến độ
 
-            Text("\(service.completedTasks.count) / \(service.selectedTasks.count)")
+            Text(String(format: L("%d / %d"), service.completedTasks.count, service.selectedTasks.count))
                 .font(.caption)
                 .foregroundColor(.white.opacity(0.6))
             
@@ -1074,7 +1074,7 @@ struct OptimizerView: View {
                     .foregroundColor(.green)
             }
             
-            Text("Tối ưu hóa hoàn tất!")
+            Text(L("Tối ưu hóa hoàn tất!"))
                 .font(.title)
                 .bold()
                 .foregroundColor(.white)
@@ -1097,7 +1097,7 @@ struct OptimizerView: View {
                                 .foregroundColor(.white)
                         }
                         
-                        Text(task.title(for: loc.currentLanguage))
+                        Text(task.localizedTitle)
                             .font(.system(size: 12))
                             .foregroundColor(.white)
                         
@@ -1121,7 +1121,7 @@ struct OptimizerView: View {
                 service.completedTasks.removeAll()
                 viewState = 1
             }) {
-                Text("Xong")
+                Text(L("Xong"))
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding(.horizontal, 40)
@@ -1188,7 +1188,7 @@ struct OptimizerTaskRow: View {
             }
             
             // Title
-            Text(task.title(for: loc.currentLanguage))
+            Text(task.localizedTitle)
                 .font(.system(size: 11, weight: isSelected ? .medium : .regular))
                 .foregroundColor(.white)
             
@@ -1297,7 +1297,7 @@ struct LaunchAgentRow: View {
                 Circle()
                     .fill(item.isEnabled ? Color.green : Color.gray)
                     .frame(width: 6, height: 6)
-                Text(item.isEnabled ? ("Đã bật") : ("Tàn tật"))
+                Text(item.isEnabled ? L("Đã bật") : L("Tàn tật"))
                     .font(.system(size: 10))
                     .foregroundColor(.white.opacity(0.7))
             }
@@ -1319,20 +1319,20 @@ struct OptimizerLandingView: View {
                 VStack(alignment: .leading, spacing: 30) {
                     // Branding Header
                     HStack(spacing: 8) {
-                        Text("Tối ưu hóa hệ thống")
+                        Text(L("Tối ưu hóa hệ thống"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
                         
                         // Optimization Icon
                         HStack(spacing: 4) {
                             Image(systemName: "slider.horizontal.3")
-                            Text("Tăng cường đầy đủ")
+                            Text(L("Tăng cường đầy đủ"))
                                 .font(.system(size: 20, weight: .heavy))
                         }
                         .foregroundColor(.white)
                     }
                     
-                    Text("Cải thiện đầu ra bằng cách kiểm soát các ứng dụng đang chạy trên máy Mac của bạn.\nĐược tối ưu hóa lần cuối: Không bao giờ")
+                    Text(L("Cải thiện đầu ra bằng cách kiểm soát các ứng dụng đang chạy trên máy Mac của bạn.\nĐược tối ưu hóa lần cuối: Không bao giờ"))
                         .font(.system(size: 13))
                         .foregroundColor(.white.opacity(0.7))
                         .lineSpacing(4)
@@ -1341,26 +1341,26 @@ struct OptimizerLandingView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         featureRow(
                             icon: "light.beacon.max.fill",
-                            title: "Quản lý đại lý khởi chạy",
-                            desc: "Kiểm soát các ứng dụng được máy Mac của bạn hỗ trợ."
+                            title: L("Quản lý đại lý khởi chạy"),
+                            desc: L("Kiểm soát các ứng dụng được máy Mac của bạn hỗ trợ.")
                         )
                         
                         featureRow(
                             icon: "waveform.path.ecg",
-                            title: "Kiểm soát ứng dụng đang chạy",
-                            desc: "Quản lý các mục đăng nhập, chỉ chạy những gì bạn thực sự cần."
+                            title: L("Kiểm soát ứng dụng đang chạy"),
+                            desc: L("Quản lý các mục đăng nhập, chỉ chạy những gì bạn thực sự cần.")
                         )
                         
                         featureRow(
                             icon: "chart.xyaxis.line",
-                            title: "Người tiêu dùng nặng",
-                            desc: "Tìm và thoát khỏi các tiến trình sử dụng quá nhiều tài nguyên."
+                            title: L("Người tiêu dùng nặng"),
+                            desc: L("Tìm và thoát khỏi các tiến trình sử dụng quá nhiều tài nguyên.")
                         )
                     }
                     
                     // View Items Button
                     Button(action: { viewState = 1 }) {
-                        Text("Xem các mục...")
+                        Text(L("Xem các mục..."))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.black)
                             .padding(.horizontal, 16)
@@ -1442,7 +1442,7 @@ struct OptimizerLandingView: View {
                             .frame(width: 74, height: 74)
                             .shadow(color: Color.black.opacity(0.3), radius: 10, y: 5)
                         
-                        Text("Bắt đầu")
+                        Text(L("Bắt đầu"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white)
                     }
@@ -1487,11 +1487,11 @@ struct MemoryConfirmationDialog: View {
             // Header
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Tối ưu hóa bộ nhớ")
+                    Text(L("Tối ưu hóa bộ nhớ"))
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(.primary)
-                    
-                    Text("Các ứng dụng sau đang sử dụng bộ nhớ cao. Đóng chúng để giải phóng RAM?")
+
+                    Text(L("Các ứng dụng sau đang sử dụng bộ nhớ cao. Đóng chúng để giải phóng RAM?"))
                         .font(.system(size: 13))
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1585,8 +1585,8 @@ struct MemoryConfirmationDialog: View {
                     }
                 }) {
                     Text(service.highMemoryApps.allSatisfy { $0.isSelected } ? 
-                         ("Bỏ chọn tất cả") : 
-                         ("Chọn tất cả"))
+                         L("Bỏ chọn tất cả") : 
+                         L("Chọn tất cả"))
                         .font(.system(size: 13))
                         .foregroundColor(.blue)
                 }
@@ -1600,7 +1600,7 @@ struct MemoryConfirmationDialog: View {
                     service.showMemoryConfirmAlert = false
                     dismiss()
                 }) {
-                    Text("Bỏ qua")
+                    Text(L("Bỏ qua"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 20)
@@ -1617,7 +1617,7 @@ struct MemoryConfirmationDialog: View {
                         dismiss()
                     }
                 }) {
-                    Text("Đóng ứng dụng")
+                    Text(L("Đóng ứng dụng"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)
@@ -1647,11 +1647,11 @@ struct BootOptimizationDialog: View {
             // Header
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Tối ưu hóa khởi động")
+                    Text(L("Tối ưu hóa khởi động"))
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(.primary)
                     
-                    Text("Các tác nhân khởi chạy sau đây sẽ bị vô hiệu hóa để tăng tốc thời gian khởi động. Hãy lựa chọn cẩn thận - việc tắt các mục thiết yếu có thể ảnh hưởng đến chức năng của ứng dụng.")
+                    Text(L("Các tác nhân khởi chạy sau đây sẽ bị vô hiệu hóa để tăng tốc thời gian khởi động. Hãy lựa chọn cẩn thận - việc tắt các mục thiết yếu có thể ảnh hưởng đến chức năng của ứng dụng."))
                         .font(.system(size: 13))
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1681,7 +1681,7 @@ struct BootOptimizationDialog: View {
                     .foregroundColor(.orange)
                     .font(.system(size: 16))
                 
-                Text("Chỉ vô hiệu hóa các tác nhân khởi chạy mà bạn chắc chắn mình không cần")
+                Text(L("Chỉ vô hiệu hóa các tác nhân khởi chạy mà bạn chắc chắn mình không cần"))
                     .font(.system(size: 12))
                     .foregroundColor(.orange)
                 
@@ -1741,8 +1741,8 @@ struct BootOptimizationDialog: View {
                                     .fill(agent.isEnabled ? Color.green : Color.gray)
                                     .frame(width: 6, height: 6)
                                 Text(agent.isEnabled ? 
-                                     ("Đã bật") : 
-                                     ("Tàn tật"))
+                                     L("Đã bật") : 
+                                     L("Tàn tật"))
                                     .font(.system(size: 10))
                                     .foregroundColor(.secondary)
                             }
@@ -1774,8 +1774,8 @@ struct BootOptimizationDialog: View {
                     }
                 }) {
                     Text(service.bootAgentsToDisable.allSatisfy { $0.isSelected } ? 
-                         ("Bỏ chọn tất cả") : 
-                         ("Chọn tất cả"))
+                         L("Bỏ chọn tất cả") : 
+                         L("Chọn tất cả"))
                         .font(.system(size: 13))
                         .foregroundColor(.blue)
                 }
@@ -1789,7 +1789,7 @@ struct BootOptimizationDialog: View {
                     service.showBootConfirmAlert = false
                     dismiss()
                 }) {
-                    Text("Nhảy")
+                    Text(L("Nhảy"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 20)
@@ -1806,7 +1806,7 @@ struct BootOptimizationDialog: View {
                         dismiss()
                     }
                 }) {
-                    Text("Vô hiệu hóa đã chọn")
+                    Text(L("Vô hiệu hóa đã chọn"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)

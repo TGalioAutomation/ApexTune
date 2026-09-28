@@ -8,7 +8,7 @@ struct NetworkDetailView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text("Mạng")
+                Text(L("Mạng"))
                     .font(.headline)
                     .foregroundColor(.white)
                 Spacer()
@@ -39,7 +39,7 @@ struct NetworkDetailView: View {
                                 Text(systemMonitor.wifiSSID)
                                     .font(.system(size: 16, weight: .bold))
                                     .foregroundColor(.white)
-                                Text("Đã kết nối Wi-Fi")
+                                Text(L("Đã kết nối Wi-Fi"))
                                     .font(.system(size: 12))
                                     .foregroundColor(.white.opacity(0.7))
                             }
@@ -51,7 +51,7 @@ struct NetworkDetailView: View {
                                 .foregroundColor(.white)
                         }
                         
-                        Text("Mạng của bạn đang dùng bảo mật \(systemMonitor.wifiSecurity) và được đánh giá là tốt.\nBạn có thể tiếp tục sử dụng mạng này.")
+                        Text(L("Theo dõi tốc độ và tổng lưu lượng truyền nhận theo thời gian thực của kết nối Wi-Fi đang dùng."))
                             .font(.system(size: 13))
                             .foregroundColor(.white.opacity(0.8))
                             .lineSpacing(4)
@@ -63,7 +63,7 @@ struct NetworkDetailView: View {
                                 // Open Network Settings or similar
                             }) {
                                 HStack(spacing: 4) {
-                                    Text("Tìm hiểu thêm")
+                                    Text(L("Tìm hiểu thêm"))
                                     Image(systemName: "arrow.up.right")
                                         .font(.system(size: 10))
                                 }
@@ -82,7 +82,7 @@ struct NetworkDetailView: View {
                     HStack(spacing: 12) {
                         // Download Card
                         TrafficCard(
-                            title: "Tải xuống",
+                            title: L("Tải xuống"),
                             total: systemMonitor.totalDownload,
                             speed: systemMonitor.formatSpeed(systemMonitor.downloadSpeed),
                             history: systemMonitor.downloadSpeedHistory,
@@ -91,7 +91,7 @@ struct NetworkDetailView: View {
                         
                         // Upload Card
                         TrafficCard(
-                            title: "Tải lên",
+                            title: L("Tải lên"),
                             total: systemMonitor.totalUpload,
                             speed: systemMonitor.formatSpeed(systemMonitor.uploadSpeed),
                             history: systemMonitor.uploadSpeedHistory,
@@ -102,7 +102,7 @@ struct NetworkDetailView: View {
                     
                     // 3. Speed Test Section
                     VStack(spacing: 20) {
-                        Text("Kiểm tra kết nối mạng")
+                        Text(L("Kiểm tra kết nối mạng"))
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -132,14 +132,14 @@ struct NetworkDetailView: View {
                                 // Center Content
                                 VStack {
                                     if systemMonitor.isTestingSpeed {
-                                        Text("Đang kiểm tra")
+                                        Text(L("Đang kiểm tra"))
                                             .font(.headline)
                                             .foregroundColor(.cyan)
                                     } else if systemMonitor.speedTestResult > 0 {
                                         Image(systemName: "checkmark.circle.fill")
                                             .font(.system(size: 40))
                                             .foregroundColor(.green)
-                                        Text("Hoàn tất")
+                                        Text(L("Hoàn tất"))
                                             .font(.caption)
                                             .foregroundColor(.white)
                                     } else {
@@ -147,7 +147,7 @@ struct NetworkDetailView: View {
                                         Button(action: {
                                             systemMonitor.runSpeedTest()
                                         }) {
-                                           Text("Bắt đầu")
+                                           Text(L("Bắt đầu"))
                                                 .font(.headline)
                                                 .foregroundColor(.white)
                                                 .padding(20)
@@ -164,7 +164,7 @@ struct NetworkDetailView: View {
                                     }) {
                                         VStack {
                                             Spacer()
-                                            Text("Kiểm tra lại")
+                                            Text(L("Kiểm tra lại"))
                                                 .font(.system(size: 12))
                                                 .foregroundColor(.white.opacity(0.8))
                                                 .padding(.bottom, 30)
@@ -179,26 +179,26 @@ struct NetworkDetailView: View {
                             // Results List
                             if systemMonitor.speedTestResult > 0 {
                                 VStack(alignment: .leading, spacing: 8) {
-                                    Text("\(String(format: "%.1f", systemMonitor.speedTestResult)) Mbps")
+                                    Text(String(format: L("%.1f Mbps"), systemMonitor.speedTestResult))
                                         .font(.system(size: 24, weight: .bold))
                                         .foregroundColor(.white)
                                     
-                                    Text("Phù hợp cho:")
+                                    Text(L("Phù hợp cho:"))
                                         .font(.system(size: 12))
                                         .foregroundColor(.white.opacity(0.6))
                                     
                                     VStack(alignment: .leading, spacing: 4) {
-                                        SuitabilityRow(text: "Chơi game trực tuyến")
-                                        SuitabilityRow(text: "Xem video trực tuyến")
-                                        SuitabilityRow(text: "Gọi video")
-                                        SuitabilityRow(text: "Nghe nhạc trực tuyến")
-                                        SuitabilityRow(text: "Gọi thoại")
-                                        SuitabilityRow(text: "Nhắn tin")
+                                        SuitabilityRow(text: L("Chơi game trực tuyến"))
+                                        SuitabilityRow(text: L("Xem video trực tuyến"))
+                                        SuitabilityRow(text: L("Gọi video"))
+                                        SuitabilityRow(text: L("Nghe nhạc trực tuyến"))
+                                        SuitabilityRow(text: L("Gọi thoại"))
+                                        SuitabilityRow(text: L("Nhắn tin"))
                                     }
                                 }
                             } else {
                                 // Placeholder when no test result yet
-                                Text(systemMonitor.isTestingSpeed ? "Đang đo tốc độ..." : "Nhấn để bắt đầu kiểm tra")
+                                Text(systemMonitor.isTestingSpeed ? L("Đang đo tốc độ...") : L("Nhấn để bắt đầu kiểm tra"))
                                     .font(.system(size: 14))
                                     .foregroundColor(.white.opacity(0.5))
                             }

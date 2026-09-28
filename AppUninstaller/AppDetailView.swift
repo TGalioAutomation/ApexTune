@@ -97,7 +97,7 @@ struct AppDetailView: View {
                     HStack(spacing: 12) {
                         StatBadge(
                             icon: "internaldrive.fill",
-                            label: "Kích thước ứng dụng",
+                            label: loc.L("Kích thước ứng dụng"),
                             value: app.formattedSize,
                             color: .uninstallerStart
                         )
@@ -112,7 +112,7 @@ struct AppDetailView: View {
                             
                             StatBadge(
                                 icon: "trash.fill",
-                                label: "Có thể làm sạch",
+                                label: loc.L("Có thể làm sạch"),
                                 value: app.formattedResidualSize,
                                 color: .danger
                             )
@@ -149,7 +149,7 @@ struct AppDetailView: View {
                     .scaleEffect(1.4)
             }
             
-            Text("Đang quét các tập tin còn sót lại...")
+            Text(loc.L("Đang quét các tập tin còn sót lại..."))
                 .font(.system(size: 15, weight: .medium))
                 .foregroundColor(.secondaryText)
             
@@ -174,11 +174,11 @@ struct AppDetailView: View {
             }
             
             VStack(spacing: 8) {
-                Text("Xuất sắc!")
+                Text(loc.L("Xuất sắc!"))
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.primaryText)
                 
-                Text("Không phát hiện thấy tệp dư nào cho ứng dụng này")
+                Text(loc.L("Không phát hiện thấy tệp dư nào cho ứng dụng này"))
                     .font(.system(size: 14))
                     .foregroundColor(.secondaryText)
             }
@@ -209,7 +209,7 @@ struct AppDetailView: View {
                     Text("\(selectedFilesCount)")
                         .font(.system(size: 13, weight: .bold))
                         .foregroundStyle(GradientStyles.uninstaller)
-                    Text("mục đã chọn")
+                    Text(loc.L("mục đã chọn"))
                         .font(.system(size: 12))
                         .foregroundColor(.tertiaryText)
                 }
@@ -254,7 +254,7 @@ struct AppDetailView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "app.fill")
                                 .font(.system(size: 11))
-                            Text("Bao gồm ứng dụng")
+                            Text(loc.L("Bao gồm ứng dụng"))
                                 .font(.system(size: 13))
                         }
                         .foregroundColor(.primaryText.opacity(0.85))
@@ -265,7 +265,7 @@ struct AppDetailView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "trash")
                                 .font(.system(size: 11))
-                            Text("Chuyển vào Thùng rác (Có thể phục hồi)")
+                            Text(loc.L("Chuyển vào Thùng rác (Có thể phục hồi)"))
                                 .font(.system(size: 13))
                         }
                         .foregroundColor(.primaryText.opacity(0.85))
@@ -278,7 +278,7 @@ struct AppDetailView: View {
                 // Xóa số liệu thống kê
 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("để làm sạch")
+                    Text(loc.L("để làm sạch"))
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(.tertiaryText)
                     
@@ -296,7 +296,7 @@ struct AppDetailView: View {
                     HStack(spacing: 8) {
                         Image(systemName: includeApp ? "trash.fill" : "paintbrush.fill")
                             .font(.system(size: 14))
-                        Text(includeApp ? "Gỡ ứng dụng" : "Dọn tệp còn sót")
+                        Text(includeApp ? loc.L("Gỡ ứng dụng") : loc.L("Dọn tệp còn sót"))
                     }
                 }
                 .buttonStyle(PrimaryButtonStyle(isDestructive: includeApp))
@@ -380,7 +380,7 @@ struct FileTypeSection: View {
         case .crashReports:
             return loc.L("crash_reports")
         case .developer:
-            return "Dữ liệu của nhà phát triển"
+            return loc.L("Dữ liệu của nhà phát triển")
         }
     }
     

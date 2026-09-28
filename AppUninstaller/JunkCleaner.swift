@@ -62,30 +62,30 @@ enum JunkType: String, CaseIterable, Identifiable {
     
     var description: String {
         switch self {
-        case .userCache: return "Các tệp bộ đệm tạm do ứng dụng tạo ra"
-        case .systemCache: return "Bộ đệm do macOS tạo ra"
-        case .userLogs: return "Nhật ký hoạt động của ứng dụng"
-        case .systemLogs: return "Tệp nhật ký hệ thống macOS"
-        case .browserCache: return "Bộ đệm từ Chrome, Safari, Firefox và các trình duyệt khác"
-        case .appCache: return "Tệp tạm từ nhiều ứng dụng"
-        case .chatCache: return "Bộ đệm trò chuyện từ WeChat, QQ, Telegram và các ứng dụng tương tự"
-        case .mailAttachments: return "Tệp đính kèm được tải về từ email"
-        case .crashReports: return "Báo cáo chẩn đoán khi ứng dụng gặp sự cố"
-        case .tempFiles: return "Tệp tạm do hệ thống và ứng dụng tạo ra"
-        case .xcodeDerivedData: return "Tệp trung gian do Xcode tạo trong lúc biên dịch"
+        case .userCache: return L("Các tệp bộ đệm tạm do ứng dụng tạo ra")
+        case .systemCache: return L("Bộ đệm do macOS tạo ra")
+        case .userLogs: return L("Nhật ký hoạt động của ứng dụng")
+        case .systemLogs: return L("Tệp nhật ký hệ thống macOS")
+        case .browserCache: return L("Bộ đệm từ Chrome, Safari, Firefox và các trình duyệt khác")
+        case .appCache: return L("Tệp tạm từ nhiều ứng dụng")
+        case .chatCache: return L("Bộ đệm trò chuyện từ WeChat, QQ, Telegram và các ứng dụng tương tự")
+        case .mailAttachments: return L("Tệp đính kèm được tải về từ email")
+        case .crashReports: return L("Báo cáo chẩn đoán khi ứng dụng gặp sự cố")
+        case .tempFiles: return L("Tệp tạm do hệ thống và ứng dụng tạo ra")
+        case .xcodeDerivedData: return L("Tệp trung gian do Xcode tạo trong lúc biên dịch")
         // Thêm mô tả
 
-        case .universalBinaries: return "Mã dư thừa dành cho ứng dụng hỗ trợ nhiều kiến trúc hệ thống"
-        case .unusedDiskImages: return "Tệp ảnh đĩa DMG/ISO đã tải về nhưng không dùng"
-        case .brokenLoginItems: return "Mục đăng nhập trỏ tới ứng dụng hoặc tệp không còn tồn tại"
-        case .languageFiles: return "Gói ngôn ngữ ứng dụng không sử dụng"
-        case .deletedUsers: return "Dữ liệu còn sót của người dùng đã xóa"
-        case .iosBackups: return "Tệp sao lưu thiết bị iOS"
-        case .oldUpdates: return "Gói cập nhật phần mềm cũ đã cài"
+        case .universalBinaries: return L("Mã dư thừa dành cho ứng dụng hỗ trợ nhiều kiến trúc hệ thống")
+        case .unusedDiskImages: return L("Tệp ảnh đĩa DMG/ISO đã tải về nhưng không dùng")
+        case .brokenLoginItems: return L("Mục đăng nhập trỏ tới ứng dụng hoặc tệp không còn tồn tại")
+        case .languageFiles: return L("Gói ngôn ngữ ứng dụng không sử dụng")
+        case .deletedUsers: return L("Dữ liệu còn sót của người dùng đã xóa")
+        case .iosBackups: return L("Tệp sao lưu thiết bị iOS")
+        case .oldUpdates: return L("Gói cập nhật phần mềm cũ đã cài")
         // BrokenPreferences đã bị xóa - Tùy chọn hệ thống không còn được quét nữa
 
-        case .documentVersions: return "Lịch sử phiên bản tài liệu cũ"
-        case .downloads: return "Các tệp trong thư mục Tải xuống"
+        case .documentVersions: return L("Lịch sử phiên bản tài liệu cũ")
+        case .downloads: return L("Các tệp trong thư mục Tải xuống")
         }
     }
     
@@ -431,7 +431,7 @@ class JunkCleaner: ObservableObject {
                     
                     await MainActor.run { 
                         self.currentScanningPath = expandedPath
-                        self.currentScanningCategory = type.rawValue 
+                        self.currentScanningCategory = L(type.rawValue) 
                     }
                     
                     guard self.fileManager.fileExists(atPath: url.path) else { return ([], false) }
@@ -459,7 +459,7 @@ class JunkCleaner: ObservableObject {
                                 if Int.random(in: 0...50) == 0 { 
                                     await MainActor.run { 
                                         self.currentScanningPath = fileURL.path 
-                                        self.currentScanningCategory = type.rawValue
+                                        self.currentScanningCategory = L(type.rawValue)
                                     } 
                                 } // Throttle updates
                                 let ext = fileURL.pathExtension.lowercased()

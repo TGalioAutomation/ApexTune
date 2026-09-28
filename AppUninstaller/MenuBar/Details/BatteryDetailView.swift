@@ -8,7 +8,7 @@ struct BatteryDetailView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text("Pin")
+                Text(L("Pin"))
                     .font(.headline)
                     .foregroundColor(.white)
                 Spacer()
@@ -40,7 +40,7 @@ struct BatteryDetailView: View {
                             Text("\(Int(systemMonitor.batteryLevel * 100))%")
                                 .font(.system(size: 48, weight: .bold))
                                 .foregroundColor(.white)
-                            Text(systemMonitor.isCharging ? "Đang sạc" : "Pin còn lại")
+                            Text(systemMonitor.isCharging ? L("Đang sạc") : L("Pin còn lại"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.white.opacity(0.6))
                         }
@@ -50,10 +50,10 @@ struct BatteryDetailView: View {
                     
                     // Info Grid
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        BatteryInfoCard(title: "Độ chai", value: systemMonitor.batteryHealth, icon: "heart.fill", color: .green)
-                        BatteryInfoCard(title: "Số chu kỳ", value: "\(systemMonitor.batteryCycleCount)", icon: "repeat", color: .blue)
-                        BatteryInfoCard(title: "Trạng thái", value: systemMonitor.batteryCondition, icon: "battery.100", color: .orange)
-                        BatteryInfoCard(title: "Nhiệt độ", value: "32°C", icon: "thermometer", color: .red) // Mock temp for now
+                        BatteryInfoCard(title: L("Độ chai"), value: systemMonitor.batteryHealth, icon: "heart.fill", color: .green)
+                        BatteryInfoCard(title: L("Số chu kỳ"), value: "\(systemMonitor.batteryCycleCount)", icon: "repeat", color: .blue)
+                        BatteryInfoCard(title: L("Trạng thái"), value: systemMonitor.batteryCondition, icon: "battery.100", color: .orange)
+                        BatteryInfoCard(title: L("Nhiệt độ"), value: "32°C", icon: "thermometer", color: .red) // Mock temp for now
                     }
                     .padding(.horizontal, 20)
                     
@@ -61,7 +61,7 @@ struct BatteryDetailView: View {
                         HStack {
                             Image(systemName: "bolt.fill")
                                 .foregroundColor(.yellow)
-                            Text("Đã kết nối bộ sạc")
+                            Text(L("Đã kết nối bộ sạc"))
                                 .font(.system(size: 13))
                                 .foregroundColor(.white)
                         }

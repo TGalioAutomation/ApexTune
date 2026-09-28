@@ -66,33 +66,33 @@ struct FileExplorerView: View {
             }
         }
         .sheet(isPresented: $showNewFolderDialog) {
-            newItemDialog(title: "Tạo thư mục mới", placeholder: "Tên thư mục") {
+            newItemDialog(title: loc.L("Tạo thư mục mới"), placeholder: loc.L("Tên thư mục")) {
                 try service.createFolder(name: newItemName)
             }
         }
         .sheet(isPresented: $showNewFileDialog) {
-            newItemDialog(title: "Tạo tệp mới", placeholder: "Tên tệp") {
+            newItemDialog(title: loc.L("Tạo tệp mới"), placeholder: loc.L("Tên tệp")) {
                 try service.createFile(name: newItemName)
             }
         }
         .sheet(isPresented: $showRenameDialog) {
             renameDialog
         }
-        .confirmationDialog("Xác nhận xóa", isPresented: $showDeleteConfirmation) {
-            Button("Chuyển vào thùng rác", role: .destructive) {
+        .confirmationDialog(loc.L("Xác nhận xóa"), isPresented: $showDeleteConfirmation) {
+            Button(loc.L("Chuyển vào thùng rác"), role: .destructive) {
                 if let item = selectedItem {
                     try? service.deleteItem(item, moveToTrash: true)
                 }
             }
-            Button("Xóa vĩnh viễn", role: .destructive) {
+            Button(loc.L("Xóa vĩnh viễn"), role: .destructive) {
                 if let item = selectedItem {
                     try? service.deleteItem(item, moveToTrash: false)
                 }
             }
-            Button("Hủy", role: .cancel) {}
+            Button(loc.L("Hủy"), role: .cancel) {}
         } message: {
             if let item = selectedItem {
-                Text("Bạn có chắc muốn xóa \"\(item.name)\" không?")
+                Text(String(format: loc.L("Bạn có chắc muốn xóa \"%@\" không?"), item.name))
             }
         }
     }
@@ -230,7 +230,7 @@ struct FileExplorerView: View {
             if isEditingPath {
                 // Chế độ chỉnh sửa - hiển thị hộp nhập
 
-                TextField("Nhập đường dẫn...", text: $pathInputText)
+                TextField(loc.L("Nhập đường dẫn..."), text: $pathInputText)
                     .textFieldStyle(.plain)
                     .font(.system(size: 12, design: .monospaced))
                     .foregroundColor(.white)
@@ -242,14 +242,14 @@ struct FileExplorerView: View {
                         navigateToInputPath()
                     }
                 
-                Button("Đi tới") {
+                Button(loc.L("Đi tới")) {
                     navigateToInputPath()
                 }
                 .buttonStyle(.plain)
                 .font(.caption)
                 .foregroundColor(.blue)
                 
-                Button("Hủy") {
+                Button(loc.L("Hủy")) {
                     isEditingPath = false
                 }
                 .buttonStyle(.plain)
@@ -311,7 +311,7 @@ struct FileExplorerView: View {
             service.navigateTo(url)
             isEditingPath = false
         } else {
-            service.error = "Đường dẫn không tồn tại hoặc không phải thư mục: \(path)"
+            service.error = String(format: loc.L("Đường dẫn không tồn tại hoặc không phải thư mục: %@"), path)
         }
     }
     
@@ -365,25 +365,25 @@ struct FileExplorerView: View {
     private func contextMenuContent(for item: ExplorerFileItem) -> some View {
         let svc = service
         
-        Button("Mở", systemImage: "arrow.up.forward.square") {
+        Button(loc.L("Mở"), systemImage: "arrow.up.forward.square") {
             svc.openItem(item)
         }
         
         if item.isDirectory {
-            Button("Vào thư mục", systemImage: "folder") {
+            Button(loc.L("Vào thư mục"), systemImage: "folder") {
                 svc.navigateTo(item.url)
             }
         }
         
         Divider()
         
-        Button("Hiện trong Finder", systemImage: "folder.badge.gear") {
+        Button(loc.L("Hiện trong Finder"), systemImage: "folder.badge.gear") {
             svc.revealInFinder(item)
         }
         
         Divider()
         
-        Button("Đổi tên", systemImage: "pencil") {
+        Button(loc.L("Đổi tên"), systemImage: "pencil") {
             selectedItem = item
             newItemName = item.name
             showRenameDialog = true
@@ -391,7 +391,7 @@ struct FileExplorerView: View {
         
         Divider()
         
-        Button("Xóa", systemImage: "trash", role: .destructive) {
+        Button(loc.L("Xóa"), systemImage: "trash", role: .destructive) {
             selectedItem = item
             showDeleteConfirmation = true
         }
@@ -439,14 +439,14 @@ struct FileExplorerView: View {
                 .frame(width: 300)
             
             HStack {
-                Button("Hủy") {
+                Button(loc.L("Hủy")) {
                     showNewFolderDialog = false
                     showNewFileDialog = false
                     newItemName = ""
                 }
                 .keyboardShortcut(.escape)
                 
-                Button("Tạo") {
+                Button(loc.L("Tạo")) {
                     do {
                         try action()
                         showNewFolderDialog = false
@@ -465,21 +465,21 @@ struct FileExplorerView: View {
     
     private var renameDialog: some View {
         VStack(spacing: 20) {
-            Text("Đổi tên")
+            Text(loc.L("Đổi tên"))
                 .font(.headline)
             
-            TextField("Tên mới", text: $newItemName)
+            TextField(loc.L("Tên mới"), text: $newItemName)
                 .textFieldStyle(.roundedBorder)
                 .frame(width: 300)
             
             HStack {
-                Button("Hủy") {
+                Button(loc.L("Hủy")) {
                     showRenameDialog = false
                     newItemName = ""
                 }
                 .keyboardShortcut(.escape)
                 
-                Button("Xác nhận") {
+                Button(loc.L("Xác nhận")) {
                     if let item = selectedItem {
                         try? service.renameItem(item, to: newItemName)
                     }

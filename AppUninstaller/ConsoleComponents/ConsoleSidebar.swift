@@ -6,7 +6,7 @@ struct ConsoleSidebar: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Trung tâm hệ thống")
+            Text(L("Trung tâm hệ thống"))
                 .font(.title3)
                 .bold()
                 .padding(.horizontal, 16)
@@ -15,27 +15,27 @@ struct ConsoleSidebar: View {
                 .foregroundColor(.white)
             
             Group {
-                SidebarButton(title: "Tổng quan", icon: "square.grid.2x2", isSelected: selection == .dashboard) {
+                SidebarButton(title: L("Tổng quan"), icon: "square.grid.2x2", isSelected: selection == .dashboard) {
                     selection = .dashboard
                 }
                 
-                SidebarButton(title: "Quản lý ứng dụng", icon: "app.badge", isSelected: selection == .appManager) {
+                SidebarButton(title: L("Quản lý ứng dụng"), icon: "app.badge", isSelected: selection == .appManager) {
                     selection = .appManager
                 }
                 
-                SidebarButton(title: "Quản lý tiến trình", icon: "waveform.path.ecg", isSelected: selection == .processManager) {
+                SidebarButton(title: L("Quản lý tiến trình"), icon: "waveform.path.ecg", isSelected: selection == .processManager) {
                     selection = .processManager
                 }
                 
-                SidebarButton(title: "Mạng", icon: "wifi", isSelected: selection == .networkOptimize) {
+                SidebarButton(title: L("Mạng"), icon: "wifi", isSelected: selection == .networkOptimize) {
                     selection = .networkOptimize
                 }
                 
-                SidebarButton(title: "Quản lý cổng mạng", icon: "network", isSelected: selection == .portManager) {
+                SidebarButton(title: L("Quản lý cổng mạng"), icon: "network", isSelected: selection == .portManager) {
                     selection = .portManager
                 }
                 
-                SidebarButton(title: "Bảo vệ hệ thống", icon: "shield.checkerboard", isSelected: selection == .protection) {
+                SidebarButton(title: L("Bảo vệ hệ thống"), icon: "shield.checkerboard", isSelected: selection == .protection) {
                     selection = .protection
                 }
             }

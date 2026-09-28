@@ -88,7 +88,7 @@ struct ScanResultStat: View {
             // Details Button
             if let action = detailsAction {
                 Button(action: action) {
-                    Text("Xem chi tiết...")
+                    Text(L("Xem chi tiết..."))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                         .padding(.horizontal, 12)
@@ -98,7 +98,7 @@ struct ScanResultStat: View {
                 }
                 .buttonStyle(.plain)
             } else {
-                Text("Tốt") // thiết kế phù hợp "tốt"
+                Text(L("Tốt")) // thiết kế phù hợp "tốt"
                     .font(.system(size: 30, weight: .regular))
                     .foregroundColor(.green)
             }

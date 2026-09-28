@@ -97,7 +97,7 @@ struct MainCategoryRow: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 1) { // Tighter spacing
-                    Text(mainCategory.rawValue)
+                    Text(L(mainCategory.rawValue))
                         .font(.system(size: 12, weight: .medium)) // Smaller 13->12
                         .foregroundColor(.white)
                     
@@ -110,7 +110,7 @@ struct MainCategoryRow: View {
                 
                 VStack(alignment: .trailing, spacing: 1) {
                     if [.virus, .startupItems, .performanceApps, .appUpdates].contains(mainCategory) {
-                        Text("\(totalItems) mục")
+                        Text(String(format: L("%d mục"), totalItems))
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(.white)
                     } else {
@@ -174,11 +174,11 @@ struct SubCategoryRow: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(subcategory.rawValue)
+                    Text(L(subcategory.rawValue))
                         .font(.system(size: 12, weight: .medium)) // Smaller 13->12
                         .foregroundColor(.white)
                     
-                    Text("\(fileCount) tệp")
+                    Text(String(format: L("%d tệp"), fileCount))
                         .font(.system(size: 10)) // Smaller 11->10
                         .foregroundColor(.secondaryText)
                 }
@@ -187,7 +187,7 @@ struct SubCategoryRow: View {
                 
                 VStack(alignment: .trailing, spacing: 1) {
                     if [.virus, .startupItems, .performanceApps, .appUpdates].contains(subcategory) {
-                        Text("\(fileCount) mục")
+                        Text(String(format: L("%d mục"), fileCount))
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(.white)
                     } else {
@@ -221,7 +221,7 @@ struct MainCategoryListView: View {
         VStack(alignment: .leading, spacing: 4) {
             // tiêu đề
 
-            Text("Kết quả quét")
+            Text(L("Kết quả quét"))
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 12)
@@ -267,7 +267,7 @@ struct SubCategoryListView: View {
             // tiêu đề
 
             HStack {
-                Text(mainCategory.rawValue)
+                Text(L(mainCategory.rawValue))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.white)
                 
@@ -275,7 +275,7 @@ struct SubCategoryListView: View {
                 
                 // sắp xếp theo
 
-                Text("Theo kích thước ▼")
+                Text(L("Theo kích thước ▼"))
                     .font(.system(size: 12))
                     .foregroundColor(.secondaryText)
             }

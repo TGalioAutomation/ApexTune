@@ -38,13 +38,13 @@ struct CleanupDetailResultsView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 16, weight: .semibold))
-                            Text("Quay lại")
+                            Text(L("Quay lại"))
                                 .font(.system(size: 14, weight: .medium))
                         }
                         .foregroundColor(.white)
                     }
                     Spacer()
-                    Text("Kết quả dọn dẹp")
+                    Text(L("Kết quả dọn dẹp"))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                     Spacer()
@@ -63,11 +63,11 @@ struct CleanupDetailResultsView: View {
                         VStack(spacing: 16) {
                             // Title
                             VStack(spacing: 8) {
-                                Text("Dọn dẹp hoàn tất")
+                                Text(L("Dọn dẹp hoàn tất"))
                                     .font(.system(size: 24, weight: .bold))
                                     .foregroundColor(.white)
                                 
-                                Text("Đã dọn \(cleanedCount) tệp")
+                                Text(String(format: L("Đã dọn %d tệp"), cleanedCount))
                                     .font(.system(size: 14, weight: .regular))
                                     .foregroundColor(.white.opacity(0.8))
                             }
@@ -78,7 +78,7 @@ struct CleanupDetailResultsView: View {
                                 CleanupStatCard(
                                     icon: "checkmark.circle.fill",
                                     title: formattedCleanedSize,
-                                    subtitle: "Dọn thành công",
+                                    subtitle: L("Dọn thành công"),
                                     color: Color(red: 0.4, green: 0.9, blue: 0.6),
                                     progress: successRate
                                 )
@@ -87,7 +87,7 @@ struct CleanupDetailResultsView: View {
                                 CleanupStatCard(
                                     icon: "percent",
                                     title: String(format: "%.0f%%", successRate),
-                                    subtitle: "Tỷ lệ thành công",
+                                    subtitle: L("Tỷ lệ thành công"),
                                     color: Color(red: 0.4, green: 0.8, blue: 1.0),
                                     progress: successRate
                                 )
@@ -96,8 +96,8 @@ struct CleanupDetailResultsView: View {
                                 if failedCount > 0 {
                                     CleanupStatCard(
                                         icon: "exclamationmark.circle.fill",
-                                        title: "\(failedCount) mục",
-                                        subtitle: "Dọn chưa thành công",
+                                        title: String(format: L("%d mục"), failedCount),
+                                        subtitle: L("Dọn chưa thành công"),
                                         color: Color(red: 1.0, green: 0.5, blue: 0.6),
                                         progress: Double(failedCount) / Double(totalAttempted) * 100
                                     )
@@ -117,13 +117,13 @@ struct CleanupDetailResultsView: View {
                         if failedCount > 0 {
                             VStack(alignment: .leading, spacing: 12) {
                                 HStack {
-                                    Text("Tệp chưa dọn được")
+                                    Text(L("Tệp chưa dọn được"))
                                         .font(.system(size: 16, weight: .semibold))
                                         .foregroundColor(.white)
                                     
                                     Spacer()
                                     
-                                    Text("\(failedCount) mục")
+                                    Text(String(format: L("%d mục"), failedCount))
                                         .font(.system(size: 12, weight: .medium))
                                         .foregroundColor(.white.opacity(0.7))
                                 }
@@ -154,31 +154,31 @@ struct CleanupDetailResultsView: View {
                         
                         // Recommendations
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("Gợi ý")
+                            Text(L("Gợi ý"))
                                 .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(.white)
                             
                             VStack(spacing: 8) {
                                 RecommendationItem(
                                     icon: "checkmark.circle",
-                                    title: "Dọn định kỳ",
-                                    description: "Nên chạy dọn dẹp mỗi tuần để giữ hiệu năng tốt nhất",
+                                    title: L("Dọn định kỳ"),
+                                    description: L("Nên chạy dọn dẹp mỗi tuần để giữ hiệu năng tốt nhất"),
                                     color: Color(red: 0.4, green: 0.9, blue: 0.6)
                                 )
                                 
                                 if failedCount > 0 {
                                     RecommendationItem(
                                         icon: "exclamationmark.circle",
-                                        title: "Kiểm tra tệp lỗi",
-                                        description: "Một số tệp có thể đang bị ứng dụng dùng hoặc thiếu quyền, hãy thử lại sau",
+                                        title: L("Kiểm tra tệp lỗi"),
+                                        description: L("Một số tệp có thể đang bị ứng dụng dùng hoặc thiếu quyền, hãy thử lại sau"),
                                         color: Color(red: 1.0, green: 0.5, blue: 0.6)
                                     )
                                 }
                                 
                                 RecommendationItem(
                                     icon: "arrow.clockwise.circle",
-                                    title: "Chạy quét sâu",
-                                    description: "Quét sâu có thể tìm thêm các tệp rác bị ẩn",
+                                    title: L("Chạy quét sâu"),
+                                    description: L("Quét sâu có thể tìm thêm các tệp rác bị ẩn"),
                                     color: Color(red: 0.4, green: 0.8, blue: 1.0)
                                 )
                             }
@@ -200,7 +200,7 @@ struct CleanupDetailResultsView: View {
                 // Bottom Actions
                 VStack(spacing: 12) {
                     Button(action: onDismiss) {
-                        Text("Về trang chính")
+                        Text(L("Về trang chính"))
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -210,7 +210,7 @@ struct CleanupDetailResultsView: View {
                     }
                     
                     Button(action: {}) {
-                        Text("Xuất báo cáo dọn dẹp")
+                        Text(L("Xuất báo cáo dọn dẹp"))
                             .font(.system(size: 12, weight: .regular))
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -322,9 +322,9 @@ struct FailedFileRow: View {
                         .background(Color.white.opacity(0.1))
                     
                     VStack(alignment: .leading, spacing: 6) {
-                        DetailRow(label: "Kích thước tệp", value: file.formattedSize)
-                        DetailRow(label: "Lý do lỗi", value: file.errorReason)
-                        DetailRow(label: "Đường dẫn tệp", value: file.filePath)
+                        DetailRow(label: L("Kích thước tệp"), value: file.formattedSize)
+                        DetailRow(label: L("Lý do lỗi"), value: file.errorReason)
+                        DetailRow(label: L("Đường dẫn tệp"), value: file.filePath)
                     }
                     .padding(.top, 8)
                 }

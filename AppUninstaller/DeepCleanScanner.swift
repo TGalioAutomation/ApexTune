@@ -37,11 +37,11 @@ enum DeepCleanCategory: String, CaseIterable, Sendable {
     
     var localizedName: String {
         switch self {
-        case .largeFiles: return "Tệp lớn"
-        case .junkFiles: return "Rác hệ thống"
-        case .systemLogs: return "Tệp nhật ký"
-        case .systemCaches: return "Tệp bộ nhớ đệm"
-        case .appResiduals: return "Dư lượng ứng dụng"
+        case .largeFiles: return L("Tệp lớn")
+        case .junkFiles: return L("Rác hệ thống")
+        case .systemLogs: return L("Tệp nhật ký")
+        case .systemCaches: return L("Tệp bộ nhớ đệm")
+        case .appResiduals: return L("Dư lượng ứng dụng")
         }
     }
     
@@ -128,7 +128,7 @@ class DeepCleanScanner: ObservableObject {
         await MainActor.run {
             self.reset()
             self.isScanning = true
-            self.scanStatus = "Chuẩn bị..."
+            self.scanStatus = L("Chuẩn bị...")
             self.scanProgress = 0.0
         }
         
@@ -178,18 +178,18 @@ class DeepCleanScanner: ObservableObject {
         
         await MainActor.run {
             self.isScanning = false
-            self.scanStatus = "Quét hoàn tất"
+            self.scanStatus = L("Quét hoàn tất")
             self.scanProgress = 1.0
         }
     }
     
     private func statusText(for category: DeepCleanCategory) -> String {
         switch category {
-        case .largeFiles: return "Đang quét tệp lớn..."
-        case .junkFiles: return "Đang quét rác hệ thống..."
-        case .systemLogs: return "Đang quét nhật ký..."
-        case .systemCaches: return "Đang quét bộ đệm..."
-        case .appResiduals: return "Đang quét tệp còn sót của ứng dụng..."
+        case .largeFiles: return L("Đang quét tệp lớn...")
+        case .junkFiles: return L("Đang quét rác hệ thống...")
+        case .systemLogs: return L("Đang quét nhật ký...")
+        case .systemCaches: return L("Đang quét bộ đệm...")
+        case .appResiduals: return L("Đang quét tệp còn sót của ứng dụng...")
         }
     }
     
@@ -231,7 +231,7 @@ class DeepCleanScanner: ObservableObject {
         
         await MainActor.run {
             self.isCleaning = true
-            self.scanStatus = "Đang chuẩn bị dọn dẹp..."
+            self.scanStatus = L("Đang chuẩn bị dọn dẹp...")
             self.cleaningProgress = 0
             self.cleanedCategories = []
         }
@@ -265,8 +265,8 @@ class DeepCleanScanner: ObservableObject {
              await MainActor.run {
                 self.cleaningCurrentCategory = category
                 self.currentCategory = category
-                self.scanStatus = "Đang dọn \(category.localizedName)..."
-                self.cleaningDescription = "Làm sạch..."
+                self.scanStatus = String(format: L("Đang dọn %@..."), category.localizedName)
+                self.cleaningDescription = L("Làm sạch...")
             }
             
             let categoryItems = items.filter { $0.category == category && $0.isSelected }
@@ -326,7 +326,7 @@ class DeepCleanScanner: ObservableObject {
             self.cleaningProgress = 1.0
             self.cleaningCurrentCategory = nil
             self.currentCleaningItem = ""
-            self.scanStatus = "Dọn dẹp hoàn tất"
+            self.scanStatus = L("Dọn dẹp hoàn tất")
             print("[DeepClean] 📢 Đã đặt isCleaning = false, giao diện nên chuyển màn hình")
         }
         
@@ -485,7 +485,7 @@ class DeepCleanScanner: ObservableObject {
                         if size > 1024 * 1024 { // > 1MB
                              return DeepCleanItem(
                                 url: cacheUrl,
-                                name: app.name + " " + ("Bộ nhớ đệm"),
+                                name: app.name + " " + (L("Bộ nhớ đệm")),
                                 size: size,
                                 category: .systemCaches,
                                 appIcon: app.icon,
@@ -853,7 +853,7 @@ class DeepCleanScanner: ObservableObject {
         if trashSize > 0 {
             items.append(DeepCleanItem(
                 url: trash,
-                name: "Rác",
+                name: L("Rác"),
                 size: trashSize,
                 category: .junkFiles
             ))
@@ -882,7 +882,7 @@ class DeepCleanScanner: ObservableObject {
             if size > 0 {
                 items.append(DeepCleanItem(
                     url: iosBackups,
-                    name: "Sao lưu iOS",
+                    name: L("Sao lưu iOS"),
                     size: size,
                     category: .junkFiles
                 ))
@@ -897,7 +897,7 @@ class DeepCleanScanner: ObservableObject {
             if size > 0 {
                 items.append(DeepCleanItem(
                     url: mailDownloads,
-                    name: "Tệp đính kèm thư",
+                    name: L("Tệp đính kèm thư"),
                     size: size,
                     category: .junkFiles
                 ))
@@ -976,10 +976,10 @@ class DeepCleanScanner: ObservableObject {
         // 6. Bộ nhớ đệm của trình duyệt
 
         let browserCaches: [(name: String, path: String)] = [
-            ("Bộ đệm Safari", "Library/Caches/com.apple.Safari"),
-            ("Bộ đệm Chrome", "Library/Caches/Google/Chrome"),
-            ("Bộ đệm Firefox", "Library/Caches/Firefox"),
-            ("Bộ đệm Edge", "Library/Caches/com.microsoft.Edge")
+            (L("Bộ đệm Safari"), "Library/Caches/com.apple.Safari"),
+            (L("Bộ đệm Chrome"), "Library/Caches/Google/Chrome"),
+            (L("Bộ đệm Firefox"), "Library/Caches/Firefox"),
+            (L("Bộ đệm Edge"), "Library/Caches/com.microsoft.Edge")
         ]
         
         for (name, relativePath) in browserCaches {

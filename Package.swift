@@ -21,6 +21,11 @@ let package = Package(
             path: "Sources/AIModelKitVerify"
         ),
         .executableTarget(
+            name: "MacOptimizerWidget",
+            path: "WidgetExtension",
+            exclude: ["Info.plist"]
+        ),
+        .executableTarget(
             name: "AppUninstaller",
             dependencies: ["AIModelKit"],
             path: "AppUninstaller",
@@ -33,6 +38,7 @@ let package = Package(
                 "zhiwendunpai_2026.png"
             ],
             resources: [
+                .copy("Languages"),
                 .process("AppIcon.icns"),
                 .process("ButtonClick.m4a"),
                 .process("CleanDidFinish-Winter.m4a"),

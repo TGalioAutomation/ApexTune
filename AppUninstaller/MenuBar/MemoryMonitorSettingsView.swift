@@ -18,7 +18,7 @@ struct MemoryMonitorSettingsView: View {
                     .font(.system(size: 22))
                     .foregroundColor(.blue)
                 
-                Text("Cài đặt giám sát bộ nhớ")
+                Text(L("Cài đặt giám sát bộ nhớ"))
                     .font(.system(size: 18, weight: .bold))
                 
                 Spacer()
@@ -29,10 +29,10 @@ struct MemoryMonitorSettingsView: View {
             // minh họa
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Tự động giám sát")
+                Text(L("Tự động giám sát"))
                     .font(.system(size: 14, weight: .semibold))
                 
-                Text("Hệ thống sẽ tự phát hiện ứng dụng dùng hơn 1 GB bộ nhớ và hiện cảnh báo ở thanh menu.")
+                Text(L("Hệ thống sẽ tự phát hiện ứng dụng dùng hơn 1 GB bộ nhớ và hiện cảnh báo ở thanh menu."))
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
             }
@@ -43,13 +43,13 @@ struct MemoryMonitorSettingsView: View {
 
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text("Ứng dụng đã bỏ qua")
+                    Text(L("Ứng dụng đã bỏ qua"))
                         .font(.system(size: 14, weight: .semibold))
                     
                     Spacer()
                     
                     if !ignoredApps.isEmpty {
-                        Button("Xóa tất cả") {
+                        Button(L("Xóa tất cả")) {
                             showingClearConfirmation = true
                         }
                         .buttonStyle(.plain)
@@ -66,7 +66,7 @@ struct MemoryMonitorSettingsView: View {
                                 .font(.system(size: 32))
                                 .foregroundColor(.green.opacity(0.6))
                             
-                            Text("Chưa có ứng dụng nào bị bỏ qua")
+                            Text(L("Chưa có ứng dụng nào bị bỏ qua"))
                                 .font(.system(size: 13))
                                 .foregroundColor(.secondary)
                         }
@@ -113,7 +113,7 @@ struct MemoryMonitorSettingsView: View {
                 Image(systemName: "info.circle")
                     .foregroundColor(.blue)
                 
-                Text("Sau khi chọn \"Bỏ qua ứng dụng này\", ứng dụng đó sẽ không kích hoạt cảnh báo bộ nhớ nữa.")
+                Text(L("Sau khi chọn \"Bỏ qua ứng dụng này\", ứng dụng đó sẽ không kích hoạt cảnh báo bộ nhớ nữa."))
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
             }
@@ -126,13 +126,13 @@ struct MemoryMonitorSettingsView: View {
         .onAppear {
             loadIgnoredApps()
         }
-        .alert("Xác nhận xóa", isPresented: $showingClearConfirmation) {
-            Button("Hủy", role: .cancel) { }
-            Button("Xóa tất cả", role: .destructive) {
+        .alert(L("Xác nhận xóa"), isPresented: $showingClearConfirmation) {
+            Button(L("Hủy"), role: .cancel) { }
+            Button(L("Xóa tất cả"), role: .destructive) {
                 clearAllApps()
             }
         } message: {
-            Text("Bạn có chắc muốn xóa toàn bộ ứng dụng đã bỏ qua không? Sau khi xóa, các ứng dụng này sẽ lại kích hoạt cảnh báo nếu dùng nhiều bộ nhớ.")
+            Text(L("Bạn có chắc muốn xóa toàn bộ ứng dụng đã bỏ qua không? Sau khi xóa, các ứng dụng này sẽ lại kích hoạt cảnh báo nếu dùng nhiều bộ nhớ."))
         }
     }
     

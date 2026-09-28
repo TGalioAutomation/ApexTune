@@ -118,8 +118,8 @@ class ProtectionService: ObservableObject {
         
         // 2. Send Notification
         let content = UNMutableNotificationContent()
-        content.title = "Phát hiện mối đe dọa virus"
-        content.body = "Đã phát hiện \(threat.name) trong thư mục Tải xuống. Hãy xử lý ngay."
+        content.title = L("Phát hiện mối đe dọa virus")
+        content.body = String(format: L("Đã phát hiện %@ trong thư mục Tải xuống. Hãy xử lý ngay."), threat.name)
         content.sound = .defaultCritical
         
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
@@ -128,11 +128,11 @@ class ProtectionService: ObservableObject {
         // 3. Show Alert if App is active
         NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
-        alert.messageText = "Cảnh báo bảo mật: phát hiện virus"
-        alert.informativeText = "Tệp '\(threat.path.lastPathComponent)' chứa virus hoặc phần mềm độc hại (\(threat.name)).\nBạn nên xóa ngay."
+        alert.messageText = L("Cảnh báo bảo mật: phát hiện virus")
+        alert.informativeText = String(format: L("Tệp '%@' chứa virus hoặc phần mềm độc hại (%@).\nBạn nên xóa ngay."), threat.path.lastPathComponent, threat.name)
         alert.alertStyle = .critical
-        alert.addButton(withTitle: "Xóa ngay")
-        alert.addButton(withTitle: "Để sau")
+        alert.addButton(withTitle: L("Xóa ngay"))
+        alert.addButton(withTitle: L("Để sau"))
         
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {

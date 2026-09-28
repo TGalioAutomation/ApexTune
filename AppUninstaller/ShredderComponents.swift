@@ -21,7 +21,7 @@ struct ShredderLandingView: View {
                     // Shredder Icon
                     HStack(spacing: 4) {
                         Image(systemName: "doc.badge.gearshape")
-                        Text("Xóa an toàn")
+                        Text(L("Xóa an toàn"))
                             .font(.system(size: 20, weight: .heavy))
                     }
                     .foregroundColor(.white)

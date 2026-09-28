@@ -97,7 +97,7 @@ struct LargeFileDetailsSplitView: View {
                     }) {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
-                            Text("Quay lại")
+                            Text(L("Quay lại"))
                         }
                         .foregroundColor(.white.opacity(0.8))
                     }
@@ -156,12 +156,12 @@ struct LargeFileDetailsSplitView: View {
                     
                     // Sort Menu
                     Menu {
-                        Button("Kích thước") { sortOption = .size }
-                        Button("Tên") { sortOption = .name }
-                        Button("Ngày") { sortOption = .date }
+                        Button(L("Kích thước")) { sortOption = .size }
+                        Button(L("Tên")) { sortOption = .name }
+                        Button(L("Ngày")) { sortOption = .date }
                     } label: {
                         HStack(spacing: 4) {
-                            Text("Sắp xếp theo")
+                            Text(L("Sắp xếp theo"))
                             Text(sortOptionString)
                             Image(systemName: "chevron.down")
                         }
@@ -174,7 +174,7 @@ struct LargeFileDetailsSplitView: View {
                     HStack {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.secondaryText)
-                        TextField("Tìm kiếm", text: $searchText)
+                        TextField(L("Tìm kiếm"), text: $searchText)
                             .textFieldStyle(.plain)
                             .foregroundColor(.white)
                     }
@@ -213,12 +213,12 @@ struct LargeFileDetailsSplitView: View {
                         Button(loc.L("selectAll")) {
                             scanner.selectedFiles = Set(filteredFiles.map { $0.id })
                         }
-                        Button("Bỏ chọn tất cả") {
+                        Button(L("Bỏ chọn tất cả")) {
                             scanner.selectedFiles.removeAll()
                         }
                     } label: {
                         HStack(spacing: 4) {
-                            Text("Xóa ngay lập tức")
+                            Text(L("Xóa ngay lập tức"))
                             Image(systemName: "chevron.up")
                         }
                         .foregroundColor(.secondaryText)
@@ -240,7 +240,7 @@ struct LargeFileDetailsSplitView: View {
                                 )
                             
                             VStack(spacing: 4) {
-                                Text("Di dời")
+                                Text(L("Di dời"))
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(.white)
                                 Text(ByteCountFormatter.string(fromByteCount: scanner.totalSelectedSize, countStyle: .file))
@@ -251,30 +251,30 @@ struct LargeFileDetailsSplitView: View {
                     }
                     .buttonStyle(.plain)
                     .disabled(scanner.selectedFiles.isEmpty)
-                    .alert("Xác nhận xóa", isPresented: $showDeleteConfirmation) {
-                        Button("Hủy bỏ", role: .cancel) { }
-                        Button("Xóa bỏ", role: .destructive) {
+                    .alert(L("Xác nhận xóa"), isPresented: $showDeleteConfirmation) {
+                        Button(L("Hủy bỏ"), role: .cancel) { }
+                        Button(L("Xóa bỏ"), role: .destructive) {
                             Task {
                                 let result = await scanner.deleteItems(scanner.selectedFiles)
                                 if result.isSuccessful {
-                                    successMessage = String(format: "Đã xóa tệp %d, giải phóng %@", result.successCount, ByteCountFormatter.string(fromByteCount: result.recoveredSize, countStyle: .file))
+                                    successMessage = String(format: L("Đã xóa tệp %d, giải phóng %@"), result.successCount, ByteCountFormatter.string(fromByteCount: result.recoveredSize, countStyle: .file))
                                     showDeleteSuccess = true
                                 } else {
                                     let failedList = result.failedFiles.prefix(5).joined(separator: "\n")
-                                    let moreCount = result.failedFiles.count > 5 ? "\n..." + String(format: "và %d tệp khác bị lỗi", result.failedFiles.count - 5) : ""
-                                    deleteErrorMessage = String(format: "Không xóa được tệp %d:\n%s%s", result.failedCount, failedList, moreCount)
+                                    let moreCount = result.failedFiles.count > 5 ? "\n..." + String(format: L("và %d tệp khác bị lỗi"), result.failedFiles.count - 5) : ""
+                                    deleteErrorMessage = String(format: L("Không xóa được tệp %d:\n%s%s"), result.failedCount, failedList, moreCount)
                                     showDeleteError = true
                                 }
                             }
                         }
                     } message: {
-                        Text(String(format: "Bạn có chắc chắn muốn xóa các tập tin %d không?", scanner.selectedFiles.count))
+                        Text(String(format: L("Bạn có chắc chắn muốn xóa các tập tin %d không?"), scanner.selectedFiles.count))
                     }
                     
                     // Right Side: Hidden balancer
                     Menu { } label: {
                         HStack(spacing: 4) {
-                            Text("Xóa ngay lập tức")
+                            Text(L("Xóa ngay lập tức"))
                             Image(systemName: "chevron.up") 
                         }
                     }
@@ -289,12 +289,12 @@ struct LargeFileDetailsSplitView: View {
                 .padding(.bottom, 20)
             }
         }
-        .alert("Xóa không thành công", isPresented: $showDeleteError) {
+        .alert(L("Xóa không thành công"), isPresented: $showDeleteError) {
             Button("OK") { }
         } message: {
             Text(deleteErrorMessage)
         }
-        .alert("Xóa thành công", isPresented: $showDeleteSuccess) {
+        .alert(L("Xóa thành công"), isPresented: $showDeleteSuccess) {
             Button("OK") { }
         } message: {
             Text(successMessage)
@@ -303,9 +303,9 @@ struct LargeFileDetailsSplitView: View {
     
     private var sortOptionString: String {
         switch sortOption {
-        case .size: return "Kích cỡ"
-        case .name: return "Tên"
-        case .date: return "Ngày"
+        case .size: return L("Kích cỡ")
+        case .name: return L("Tên")
+        case .date: return L("Ngày")
         }
     }
     
@@ -354,24 +354,24 @@ struct LargeFileDetailsSplitView: View {
     
     private func categoryLocalized(_ title: String) -> String {
         switch title {
-        case "All Files": return "Tất cả tệp"
-        case "Type": return "Theo loại"
-        case "Size": return "Theo kích thước"
-        case "Date": return "Theo ngày truy cập"
-            
-        case "All": return "Tất cả"
-        case "Movies": return "Video"
-        case "Archives": return "Lưu trữ"
-        case "Music": return "Nhạc"
-        case "Pictures": return "Hình ảnh"
-        case "Documents": return "Tài liệu"
-        case "Others": return "Khác"
-        case "Huge": return "Rất lớn"
-        case "Small": return "Nhỏ"
-        case "Medium": return "Trung bình"
-        case "One Year Ago": return "Một năm trước"
-        case "One Month Ago": return "Một tháng trước"
-        case "One Week Ago": return "Một tuần trước"
+        case "All Files": return L("Tất cả tệp")
+        case "Type": return L("Theo loại")
+        case "Size": return L("Theo kích thước")
+        case "Date": return L("Theo ngày truy cập")
+
+        case "All": return L("Tất cả")
+        case "Movies": return L("Video")
+        case "Archives": return L("Lưu trữ")
+        case "Music": return L("Nhạc")
+        case "Pictures": return L("Hình ảnh")
+        case "Documents": return L("Tài liệu")
+        case "Others": return L("Khác")
+        case "Huge": return L("Rất lớn")
+        case "Small": return L("Nhỏ")
+        case "Medium": return L("Trung bình")
+        case "One Year Ago": return L("Một năm trước")
+        case "One Month Ago": return L("Một tháng trước")
+        case "One Week Ago": return L("Một tuần trước")
         default: return title
         }
     }

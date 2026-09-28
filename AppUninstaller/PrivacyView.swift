@@ -51,11 +51,11 @@ struct PrivacyView: View {
         
         var title: String {
             switch self {
-            case .permissions: return "Quyền ứng dụng"
-            case .recentItems: return "Danh sách các mục gần đây"
-            case .wifi: return "Mạng Wi-Fi"
-            case .chat: return "Dữ liệu trò chuyện"
-            case .development: return "Dấu vết phát triển"
+            case .permissions: return L("Quyền ứng dụng")
+            case .recentItems: return L("Danh sách các mục gần đây")
+            case .wifi: return L("Mạng Wi-Fi")
+            case .chat: return L("Dữ liệu trò chuyện")
+            case .development: return L("Dấu vết phát triển")
             case .browser(let b): return b.rawValue
             }
         }
@@ -93,15 +93,15 @@ struct PrivacyView: View {
                 selectFirstAvailableCategory()
             }
         }
-        .alert("Đóng trình duyệt", isPresented: $showingCloseBrowserAlert) {
-            Button("Đóng và làm sạch", role: .destructive) {
+        .alert(L("Đóng trình duyệt"), isPresented: $showingCloseBrowserAlert) {
+            Button(L("Đóng và làm sạch"), role: .destructive) {
                 Task {
                     await performClean(closeBrowsers: true)
                 }
             }
             Button(loc.L("cancel"), role: .cancel) { }
         } message: {
-            Text("Các trình duyệt đang chạy. Chúng cần phải được đóng lại để đảm bảo dữ liệu được xóa hoàn toàn.")
+            Text(L("Các trình duyệt đang chạy. Chúng cần phải được đóng lại để đảm bảo dữ liệu được xóa hoàn toàn."))
         }
     }
     
@@ -144,11 +144,11 @@ struct PrivacyView: View {
             // văn bản tiêu đề
 
             VStack(alignment: .leading, spacing: 16) {
-                Text("Quyền riêng tư")
+                Text(L("Quyền riêng tư"))
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.white)
                 
-                Text("Xóa lịch sử duyệt web và dấu vết hoạt động trực tuyến và ngoại tuyến ngay lập tức.")
+                Text(L("Xóa lịch sử duyệt web và dấu vết hoạt động trực tuyến và ngoại tuyến ngay lập tức."))
                     .font(.system(size: 14))
                     .foregroundColor(.white.opacity(0.8))
                     .frame(maxWidth: 400, alignment: .leading)
@@ -160,9 +160,9 @@ struct PrivacyView: View {
                 // Danh sách chức năng bên trái
 
                 VStack(alignment: .leading, spacing: 24) {
-                    FeatureRow(icon: "theatermasks", title: "Xóa dấu vết duyệt web", description: "Làm sạch lịch sử duyệt web, bao gồm các biểu mẫu tự động điền và dữ liệu khác được lưu trữ bởi các trình duyệt phổ biến.")
-                    FeatureRow(icon: "message", title: "Làm sạch dữ liệu trò chuyện", description: "Bạn có thể xóa lịch sử trò chuyện của Skype và các ứng dụng nhắn tin khác.")
-                    FeatureRow(icon: "exclamationmark.triangle", title: "Cấp Toàn quyền truy cập ổ đĩa để dọn sâu hơn", description: "MacOptimizer cần Toàn quyền truy cập ổ đĩa để xóa các mục riêng tư.", isWarning: true)
+                    FeatureRow(icon: "theatermasks", title: L("Xóa dấu vết duyệt web"), description: L("Làm sạch lịch sử duyệt web, bao gồm các biểu mẫu tự động điền và dữ liệu khác được lưu trữ bởi các trình duyệt phổ biến."))
+                    FeatureRow(icon: "message", title: L("Làm sạch dữ liệu trò chuyện"), description: L("Bạn có thể xóa lịch sử trò chuyện của Skype và các ứng dụng nhắn tin khác."))
+                    FeatureRow(icon: "exclamationmark.triangle", title: L("Cấp Toàn quyền truy cập ổ đĩa để dọn sâu hơn"), description: L("MacOptimizer cần Toàn quyền truy cập ổ đĩa để xóa các mục riêng tư."), isWarning: true)
                     
                     Button(action: {
                         // Mở cài đặt hệ thống
@@ -171,7 +171,7 @@ struct PrivacyView: View {
                             NSWorkspace.shared.open(url)
                         }
                     }) {
-                        Text("Cấp quyền")
+                        Text(L("Cấp quyền"))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.black)
                             .padding(.horizontal, 20)
@@ -237,7 +237,7 @@ struct PrivacyView: View {
                         .stroke(Color.white.opacity(0.3), lineWidth: 2)
                         .frame(width: 76, height: 76)
                     
-                    Text("Quét")
+                    Text(L("Quét"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                 }
@@ -292,7 +292,7 @@ struct PrivacyView: View {
             
             // Văn bản trạng thái quét
 
-            Text("Đang tìm kiếm các mục riêng tư...")
+            Text(L("Đang tìm kiếm các mục riêng tư..."))
                 .font(.title2)
                 .foregroundColor(.white)
             
@@ -317,7 +317,7 @@ struct PrivacyView: View {
                         .fill(Color.white.opacity(0.1))
                         .frame(width: 60, height: 60)
                     
-                    Text("Dừng lại")
+                    Text(L("Dừng lại"))
                         .font(.system(size: 14))
                         .foregroundColor(.white)
                 }
@@ -349,7 +349,7 @@ struct PrivacyView: View {
             }) {
                 HStack {
                     Image(systemName: "chevron.left")
-                    Text("Quay lại")
+                    Text(L("Quay lại"))
                 }
                 .foregroundColor(.white.opacity(0.8))
             }
@@ -357,7 +357,7 @@ struct PrivacyView: View {
             
             Spacer()
             
-            Text("Quyền riêng tư")
+            Text(L("Quyền riêng tư"))
                 .font(.headline)
                 .foregroundColor(.white.opacity(0.8))
             
@@ -368,7 +368,7 @@ struct PrivacyView: View {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.white.opacity(0.5))
-                Text("Tìm kiếm")
+                Text(L("Tìm kiếm"))
                     .foregroundColor(.white.opacity(0.5))
                 Spacer()
             }
@@ -389,7 +389,7 @@ struct PrivacyView: View {
                     .bold()
                     .foregroundColor(.white)
                 
-                Text("Bất kỳ ứng dụng nào cũng có thể yêu cầu thêm quyền...")
+                Text(L("Bất kỳ ứng dụng nào cũng có thể yêu cầu thêm quyền..."))
                     .font(.subheadline)
                     .foregroundColor(.white.opacity(0.7))
                     .lineLimit(2)
@@ -417,7 +417,7 @@ struct PrivacyView: View {
 
             HStack {
                 Spacer()
-                Text("Sắp xếp theo tên")
+                Text(L("Sắp xếp theo tên"))
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.6))
             }
@@ -560,11 +560,11 @@ struct PrivacyView: View {
     private var detailListView: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Nhóm theo loại")
+                Text(L("Nhóm theo loại"))
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.6))
                 Spacer()
-                Text("Sắp xếp theo tên")
+                Text(L("Sắp xếp theo tên"))
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.6))
             }
@@ -613,7 +613,7 @@ struct PrivacyView: View {
                         .shadow(color: Color.black.opacity(0.2), radius: 10, y: 5)
                     
                     VStack(spacing: 2) {
-                        Text("Di dời")
+                        Text(L("Di dời"))
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.white)
                     }
@@ -678,7 +678,7 @@ struct PrivacyView: View {
                     .foregroundColor(.white)
             }
             
-            Text("Làm sạch dấu vết hoạt động...")
+            Text(L("Làm sạch dấu vết hoạt động..."))
                 .font(.title)
                 .bold()
                 .foregroundColor(.white)
@@ -691,10 +691,10 @@ struct PrivacyView: View {
                         .font(.title2)
                         .foregroundColor(.blue)
                         
-                    Text("Danh sách các mục gần đây")
+                    Text(L("Danh sách các mục gần đây"))
                         .foregroundColor(.white)
                     Spacer()
-                    Text("15 dấu vết")
+                    Text(L("15 dấu vết"))
                         .foregroundColor(.white.opacity(0.7))
                     Image(systemName: "checkmark.square.fill")
                         .foregroundColor(.blue)
@@ -706,7 +706,7 @@ struct PrivacyView: View {
                         .font(.title2)
                         .foregroundColor(.blue)
                         
-                    Text("Quyền ứng dụng")
+                    Text(L("Quyền ứng dụng"))
                         .foregroundColor(.white)
                     Spacer()
                     Image(systemName: "ellipsis")
@@ -734,7 +734,7 @@ struct PrivacyView: View {
                         .stroke(Color.white.opacity(0.2), lineWidth: 4)
                         .frame(width: 64, height: 64)
                     
-                    Text("Dừng lại")
+                    Text(L("Dừng lại"))
                         .font(.system(size: 13))
                         .foregroundColor(.white)
                 }
@@ -755,7 +755,7 @@ struct PrivacyView: View {
                 .foregroundColor(.green)
                 .shadow(color: .green.opacity(0.5), radius: 10)
             
-            Text("Dọn dẹp hoàn tất")
+            Text(L("Dọn dẹp hoàn tất"))
                 .font(.largeTitle)
                 .bold()
                 .foregroundColor(.white)
@@ -769,7 +769,7 @@ struct PrivacyView: View {
             Button(action: {
                 scanState = .initial
             }) {
-                Text("Xong")
+                Text(L("Xong"))
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding(.horizontal, 40)
@@ -922,7 +922,7 @@ struct PrivacyCategoryRow: View {
                     
                     Spacer()
                     
-                    Text("\(count) mục")
+                    Text(String(format: L("%d mục"), count))
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.6))
                 }

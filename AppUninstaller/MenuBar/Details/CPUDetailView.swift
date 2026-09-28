@@ -27,7 +27,7 @@ struct CPUDetailView: View {
                 VStack(spacing: 24) {
                     // Load Graph (Simple Bar/Line visualization state)
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Tải hệ thống")
+                        Text(L("Tải hệ thống"))
                             .font(.system(size: 12))
                             .foregroundColor(.white.opacity(0.6))
                         
@@ -40,7 +40,7 @@ struct CPUDetailView: View {
                         }
                         .frame(height: 100)
                         
-                        Text("\(Int(systemMonitor.cpuUsage * 100))% tổng mức dùng")
+                        Text(String(format: L("%d%% tổng mức dùng"), Int(systemMonitor.cpuUsage * 100)))
                             .font(.headline)
                             .foregroundColor(.white)
                     }
@@ -52,7 +52,7 @@ struct CPUDetailView: View {
                      // Uptime
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("Thời gian hoạt động")
+                            Text(L("Thời gian hoạt động"))
                                 .font(.caption)
                                 .foregroundColor(.white.opacity(0.6))
                             Text(formatUptime(systemMonitor.systemUptime))
@@ -67,7 +67,7 @@ struct CPUDetailView: View {
                     
 // Top Processes
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Tiến trình dùng nhiều nhất")
+                        Text(L("Tiến trình dùng nhiều nhất"))
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
@@ -93,7 +93,7 @@ struct CPUDetailView: View {
     func formatUptime(_ interval: TimeInterval) -> String {
         let hours = Int(interval) / 3600
         let minutes = (Int(interval) % 3600) / 60
-        return "\(hours) giờ \(minutes) phút"
+        return String(format: L("%d giờ %d phút"), hours, minutes)
     }
 }
 
@@ -127,7 +127,7 @@ struct ProcessRow: View {
                 .foregroundColor(.white.opacity(0.7))
             
             Button(action: onForceQuit) {
-                Text("Buộc thoát")
+                Text(L("Buộc thoát"))
                     .font(.system(size: 13))
                     .foregroundColor(.white.opacity(0.8))
             }
