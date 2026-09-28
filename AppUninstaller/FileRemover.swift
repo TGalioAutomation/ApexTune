@@ -138,14 +138,7 @@ class FileRemover {
 
     private func removeItemsWithPrivilege(paths: [URL]) async -> [Bool] {
         guard !paths.isEmpty else { return [] }
-        
-        // Shell thích hợp thoát khỏi đường dẫn
 
-        func shellEscape(_ path: String) -> String {
-            let escaped = path.replacingOccurrences(of: "'", with: "'\\''")
-            return "'\(escaped)'"
-        }
-        
         // Xây dựng tập lệnh loại bỏ từng đường dẫn một, bỏ qua các lỗi đơn lẻ
 
         // Bằng cách này, việc không xóa một file sẽ không ảnh hưởng đến các file khác
@@ -231,7 +224,7 @@ class FileRemover {
             }
             
             safePathsCount += 1
-            let escapedPath = shellEscape(pathStr)
+            let escapedPath = PrivilegedShell.shellEscape(pathStr)
             // Thêm || đúng sau mỗi lệnh xóa để tiếp tục ngay cả khi thất bại.
 
             scriptLines.append("rm -rf \(escapedPath) 2>/dev/null || true")
@@ -243,11 +236,10 @@ class FileRemover {
         }
         
         let shellCommands = scriptLines.joined(separator: "; ")
-        
+
         let script = """
-        do shell script "\(shellCommands)" with administrator privileges
-        """
-        
+        do shell script "\(PrivilegedShell.appleScriptEscape(shellCommands))" with administrator privileges
+        """        
         print("Thực thi script xóa bằng quyền quản trị cho \(paths.count) đường dẫn")
         
         return await MainActor.run {
@@ -346,9 +338,12 @@ class FileRemover {
 
     func forceTerminateAppWithPrivilege(_ app: InstalledApp) async -> Bool {
         guard let bundleId = app.bundleIdentifier else { return false }
-        
+
+        // bundleId do app bên thứ ba tự khai báo — coi như dữ liệu không tin cậy,
+        // escape đủ 2 lớp (shell + AppleScript) trước khi đưa vào pkill.
+        let command = "pkill -9 -f \(PrivilegedShell.shellEscape(bundleId))"
         let script = """
-        do shell script "pkill -9 -f '\(bundleId)'" with administrator privileges
+        do shell script "\(PrivilegedShell.appleScriptEscape(command))" with administrator privileges
         """
         
         return await MainActor.run {

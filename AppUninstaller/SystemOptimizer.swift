@@ -343,10 +343,9 @@ class SystemOptimizer: ObservableObject {
     
     // MARK: - Thực thi với quyền quản trị viên
     private func executeWithAdminPrivileges(_ command: String) async -> (success: Bool, output: String) {
-        let escapedCommand = command.replacingOccurrences(of: "\"", with: "\\\"")
-        
+        // Escape đủ 2 lớp cho literal AppleScript (thoát \\ trước rồi ").
         let script = """
-        do shell script "\(escapedCommand)" with administrator privileges
+        do shell script "\(PrivilegedShell.appleScriptEscape(command))" with administrator privileges
         """
         
         var error: NSDictionary?

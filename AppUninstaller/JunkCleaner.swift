@@ -1007,14 +1007,12 @@ class JunkCleaner: ObservableObject {
 
         // Sử dụng rm -rf 
 
-        let escapedPaths = safePaths.map { path in
-            path.replacingOccurrences(of: "'", with: "'\\''")
-        }
-        
-        let rmCommands = escapedPaths.map { "rm -rf '\($0)'" }.joined(separator: " && ")
-        
+        let rmCommands = safePaths
+            .map { "rm -rf \(PrivilegedShell.shellEscape($0))" }
+            .joined(separator: " && ")
+
         let script = """
-        do shell script "\(rmCommands)" with administrator privileges
+        do shell script "\(PrivilegedShell.appleScriptEscape(rmCommands))" with administrator privileges
         """
         
         var error: NSDictionary?

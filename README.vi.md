@@ -10,7 +10,7 @@
   <p>
     <img src="https://img.shields.io/badge/macOS-13%2B-111827?style=for-the-badge&logo=apple&logoColor=white" alt="macOS 13+">
     <img src="https://img.shields.io/badge/Swift-5.9-F97316?style=for-the-badge&logo=swift&logoColor=white" alt="Swift 5.9">
-    <img src="https://img.shields.io/badge/Version-4.0.9-2563EB?style=for-the-badge" alt="Version 4.0.9">
+    <img src="https://img.shields.io/badge/Version-4.0.10-2563EB?style=for-the-badge" alt="Version 4.0.9">
     <img src="https://img.shields.io/badge/UI-Vi%E1%BB%87t%20Nam%20%2F%20English-059669?style=for-the-badge" alt="UI Việt / English">
     <img src="https://img.shields.io/badge/Menu%20Bar-GPU%20%2F%20CPU%20%2F%20DISK%20%2F%20RAM-7C3AED?style=for-the-badge" alt="Menu bar metrics">
   </p>
@@ -85,6 +85,7 @@ App chạy dạng utility (`LSUIElement`): không có icon ở Dock, mọi thứ
 
 - **Tiếng Việt** (ngôn ngữ nguồn) và **English** có sẵn; chuyển ngay trong **Cài đặt → Ngôn ngữ**, toàn app cập nhật không cần khởi động lại.
 - Lần đầu chạy, app tự dùng ngôn ngữ hệ thống nếu có bản dịch (hệ thống English → giao diện English), ngược lại mặc định tiếng Việt.
+- Widget menu bar dùng chung bảng dịch của app (`WidgetExtension/WidgetLocalization.swift`), tự theo ngôn ngữ hệ thống.
 - Thêm ngôn ngữ mới **không cần sửa mã**: thả file `AppUninstaller/Languages/<mã>.json` (khóa là chuỗi tiếng Việt gốc) rồi build lại. Chi tiết tại [docs/LOCALIZATION.md](docs/LOCALIZATION.md); kiểm tra bằng `python3 scripts/validate_localizations.py`.
 
 ---
@@ -160,8 +161,8 @@ open build/MacOptimizer.app
 
 Artifact sau build:
 
-- `build_release/MacOptimizer_v4.0.9_AppleSilicon.dmg`
-- `build_release/MacOptimizer_v4.0.9_Intel.dmg`
+- `build_release/MacOptimizer_v4.0.10_AppleSilicon.dmg`
+- `build_release/MacOptimizer_v4.0.10_Intel.dmg`
 
 ### Build kiểm tra package
 
@@ -203,7 +204,8 @@ MacOptimizervn/
 ├── scripts/                    # Utility scripts (icon, validator bản dịch...)
 ├── build.sh                    # Build cục bộ + DMG
 ├── build_dual_dmg.sh           # DMG Apple Silicon + Intel
-└── README.md
+├── README.md                   # Bản tiếng Anh
+└── README.vi.md                # Bản tiếng Việt
 ```
 
 ---
@@ -211,6 +213,7 @@ MacOptimizervn/
 ## Tài liệu liên quan
 
 - [docs/LOCALIZATION.md](docs/LOCALIZATION.md) — hướng dẫn đa ngôn ngữ
+- [CHANGELOG_v4.0.9.md](CHANGELOG_v4.0.9.md)
 - [CHANGELOG_v4.0.8.md](CHANGELOG_v4.0.8.md)
 - [CHANGELOG_v4.0.7.md](CHANGELOG_v4.0.7.md)
 - [CHANGELOG_v4.0.6.md](CHANGELOG_v4.0.6.md)

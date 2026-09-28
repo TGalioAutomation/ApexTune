@@ -3430,7 +3430,8 @@ class SmartCleanerService: ObservableObject {
 
             // Lưu ý: Chúng tôi chỉ yêu cầu sự cho phép một lần ở đây
 
-            let appleScriptCommand = "do shell script \"/bin/bash \(tempScriptURL.path)\" with administrator privileges"
+            let runCommand = "/bin/bash \(PrivilegedShell.shellEscape(tempScriptURL.path))"
+            let appleScriptCommand = "do shell script \"\(PrivilegedShell.appleScriptEscape(runCommand))\" with administrator privileges"
             
             var error: NSDictionary?
             if let appleScript = NSAppleScript(source: appleScriptCommand) {

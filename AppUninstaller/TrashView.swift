@@ -223,11 +223,14 @@ class TrashScanner: ObservableObject {
     // đặt trở lại vị trí
 
     func putBack(_ item: TrashItem) {
+        // Đường dẫn thùng rác do filesystem kiểm soát — escape lớp AppleScript
+        // để tên file chứa " không chèn được mã AppleScript.
+        let path = PrivilegedShell.appleScriptEscape(item.url.path)
         let script = """
         tell application "Finder"
             activate
             try
-                set targetItem to (POSIX file "\(item.url.path)") as alias
+                set targetItem to (POSIX file "\(path)") as alias
                 select targetItem
                 tell application "System Events"
                     key code 51 using {command down}

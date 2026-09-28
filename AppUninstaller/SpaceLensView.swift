@@ -997,11 +997,14 @@ struct SpaceLensView: View {
             return false
         }
         
-        // Build rm commands
-        let rmCommands = safePaths.map { "rm -rf '\($0)'" }.joined(separator: "; ")
-        
+        // Build rm commands — escape shell (nháy đơn) cho từng đường dẫn,
+        // rồi escape cả lớp AppleScript cho toàn bộ lệnh (bảo mật 2 lớp).
+        let rmCommands = safePaths
+            .map { "rm -rf \(PrivilegedShell.shellEscape($0))" }
+            .joined(separator: "; ")
+
         let script = """
-        do shell script "\(rmCommands)" with administrator privileges
+        do shell script "\(PrivilegedShell.appleScriptEscape(rmCommands))" with administrator privileges
         """
         
         var error: NSDictionary?

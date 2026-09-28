@@ -10,7 +10,7 @@
   <p>
     <img src="https://img.shields.io/badge/macOS-13%2B-111827?style=for-the-badge&logo=apple&logoColor=white" alt="macOS 13+">
     <img src="https://img.shields.io/badge/Swift-5.9-F97316?style=for-the-badge&logo=swift&logoColor=white" alt="Swift 5.9">
-    <img src="https://img.shields.io/badge/Version-4.0.9-2563EB?style=for-the-badge" alt="Version 4.0.9">
+    <img src="https://img.shields.io/badge/Version-4.0.10-2563EB?style=for-the-badge" alt="Version 4.0.9">
     <img src="https://img.shields.io/badge/UI-Vi%E1%BB%87t%20Nam%20%2F%20English-059669?style=for-the-badge" alt="UI Vietnamese / English">
     <img src="https://img.shields.io/badge/Menu%20Bar-GPU%20%2F%20CPU%20%2F%20DISK%20%2F%20RAM-7C3AED?style=for-the-badge" alt="Menu bar metrics">
   </p>
@@ -85,6 +85,7 @@ The app runs as an accessory utility (`LSUIElement`): no Dock icon, everything h
 
 - **Vietnamese** (source language) and **English** ship built-in; switch instantly in **Settings → Language** — the whole app re-renders without a restart.
 - On first launch the app auto-detects your system language and uses it if a translation exists (English system → English UI), otherwise Vietnamese.
+- The menu bar widget follows the app translations (`WidgetExtension/WidgetLocalization.swift`) and your system language.
 - Adding a language requires **no code changes**: drop a `AppUninstaller/Languages/<code>.json` file (keys are the original Vietnamese strings) and rebuild. See [docs/LOCALIZATION.md](docs/LOCALIZATION.md); verify with `python3 scripts/validate_localizations.py`.
 
 ---
@@ -160,8 +161,8 @@ open build/MacOptimizer.app
 
 Build artifacts:
 
-- `build_release/MacOptimizer_v4.0.9_AppleSilicon.dmg`
-- `build_release/MacOptimizer_v4.0.9_Intel.dmg`
+- `build_release/MacOptimizer_v4.0.10_AppleSilicon.dmg`
+- `build_release/MacOptimizer_v4.0.10_Intel.dmg`
 
 ### Package check
 
@@ -203,7 +204,8 @@ MacOptimizervn/
 ├── scripts/                    # Utility scripts (icon, translation validator...)
 ├── build.sh                    # Local build + DMG
 ├── build_dual_dmg.sh           # Apple Silicon + Intel DMGs
-└── README.md
+├── README.md                   # English readme
+└── README.vi.md                # Bản tiếng Việt
 ```
 
 ---
@@ -211,10 +213,12 @@ MacOptimizervn/
 ## Related docs
 
 - [docs/LOCALIZATION.md](docs/LOCALIZATION.md) — localization guide
+- [CHANGELOG_v4.0.9.md](CHANGELOG_v4.0.9.md)
 - [CHANGELOG_v4.0.8.md](CHANGELOG_v4.0.8.md)
 - [CHANGELOG_v4.0.7.md](CHANGELOG_v4.0.7.md)
 - [CHANGELOG_v4.0.6.md](CHANGELOG_v4.0.6.md)
 - [docs/audit-2026-04-06.md](docs/audit-2026-04-06.md)
+- [contracts/vietnamese-only-sweep-checklist.md](contracts/vietnamese-only-sweep-checklist.md)
 
 ---
 
