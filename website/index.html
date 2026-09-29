@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MacOptimizer — Trợ lý tối ưu macOS trong menu bar</title>
+<meta name="description" content="Dọn dẹp, gỡ cài đặt, giám sát hệ thống và quản lý AI model ngay trên menu bar macOS. Nhẹ — chỉ ~1% CPU khi chạy nền. Tiếng Việt & English, Apple Silicon + Intel.">
+<meta property="og:title" content="MacOptimizer — macOS cleaner & system monitor">
+<meta property="og:description" content="Menu bar utility làm sạch macOS, giám sát realtime, quét malware — tối ưu CPU từ v4.0.11.">
+<meta property="og:image" content="assets/mainwindow.png">
+<link rel="icon" href="assets/appicon.png">
+<style>
+:root{
+  --bg:#0b0e14; --bg2:#10141d; --panel:#151a26; --panel2:#1a2030;
+  --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --text:#e8ecf4; --muted:#98a2b8; --dim:#64708a;
+  --blue:#3b82f6; --blue2:#2563eb; --cyan:#22d3ee; --violet:#8b5cf6;
+  --green:#34d399; --amber:#fbbf24; --red:#f87171;
+  --radius:16px; --max:1120px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:rgba(59,130,246,.35)}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+/* ---------- background glow ---------- */
+.bgfx{position:fixed;inset:0;pointer-events:none;z-index:0}
+.bgfx::before{content:"";position:absolute;top:-320px;left:50%;transform:translateX(-50%);width:900px;height:640px;
+  background:radial-gradient(closest-side,rgba(59,130,246,.16),transparent 70%);filter:blur(10px)}
+.bgfx::after{content:"";position:absolute;top:200px;right:-260px;width:620px;height:620px;
+  background:radial-gradient(closest-side,rgba(139,92,246,.10),transparent 70%)}
+
+/* ---------- nav ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(18px);background:rgba(11,14,20,.72);border-bottom:1px solid var(--line)}
+.navin{max-width:var(--max);margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;letter-spacing:-.01em}
+.brand img{width:26px;height:26px;border-radius:7px}
+.brand span.opt{color:var(--blue)}
+nav .links{margin-left:auto;display:flex;align-items:center;gap:22px;font-size:13.5px;color:var(--muted)}
+nav .links a:hover{color:var(--text)}
+.lang{border:1px solid var(--line2);background:var(--panel);color:var(--muted);border-radius:99px;padding:5px 12px;font-size:12px;cursor:pointer;transition:.2s}
+.lang:hover{color:var(--text);border-color:rgba(255,255,255,.3)}
+.gh{display:flex;align-items:center;gap:7px}
+.gh svg{width:17px;height:17px;fill:currentColor}
+
+/* ---------- hero ---------- */
+.hero{position:relative;z-index:1;padding:150px 0 70px;text-align:center}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);background:linear-gradient(180deg,rgba(59,130,246,.12),rgba(59,130,246,.04));
+  color:#bcd3fb;border-radius:99px;padding:7px 15px;font-size:12.5px;font-weight:600;margin-bottom:26px}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+h1{font-size:clamp(38px,6vw,62px);line-height:1.06;letter-spacing:-.03em;font-weight:800}
+h1 .grad{background:linear-gradient(92deg,#60a5fa 0%,#22d3ee 55%,#a78bfa 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin:22px auto 0;max-width:640px;color:var(--muted);font-size:17px;line-height:1.65}
+.cta{margin-top:36px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 26px;border-radius:13px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;border:1px solid transparent}
+.btn.primary{background:linear-gradient(180deg,#3b82f6,#2563eb);box-shadow:0 8px 28px -8px rgba(37,99,235,.65),inset 0 1px 0 rgba(255,255,255,.22)}
+.btn.primary:hover{transform:translateY(-1px);box-shadow:0 12px 34px -8px rgba(37,99,235,.8),inset 0 1px 0 rgba(255,255,255,.22)}
+.btn.ghost{border-color:var(--line2);background:var(--panel);color:var(--text)}
+.btn.ghost:hover{border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
+.btn svg{width:17px;height:17px;fill:currentColor}
+.note{margin-top:16px;color:var(--dim);font-size:12.5px}
+
+/* ---------- stats ---------- */
+.stats{position:relative;z-index:1;margin:56px 0 0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel));border-radius:var(--radius);padding:20px 18px;text-align:left}
+.stat b{display:block;font-size:26px;letter-spacing:-.02em}
+.stat span{display:block;margin-top:4px;color:var(--muted);font-size:12.5px}
+.stat b.c1{color:var(--green)} .stat b.c2{color:var(--blue)} .stat b.c3{color:var(--cyan)} .stat b.c4{color:var(--violet)}
+
+/* ---------- shots ---------- */
+.shots{position:relative;z-index:1;margin-top:74px;display:grid;grid-template-columns:1.55fr 1fr;gap:22px;align-items:start}
+.shot{border:1px solid var(--line2);border-radius:20px;overflow:hidden;background:var(--panel);box-shadow:0 40px 90px -30px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.03) inset;transition:.3s}
+.shot:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.22)}
+.shot img{display:block;width:100%;height:auto}
+.shot figcaption{padding:11px 16px;font-size:12px;color:var(--dim);border-top:1px solid var(--line)}
+.shotcol{display:flex;flex-direction:column;gap:22px}
+
+/* ---------- sections ---------- */
+section{position:relative;z-index:1;padding:96px 0 0}
+.sec-head{max-width:640px;margin-bottom:44px}
+.kicker{color:var(--blue);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+h2{font-size:clamp(26px,4vw,38px);letter-spacing:-.025em;margin-top:10px;font-weight:800}
+.sec-head p{margin-top:14px;color:var(--muted);font-size:15.5px;line-height:1.65}
+
+/* features */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel));border-radius:var(--radius);padding:24px;transition:.25s}
+.card:hover{border-color:rgba(255,255,255,.2);transform:translateY(-3px)}
+.card .ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.card .ico svg{width:21px;height:21px}
+.card h3{font-size:16px;letter-spacing:-.01em;margin-bottom:8px}
+.card p{color:var(--muted);font-size:13.5px;line-height:1.6}
+.i1{background:rgba(59,130,246,.14);color:#7fb0fb}.i2{background:rgba(52,211,153,.13);color:#5fe3b3}
+.i3{background:rgba(139,92,246,.14);color:#b79efb}.i4{background:rgba(251,191,36,.13);color:#fcd34d}
+.i5{background:rgba(34,211,238,.13);color:#67e8f9}.i6{background:rgba(248,113,113,.13);color:#fca5a5}
+.i7{background:rgba(96,165,250,.14);color:#93c5fd}.i8{background:rgba(167,139,250,.14);color:#c4b5fd}
+.i9{background:rgba(45,212,191,.13);color:#5eead4}
+
+/* perf */
+.perf{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,var(--panel2),var(--panel));padding:34px 34px 30px}
+.perf-row{margin:22px 0}
+.perf-row .lab{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:9px}
+.perf-row .lab b{font-weight:700}
+.track{height:12px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden}
+.fill{height:100%;border-radius:99px;width:0;transition:width 1.4s cubic-bezier(.2,.7,.2,1)}
+.fill.before{background:linear-gradient(90deg,#f87171,#ef4444)}
+.fill.after{background:linear-gradient(90deg,#34d399,#10b981)}
+.perf .legend{display:flex;gap:22px;margin-bottom:6px;font-size:12.5px;color:var(--muted)}
+.perf .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+.perf-tag{display:inline-block;margin-top:6px;border:1px solid rgba(52,211,153,.35);color:#86efac;background:rgba(52,211,153,.08);border-radius:99px;padding:5px 13px;font-size:12px;font-weight:600}
+
+/* download */
+.dl{border:1px solid var(--line2);border-radius:24px;padding:52px 40px;text-align:center;background:
+ radial-gradient(600px 260px at 50% -80px,rgba(59,130,246,.18),transparent),linear-gradient(180deg,var(--panel2),var(--panel))}
+.dl h2{margin-top:8px}
+.dl .req{margin:18px auto 30px;color:var(--muted);font-size:14px;line-height:1.7;max-width:520px}
+.dl .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.chip{border:1px solid var(--line2);border-radius:99px;padding:6px 14px;font-size:12.5px;color:var(--muted)}
+
+/* footer */
+footer{position:relative;z-index:1;margin-top:96px;border-top:1px solid var(--line);padding:34px 0 44px;color:var(--dim);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.rv.on{opacity:1;transform:none}
+
+@media(max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .shots{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  nav .links a:not(.lang){display:none}
+}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="bgfx"></div>
+
+<nav>
+  <div class="navin">
+    <a class="brand" href="#"><img src="assets/appicon.png" alt="MacOptimizer">Mac<span class="opt">Optimizer</span></a>
+    <div class="links">
+      <a href="#features" data-vi="Tính năng" data-en="Features">Tính năng</a>
+      <a href="#performance" data-vi="Hiệu năng" data-en="Performance">Hiệu năng</a>
+      <a href="#download" data-vi="Tải về" data-en="Download">Tải về</a>
+      <a class="gh" href="https://github.com/TGalioAutomation/MacOptimizervn" aria-label="GitHub">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        <span>GitHub</span>
+      </a>
+      <button class="lang" id="langBtn">EN</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="pill"><span class="dot"></span><span data-vi="v4.0.11 — bản tối ưu hiệu năng lớn" data-en="v4.0.11 — major performance release">v4.0.11 — bản tối ưu hiệu năng lớn</span></div>
+    <h1><span data-vi="Máy Mac của bạn," data-en="Your Mac,">Máy Mac của bạn,</span><br><span class="grad" data-vi="gọn gàng và nhanh hơn" data-en="cleaner and faster">gọn gàng và nhanh hơn</span></h1>
+    <p class="sub" data-vi="Dọn rác hệ thống, gỡ ứng dụng sạch sẽ, giám sát CPU/RAM/GPU theo thời gian thực — tất cả trong một icon trên menu bar. Tiếng Việt &amp; English, chạy nhẹ tênh từ bản 4.0.11."
+      data-en="System cleanup, complete app uninstalling, real-time CPU/RAM/GPU monitoring — all from one menu bar icon. Vietnamese &amp; English, feather-light since 4.0.11.">
+      Dọn rác hệ thống, gỡ ứng dụng sạch sẽ, giám sát CPU/RAM/GPU theo thời gian thực — tất cả trong một icon trên menu bar. Tiếng Việt &amp; English, chạy nhẹ tênh từ bản 4.0.11.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/TGalioAutomation/MacOptimizervn/releases/latest/download/MacOptimizer.dmg">
+        <svg viewBox="0 0 16 16"><path d="M8 12.5a1 1 0 0 1-.7-.29L3.3 8.21a1 1 0 0 1 1.41-1.41L7 9.08V1.5a1 1 0 0 1 2 0v7.58l2.29-2.28a1 1 0 1 1 1.41 1.41l-4 4A1 1 0 0 1 8 12.5ZM13.5 14.5h-11a1 1 0 0 1 0-2h11a1 1 0 0 1 0 2Z"/></svg>
+        <span data-vi="Tải về cho macOS" data-en="Download for macOS">Tải về cho macOS</span>
+      </a>
+      <a class="btn ghost" href="https://github.com/TGalioAutomation/MacOptimizervn">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        <span data-vi="Xem mã nguồn" data-en="View source">Xem mã nguồn</span>
+      </a>
+    </div>
+    <p class="note" data-vi="DMG Universal (Apple Silicon + Intel) · macOS 13+ · Miễn phí" data-en="Universal DMG (Apple Silicon + Intel) · macOS 13+ · Free">DMG Universal (Apple Silicon + Intel) · macOS 13+ · Miễn phí</p>
+
+    <div class="stats rv">
+      <div class="stat"><b class="c1">~1%</b><span data-vi="CPU khi chạy nền (v4.0.11)" data-en="background CPU (v4.0.11)">CPU khi chạy nền (v4.0.11)</span></div>
+      <div class="stat"><b class="c2">20+</b><span data-vi="module dọn dẹp &amp; giám sát" data-en="cleaning &amp; monitor modules">module dọn dẹp &amp; giám sát</span></div>
+      <div class="stat"><b class="c3">2</b><span data-vi="ngôn ngữ: Tiếng Việt &amp; English" data-en="languages: Vietnamese &amp; English">ngôn ngữ: Tiếng Việt &amp; English</span></div>
+      <div class="stat"><b class="c4">100%</b><span data-vi="Swift thuần, không telemetry" data-en="native Swift, zero telemetry">Swift thuần, không telemetry</span></div>
+    </div>
+
+    <figure class="shots rv">
+      <div class="shot">
+        <img src="assets/mainwindow.png" alt="MacOptimizer main window" loading="lazy">
+        <figcaption data-vi="Cửa sổ chính — module dọn dẹp, quét và công cụ" data-en="Main window — cleaning, scanning and tools">Cửa sổ chính — module dọn dẹp, quét và công cụ</figcaption>
+      </div>
+      <div class="shotcol">
+        <div class="shot">
+          <img src="assets/dashboard.png" alt="Menu bar dashboard" loading="lazy">
+          <figcaption data-vi="Bảng điều khiển menu bar — điểm sức khỏe, CPU · RAM · DISK · NET" data-en="Menu bar dashboard — health score, CPU · RAM · DISK · NET">Bảng điều khiển menu bar — điểm sức khỏe, CPU · RAM · DISK · NET</figcaption>
+        </div>
+      </div>
+    </figure>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="kicker" data-vi="Tính năng" data-en="Features">Tính năng</div>
+      <h2 data-vi="Một icon, cả bộ công cụ" data-en="One icon, the whole toolkit">Một icon, cả bộ công cụ</h2>
+      <p data-vi="Không có icon Dock, không cửa sổ treo lơ lửng — mọi thứ mở ra từ menu bar và biến mất khi bạn xong việc."
+        data-en="No Dock icon, no lingering windows — everything opens from the menu bar and disappears when you're done.">
+        Không có icon Dock, không cửa sổ treo lơ lửng — mọi thứ mở ra từ menu bar và biến mất khi bạn xong việc.</p>
+    </div>
+    <div class="grid">
+      <div class="card rv"><div class="ico i1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <h3 data-vi="Dashboard menu bar" data-en="Menu bar dashboard">Dashboard menu bar</h3>
+        <p data-vi="Điểm sức khỏe hệ thống, GPU · CPU · DISK · RAM · NET · Pin trực tiếp trên status item, 5 theme banner, 3 profile sampling."
+          data-en="System health score, GPU · CPU · DISK · RAM · NET · Battery right on the status item, 5 banner themes, 3 sampling profiles.">Điểm sức khỏe hệ thống, GPU · CPU · DISK · RAM · NET · Pin trực tiếp trên status item, 5 theme banner, 3 profile sampling.</p></div>
+      <div class="card rv"><div class="ico i2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div>
+        <h3 data-vi="Gỡ cài đặt sạch sẽ" data-en="Complete uninstaller">Gỡ cài đặt sạch sẽ</h3>
+        <p data-vi="Gỡ app kèm toàn bộ file rác còn sót: preferences, caches, container — có preview và xác nhận trước khi xóa."
+          data-en="Remove apps with every leftover: preferences, caches, containers — with preview and confirmation before deleting.">Gỡ app kèm toàn bộ file rác còn sót: preferences, caches, container — có preview và xác nhận trước khi xóa.</p></div>
+      <div class="card rv"><div class="ico i3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a5 5 0 0 0-7.07 7.07l-4.3 4.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l4.3-4.3a5 5 0 0 0 7.07-7.07Z"/></svg></div>
+        <h3 data-vi="Dọn sâu &amp; tập tin lớn" data-en="Deep clean &amp; large files">Dọn sâu &amp; tập tin lớn</h3>
+        <p data-vi="Smart Clean, Junk Cleaner, Deep Clean, dò file lớn và logs cũ — quét song song, phân loại rõ ràng."
+          data-en="Smart Clean, Junk Cleaner, Deep Clean, large-file and stale-log hunting — parallel scans, clearly grouped.">Smart Clean, Junk Cleaner, Deep Clean, dò file lớn và logs cũ — quét song song, phân loại rõ ràng.</p></div>
+      <div class="card rv"><div class="ico i4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3 data-vi="Bảo vệ thời gian thực" data-en="Real-time protection">Bảo vệ thời gian thực</h3>
+        <p data-vi="Chặn quảng cáo &amp; tracker qua /etc/hosts, quét malware/adware phổ biến, tự backup &amp; khôi phục an toàn."
+          data-en="Ad &amp; tracker blocking via /etc/hosts, common malware/adware scan, safe auto-backup &amp; restore.">Chặn quảng cáo &amp; tracker qua /etc/hosts, quét malware/adware phổ biến, tự backup &amp; khôi phục an toàn.</p></div>
+      <div class="card rv"><div class="ico i5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h3 data-vi="Cảnh báo RAM thông minh" data-en="Smart RAM alerts">Cảnh báo RAM thông minh</h3>
+        <p data-vi="Ngưỡng RAM toàn hệ thống tuỳ chỉnh (60–95%), chỉ đích danh app nặng nhất, buộc thoát có xác nhận."
+          data-en="Configurable system-wide RAM threshold (60–95%), names the heaviest app, force-quit only after confirmation.">Ngưỡng RAM toàn hệ thống tuỳ chỉnh (60–95%), chỉ đích danh app nặng nhất, buộc thoát có xác nhận.</p></div>
+      <div class="card rv"><div class="ico i6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 20h20L12 2Z"/><path d="M12 9v5"/><circle cx="12" cy="17" r=".5"/></svg></div>
+        <h3 data-vi="Xóa vĩnh viễn an toàn" data-en="Secure shredder">Xóa vĩnh viễn an toàn</h3>
+        <p data-vi="File shredder nhiều lượt, whitelist đường dẫn hệ thống, chặn xóa nhầm thư mục gốc."
+          data-en="Multi-pass file shredder with system-path whitelist and home-folder guardrails.">File shredder nhiều lượt, whitelist đường dẫn hệ thống, chặn xóa nhầm thư mục gốc.</p></div>
+      <div class="card rv"><div class="ico i7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <h3 data-vi="Space Lens &amp; Docker" data-en="Space Lens &amp; Docker">Space Lens &amp; Docker</h3>
+        <p data-vi="Trực quan hoá ổ đĩa, dò thư mục phình to; dọn image Docker và model AI (Ollama, LM Studio) lấy lại hàng chục GB."
+          data-en="Visualize your disk, hunt bloated folders; reclaim tens of GB from Docker images and AI models (Ollama, LM Studio).">Trực quan hoá ổ đĩa, dò thư mục phình to; dọn image Docker và model AI (Ollama, LM Studio) lấy lại hàng chục GB.</p></div>
+      <div class="card rv"><div class="ico i8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg></div>
+        <h3 data-vi="Riêng tư" data-en="Privacy">Riêng tư</h3>
+        <p data-vi="Quét lịch sử duyệt web, cookies, dấu vết nhà phát triển — chỉ đếm và xóa tại chỗ, không gửi dữ liệu đi đâu."
+          data-en="Scan browsing history, cookies and developer traces — counted and cleaned locally, nothing leaves your Mac.">Quét lịch sử duyệt web, cookies, dấu vết nhà phát triển — chỉ đếm và xóa tại chỗ, không gửi dữ liệu đi đâu.</p></div>
+      <div class="card rv"><div class="ico i9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6M4 14l6-6 2-3M2 5h12M7 4h1M22 22l-5-10-5 10M14 18h6"/></svg></div>
+        <h3 data-vi="Song ngữ Việt–Anh" data-en="Vietnamese–English">Song ngữ Việt–Anh</h3>
+        <p data-vi="UI tiếng Việt hoàn chỉnh (mặc định theo ngôn ngữ hệ thống), chuyển ngay trong Cài đặt; thêm ngôn ngữ = 1 file JSON."
+          data-en="Full Vietnamese UI (follows system language on first launch), switch anytime in Settings; a new language is one JSON file.">UI tiếng Việt hoàn chỉnh (mặc định theo ngôn ngữ hệ thống), chuyển ngay trong Cài đặt; thêm ngôn ngữ = 1 file JSON.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="performance">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="kicker" data-vi="v4.0.11" data-en="v4.0.11">v4.0.11</div>
+      <h2 data-vi="Ứng dụng tối ưu lại nhẹ nhất từ trước đến nay" data-en="The optimizer is now optimized">Ứng dụng tối ưu lại nhẹ nhất từ trước đến nay</h2>
+      <p data-vi="Bộ giám sát chuyển sang Mach API đọc thẳng kernel — hết spawn ps/vm_stat mỗi giây. Đo thực tế trên Apple Silicon, macOS 27:"
+        data-en="The monitor now reads the kernel via Mach APIs — no more spawning ps/vm_stat every second. Measured on Apple Silicon, macOS 27:">
+        Bộ giám sát chuyển sang Mach API đọc thẳng kernel — hết spawn ps/vm_stat mỗi giây. Đo thực tế trên Apple Silicon, macOS 27:</p>
+    </div>
+    <div class="perf rv">
+      <div class="legend">
+        <span><i style="background:#ef4444"></i><span data-vi="v4.0.10" data-en="v4.0.10">v4.0.10</span></span>
+        <span><i style="background:#10b981"></i><span data-vi="v4.0.11" data-en="v4.0.11">v4.0.11</span></span>
+      </div>
+      <div class="perf-row" data-val-before="20" data-val-after="1.5">
+        <div class="lab"><span data-vi="Chạy nền (menu bar)" data-en="Background (menu bar)">Chạy nền (menu bar)</span><b><span class="a">20%</span> → <span class="g">~1.5%</span></b></div>
+        <div class="track"><div class="fill before"></div></div>
+        <div class="track" style="margin-top:5px"><div class="fill after"></div></div>
+      </div>
+      <div class="perf-row" data-val-before="20" data-val-after="4.5">
+        <div class="lab"><span data-vi="Dashboard đang mở" data-en="Dashboard open">Dashboard đang mở</span><b><span class="a">~20%</span> → <span class="g">~4.5%</span></b></div>
+        <div class="track"><div class="fill before"></div></div>
+        <div class="track" style="margin-top:5px"><div class="fill after"></div></div>
+      </div>
+      <div class="perf-row" data-val-before="17" data-val-after="3">
+        <div class="lab"><span data-vi="Energy impact (ăn pin)" data-en="Energy impact">Energy impact (ăn pin)</span><b><span class="a">~17</span> → <span class="g">~3</span></b></div>
+        <div class="track"><div class="fill before"></div></div>
+        <div class="track" style="margin-top:5px"><div class="fill after"></div></div>
+      </div>
+      <span class="perf-tag" data-vi="↓ ~13 lần CPU nền · Mach API · throttle 1 Hz · chế độ tiết kiệm khi đóng dashboard" data-en="↓ ~13× background CPU · Mach APIs · 1 Hz throttle · idle mode when dashboard closed">↓ ~13 lần CPU nền · Mach API · throttle 1 Hz · chế độ tiết kiệm khi đóng dashboard</span>
+    </div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="dl rv">
+      <div class="kicker" data-vi="Tải về" data-en="Download">Tải về</div>
+      <h2 data-vi="Sẵn sàng nhẹ xuống máy" data-en="Ready when you are">Sẵn sàng nhẹ xuống máy</h2>
+      <p class="req" data-vi="macOS 13 Ventura trở lên · Universal binary cho Apple Silicon (M-series) và Intel · Không cần cài thêm gì — kéo vào Applications là chạy."
+        data-en="macOS 13 Ventura or later · Universal binary for Apple Silicon (M-series) and Intel · Nothing else to install — drag into Applications and go.">
+        macOS 13 Ventura trở lên · Universal binary cho Apple Silicon (M-series) và Intel · Không cần cài thêm gì — kéo vào Applications là chạy.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/TGalioAutomation/MacOptimizervn/releases/latest/download/MacOptimizer.dmg">
+          <svg viewBox="0 0 16 16"><path d="M8 12.5a1 1 0 0 1-.7-.29L3.3 8.21a1 1 0 0 1 1.41-1.41L7 9.08V1.5a1 1 0 0 1 2 0v7.58l2.29-2.28a1 1 0 1 1 1.41 1.41l-4 4A1 1 0 0 1 8 12.5ZM13.5 14.5h-11a1 1 0 0 1 0-2h11a1 1 0 0 1 0 2Z"/></svg>
+          <span data-vi="Tải MacOptimizer.dmg" data-en="Download MacOptimizer.dmg">Tải MacOptimizer.dmg</span>
+        </a>
+        <a class="btn ghost" href="https://github.com/TGalioAutomation/MacOptimizervn/releases">
+          <span data-vi="Các bản phát hành" data-en="All releases">Các bản phát hành</span>
+        </a>
+      </div>
+      <div class="chips">
+        <span class="chip">macOS 13+</span><span class="chip">Apple Silicon + Intel</span><span class="chip">SwiftUI</span>
+        <span class="chip" data-vi="Tiếng Việt / English" data-en="Vietnamese / English">Tiếng Việt / English</span><span class="chip" data-vi="Không telemetry" data-en="No telemetry">Không telemetry</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 MacOptimizer · <span data-vi="Landing page v4.0.11" data-en="Landing page v4.0.11">Landing page v4.0.11</span></div>
+    <div><a href="https://github.com/TGalioAutomation/MacOptimizervn" style="color:var(--muted)">github.com/TGalioAutomation/MacOptimizervn</a></div>
+  </div>
+</footer>
+
+<script>
+// ----- reveal on scroll -----
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) {
+    e.target.classList.add('on');
+    e.target.querySelectorAll?.('.fill').forEach(f => {
+      const row = f.closest('.perf-row');
+      const b = f.classList.contains('before') ? row.dataset.valBefore : row.dataset.valAfter;
+      f.style.width = Math.min(b * 4.5, 100) + '%';
+    });
+    io.unobserve(e.target);
+  }
+}), {threshold:.18});
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+// ----- language toggle (default: detect browser) -----
+const btn = document.getElementById('langBtn');
+let lang = 'vi';
+btn.addEventListener('click', () => { setLang(lang === 'vi' ? 'en' : 'vi'); });
+function setLang(l){
+  lang = l;
+  btn.textContent = l === 'vi' ? 'EN' : 'VI';
+  document.documentElement.lang = l;
+  document.querySelectorAll('[data-vi]').forEach(el => {
+    const v = el.dataset[l]; if (v !== undefined) el.innerHTML = v;
+  });
+}
+setLang('vi');
+</script>
+</body>
+</html>
