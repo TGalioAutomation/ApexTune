@@ -51,6 +51,8 @@ import Foundation
 actor BatchedUIUpdater {
     private var pendingUpdates: [String: @MainActor () -> Void] = [:]
     private var debounceTimers: [String: Task<Void, Never>] = [:]
+    private var throttleTimers: [String: Task<Void, Never>] = [:]
+    private var lastThrottleFlush: [String: Date] = [:]
     private let debounceDelay: TimeInterval
     
     /// Initialize the batched UI updater
@@ -163,12 +165,53 @@ actor BatchedUIUpdater {
         debounceTimers[key] = timer
     }
     
+    /// Throttle: tối đa 1 lần chạy mỗi `minInterval` cho cùng key. Các lần gọi dồn vào
+    /// cùng cửa sổ được gộp — chỉ closure MỚI NHẤT chạy, ở cuối cửa sổ (trailing).
+    /// Dùng cho các nguồn publish định kỳ lệch pha (CPU/RAM/GPU/NET) để số vòng
+    /// layout lại window SwiftUI không theo số nguồn mà theo nhịp 1 Hz.
+    func throttle(_ key: String, minInterval: TimeInterval, _ action: @escaping @MainActor () -> Void) async {
+        // Không trộn với debounce cùng key
+        if let existing = debounceTimers[key] {
+            existing.cancel()
+            debounceTimers.removeValue(forKey: key)
+        }
+        pendingUpdates[key] = action
+
+        let now = Date()
+        if let last = lastThrottleFlush[key], now.timeIntervalSince(last) < minInterval {
+            let remainingNs = UInt64((minInterval - now.timeIntervalSince(last)) * 1_000_000_000)
+            let timer = Task {
+                try? await Task.sleep(nanoseconds: remainingNs)
+                guard !Task.isCancelled else { return }
+                await self.flushThrottled(key)
+            }
+            throttleTimers[key] = timer
+        } else {
+            await flushThrottled(key)
+        }
+    }
+
+    private func flushThrottled(_ key: String) async {
+        throttleTimers[key]?.cancel()
+        throttleTimers.removeValue(forKey: key)
+        guard let action = pendingUpdates.removeValue(forKey: key) else { return }
+        lastThrottleFlush[key] = Date()
+        await MainActor.run {
+            action()
+        }
+    }
+
     /// Cancel all pending debounced updates
     func cancelAll() {
         for (_, timer) in debounceTimers {
             timer.cancel()
         }
         debounceTimers.removeAll()
+        for (_, timer) in throttleTimers {
+            timer.cancel()
+        }
+        throttleTimers.removeAll()
+        lastThrottleFlush.removeAll()
         pendingUpdates.removeAll()
     }
     

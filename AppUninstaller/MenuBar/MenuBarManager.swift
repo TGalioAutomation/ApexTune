@@ -112,6 +112,9 @@ class MenuBarManager: NSObject, ObservableObject {
 
     /// Cache icon đã tô màu theo tint (theme nền sáng).
     private var tintedIconCache: [String: NSImage] = [:]
+
+    /// Cache key nội dung banner lần vẽ gần nhất (tránh vẽ lại khi giá trị hiển thị không đổi)
+    private var lastStatusRenderKey: String?
     
     override init() {
         super.init()
@@ -637,16 +640,30 @@ extension MenuBarManager {
     
     private func updateStatusItemAppearance() {
         guard let button = statusItem?.button else { return }
-        
+
         let displays = statusMetricDisplays
-        let renderedImage = makeStatusItemImage(from: displays)
-        
-        button.image = renderedImage
+        // Mỗi lần vẽ banner là lockFocus + đo chuỗi + vẽ capsule/CoreText cho mọi chip
+        // nên chỉ vẽ lại khi nội dung hiển thị (hoặc giao diện) thật sự đổi. Giá trị
+        // sampling giữ nguyên thì bỏ qua hoàn toàn — đây là nguồn spike CPU menu bar.
+        let renderKey = [
+            displays.map(\.text).joined(separator: "|"),
+            bannerTheme.rawValue,
+            String(showsStatusIcon),
+            NSApp.effectiveAppearance.name.rawValue,
+            statusItemTooltipText
+        ].joined(separator: "#")
+
+        if renderKey != lastStatusRenderKey {
+            lastStatusRenderKey = renderKey
+            let renderedImage = makeStatusItemImage(from: displays)
+            button.image = renderedImage
+            button.toolTip = statusItemTooltipText
+            statusItem?.length = renderedImage.map { max($0.size.width + 10, NSStatusItem.squareLength) } ?? NSStatusItem.squareLength
+        }
+
         button.imagePosition = .imageOnly
         button.title = ""
         button.attributedTitle = NSAttributedString(string: "")
-        button.toolTip = statusItemTooltipText
-        statusItem?.length = renderedImage.map { max($0.size.width + 10, NSStatusItem.squareLength) } ?? NSStatusItem.squareLength
     }
     
     struct StatusMetricDisplay: Identifiable {

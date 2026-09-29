@@ -231,7 +231,10 @@ class SystemMonitorService: ObservableObject {
         var detailedMemory: Bool
         var batteryDetails: Bool
         var highMemoryAlerts: Bool
-        
+        /// true khi cửa sổ bảng điều khiển đóng và không mở trang chi tiết nào,
+        /// tức sampling chỉ còn phục vụ dòng chữ trên status item của menu bar
+        var statusItemOnly: Bool
+
         static let dashboard = SamplingNeeds(
             gpu: false,
             cpu: true,
@@ -242,7 +245,8 @@ class SystemMonitorService: ObservableObject {
             processDetails: true,
             detailedMemory: false,
             batteryDetails: false,
-            highMemoryAlerts: true
+            highMemoryAlerts: true,
+            statusItemOnly: false
         )
     }
 
@@ -299,9 +303,14 @@ class SystemMonitorService: ObservableObject {
     
     // UI Update Batching
     private let uiUpdater = BatchedUIUpdater(debounceDelay: 0.05)
+
+    // Cả CPU/RAM/GPU/NET publish qua cùng một nhịp throttle 1 Hz: khi bảng điều khiển mở,
+    // các timer lệch pha không còn gây ra từng vòng layout window riêng cho mỗi metric
+    private static let samplingFlushKey = "monitorSampling"
+    private static let samplingFlushMinInterval: TimeInterval = 1.0
     
-    // Hàng đợi nối tiếp cho toàn bộ việc lấy mẫu: mọi subprocess (ps, vm_stat, netstat,
-    // ioreg, pmset) chạy ở đây để không bao giờ chặn main thread
+    // Hàng đợi nối tiếp cho toàn bộ việc lấy mẫu: các subprocess còn lại (netstat, ioreg,
+    // pmset, ps cho danh sách tiến trình) chạy ở đây để không bao giờ chặn main thread
     
     private let samplingQueue = DispatchQueue(label: "com.macoptimizer.systemmonitor.sampling", qos: .utility)
 
@@ -352,6 +361,92 @@ class SystemMonitorService: ObservableObject {
             print("Command Error [\(launchPath)]: \(error)")
             return nil
         }
+    }
+
+    // Tick CPU của lần đo trước. CHỈ truy cập trên samplingQueue (nối tiếp) để tránh data race.
+
+    private var previousCPUTicks: (idle: UInt64, total: UInt64)?
+
+    // Tên GPU lần đọc gần nhất. CHỈ truy cập trên samplingQueue; bản @Published gpuName
+    // chỉ đọc/ghi trên main thread nên không được đụng từ queue này.
+
+    private var lastGPUName: String = "GPU"
+
+    /// Đọc mức dùng CPU toàn máy qua Mach API, tính từ delta tick giữa hai lần gọi liên tiếp.
+    /// Thay cho việc spawn `ps -A` mỗi chu kỳ (fork tiến trình + quét toàn bộ process list rất tốn CPU).
+    /// CHỈ gọi từ samplingQueue.
+    private func systemCPUUsage() -> Double? {
+        let host = mach_host_self()
+        defer { mach_port_deallocate(mach_task_self_, host) }
+        var processorCount: natural_t = 0
+        var info: processor_info_array_t?
+        var infoCount: mach_msg_type_number_t = 0
+        guard host_processor_info(host, PROCESSOR_CPU_LOAD_INFO, &processorCount, &info, &infoCount) == KERN_SUCCESS,
+              let info else { return nil }
+        defer {
+            let size = vm_size_t(infoCount) * vm_size_t(MemoryLayout<integer_t>.stride)
+            vm_deallocate(mach_task_self_, vm_address_t(UInt(bitPattern: info)), size)
+        }
+
+        var idle: UInt64 = 0
+        var total: UInt64 = 0
+        let stateMax = Int(CPU_STATE_MAX)
+        let idleState = Int(CPU_STATE_IDLE)
+        for core in 0..<Int(processorCount) {
+            let base = core * stateMax
+            idle += UInt64(info[base + idleState])
+            for state in 0..<stateMax {
+                total += UInt64(info[base + state])
+            }
+        }
+
+        let current = (idle: idle, total: total)
+        let previous = previousCPUTicks
+        previousCPUTicks = current
+        guard let previous else {
+            // Lần gọi đầu chưa có delta: trả mức dùng trung bình từ lúc khởi động máy
+            // để UI có giá trị ngay thay vì chờ thêm một chu kỳ sampling
+            guard current.total > current.idle else { return nil }
+            return Double(current.total - current.idle) / Double(current.total)
+        }
+
+        let idleDelta = current.idle > previous.idle ? current.idle - previous.idle : 0
+        let totalDelta = current.total > previous.total ? current.total - previous.total : 0
+        // Tick từng state là counter 32-bit độc lập có thể wrap lệch nhau giữa 2 lần lấy mẫu;
+        // nếu idleDelta vượt totalDelta thì bỏ tick này thay vì để UInt64 underflow
+        guard totalDelta > 0, idleDelta <= totalDelta else { return nil }
+        return min(max(Double(totalDelta - idleDelta) / Double(totalDelta), 0), 1)
+    }
+
+    /// Thống kê trang RAM đọc trực tiếp từ kernel, tương đương output `vm_stat` nhưng không spawn process.
+    private struct VMPageCounts {
+        let active: UInt64
+        let inactive: UInt64
+        let speculative: UInt64
+        let wired: UInt64
+        let compressed: UInt64
+        let pageSize: UInt64
+    }
+
+    private func readVMPageCounts() -> VMPageCounts? {
+        let host = mach_host_self()
+        defer { mach_port_deallocate(mach_task_self_, host) }
+        var stats = vm_statistics64()
+        var count = mach_msg_type_number_t(MemoryLayout<vm_statistics64>.stride / MemoryLayout<integer_t>.stride)
+        let result = withUnsafeMutablePointer(to: &stats) {
+            $0.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
+                host_statistics64(host, HOST_VM_INFO64, $0, &count)
+            }
+        }
+        guard result == KERN_SUCCESS else { return nil }
+        return VMPageCounts(
+            active: UInt64(stats.active_count),
+            inactive: UInt64(stats.inactive_count),
+            speculative: UInt64(stats.speculative_count),
+            wired: UInt64(stats.wire_count),
+            compressed: UInt64(stats.compressor_page_count),
+            pageSize: UInt64(vm_kernel_page_size)
+        )
     }
     
     private func fetchUserProcesses() {
@@ -557,7 +652,8 @@ class SystemMonitorService: ObservableObject {
             processDetails: detailRoute == .cpu || detailRoute == .memory,
             detailedMemory: detailRoute == .memory,
             batteryDetails: detailRoute == .battery,
-            highMemoryAlerts: true
+            highMemoryAlerts: true,
+            statusItemOnly: !isMenuBarWindowOpen && detailRoute == nil
         )
         refreshSamplingSchedule(runImmediately: isMonitoring)
     }
@@ -634,24 +730,28 @@ class SystemMonitorService: ObservableObject {
 
     private func refreshSamplingSchedule(runImmediately: Bool) {
         guard isMonitoring else { return }
-        
-        configureTimer(&gpuTimer, enabled: samplingNeeds.gpu, interval: menuBarSamplingConfiguration.interval(for: .gpu), runImmediately: runImmediately) { [weak self] in
+
+        // Khi cửa sổ đóng và không mở trang chi tiết, sampling chỉ còn phục vụ dòng chữ
+        // trên status item nên nới chu kỳ ra 3 lần để giảm CPU; mở lại là quay về tốc độ cấu hình
+        let idleFactor: Double = samplingNeeds.statusItemOnly ? 3.0 : 1.0
+
+        configureTimer(&gpuTimer, enabled: samplingNeeds.gpu, interval: menuBarSamplingConfiguration.interval(for: .gpu) * idleFactor, runImmediately: runImmediately) { [weak self] in
             self?.sampleGPUUsage()
         }
-        
-        configureTimer(&cpuTimer, enabled: samplingNeeds.cpu, interval: menuBarSamplingConfiguration.interval(for: .cpu), runImmediately: runImmediately) { [weak self] in
+
+        configureTimer(&cpuTimer, enabled: samplingNeeds.cpu, interval: menuBarSamplingConfiguration.interval(for: .cpu) * idleFactor, runImmediately: runImmediately) { [weak self] in
             self?.sampleCPUUsage()
         }
-        
-        configureTimer(&memoryTimer, enabled: samplingNeeds.memory, interval: menuBarSamplingConfiguration.interval(for: .memory), runImmediately: runImmediately) { [weak self] in
+
+        configureTimer(&memoryTimer, enabled: samplingNeeds.memory, interval: menuBarSamplingConfiguration.interval(for: .memory) * idleFactor, runImmediately: runImmediately) { [weak self] in
             self?.sampleMemoryUsage(includeDetailedStats: self?.samplingNeeds.detailedMemory ?? false)
         }
-        
-        configureTimer(&networkTimer, enabled: samplingNeeds.network, interval: menuBarSamplingConfiguration.interval(for: .network), runImmediately: runImmediately) { [weak self] in
+
+        configureTimer(&networkTimer, enabled: samplingNeeds.network, interval: menuBarSamplingConfiguration.interval(for: .network) * idleFactor, runImmediately: runImmediately) { [weak self] in
             self?.sampleNetworkUsage(includeDetails: self?.samplingNeeds.networkDetails ?? false)
         }
-        
-        configureTimer(&batteryTimer, enabled: samplingNeeds.battery, interval: menuBarSamplingConfiguration.interval(for: .battery), runImmediately: runImmediately) { [weak self] in
+
+        configureTimer(&batteryTimer, enabled: samplingNeeds.battery, interval: menuBarSamplingConfiguration.interval(for: .battery) * idleFactor, runImmediately: runImmediately) { [weak self] in
             self?.sampleBatteryStatus(includeDetails: self?.samplingNeeds.batteryDetails ?? false)
         }
         
@@ -690,23 +790,17 @@ class SystemMonitorService: ObservableObject {
     
     private func sampleCPUUsage() {
         samplingQueue.async { [weak self] in
-            guard let self else { return }
-            // Tính tổng %CPU ngay trong Swift thay vì pipe qua bash + awk
-            
-            guard let output = self.runCommand("/bin/ps", ["-A", "-o", "%cpu"]) else { return }
-            
-            var totalCPU: Double = 0
-            for line in output.components(separatedBy: "\n").dropFirst() {
-                if let value = Double(line.trimmingCharacters(in: .whitespaces)) {
-                    totalCPU += value
-                }
-            }
-            let coreCount = Double(ProcessInfo.processInfo.activeProcessorCount)
-            let cpuUsageValue = min((totalCPU / coreCount) / 100.0, 1.0)
-            
-            Task {
-                await self.uiUpdater.batch {
-                    self.cpuUsage = cpuUsageValue
+            guard let self, let usage = self.systemCPUUsage() else { return }
+
+            // Khi bảng điều khiển đóng, status item chỉ cần độ chính xác bậc 5%: giá trị
+            // đổi ít hơn nhiều lần nên bớt số vòng render lại view graph (~200ms mỗi lần)
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                let steps: Double = self.samplingNeeds.statusItemOnly ? 20 : 100
+                let quantized = (usage * steps).rounded() / steps
+                await self.uiUpdater.throttle(Self.samplingFlushKey, minInterval: Self.samplingFlushMinInterval) {
+                    guard self.cpuUsage != quantized else { return }
+                    self.cpuUsage = quantized
                 }
             }
         }
@@ -721,11 +815,16 @@ class SystemMonitorService: ObservableObject {
             let rendererUtilization = self.extractIntegerValue(for: "\"Renderer Utilization %\"", in: output)
             let tilerUtilization = self.extractIntegerValue(for: "\"Tiler Utilization %\"", in: output)
             let usage = deviceUtilization ?? max(rendererUtilization ?? 0, tilerUtilization ?? 0)
-            let name = self.extractQuotedValue(for: "\"model\"", in: output) ?? self.gpuName
+            // lastGPUName là bản của samplingQueue, không đọc @Published từ queue nền
+            let name = self.extractQuotedValue(for: "\"model\"", in: output) ?? self.lastGPUName
+            self.lastGPUName = name
             
             Task {
-                await self.uiUpdater.batch {
-                    self.gpuUsage = Double(usage) / 100.0
+                await self.uiUpdater.throttle(Self.samplingFlushKey, minInterval: Self.samplingFlushMinInterval) {
+                    let usageValue = Double(usage) / 100.0
+                    // Bỏ qua publish khi giá trị hiển thị không đổi để khỏi layout lại window
+                    guard self.gpuUsage != usageValue || self.gpuName != name else { return }
+                    self.gpuUsage = usageValue
                     self.gpuName = name
                 }
             }
@@ -750,61 +849,35 @@ class SystemMonitorService: ObservableObject {
     
     private func sampleMemoryUsage(includeDetailedStats: Bool) {
         samplingQueue.async { [weak self] in
-            guard let self else { return }
-            guard let output = self.runCommand("/usr/bin/vm_stat", []) else { return }
-            
-            let lines = output.components(separatedBy: "\n")
-            var pageSize: UInt64 = 16384
-            var pagesActive: UInt64 = 0
-            var pagesInactive: UInt64 = 0
-            var pagesSpeculative: UInt64 = 0
-            var pagesWired: UInt64 = 0
-            var pagesCompressed: UInt64 = 0
-            
-            for line in lines {
-                if line.contains("page size of") {
-                    if let match = line.range(of: "\\d+", options: .regularExpression),
-                       let size = UInt64(line[match]) {
-                        pageSize = size
-                    }
-                } else if line.hasPrefix("Pages active:") {
-                    pagesActive = self.extractPageCount(line)
-                } else if line.hasPrefix("Pages inactive:") {
-                    pagesInactive = self.extractPageCount(line)
-                } else if line.hasPrefix("Pages speculative:") {
-                    pagesSpeculative = self.extractPageCount(line)
-                } else if line.hasPrefix("Pages wired down:") {
-                    pagesWired = self.extractPageCount(line)
-                } else if line.hasPrefix("Pages occupied by compressor:") {
-                    pagesCompressed = self.extractPageCount(line)
-                }
-            }
-            
+            guard let self, let pages = self.readVMPageCounts() else { return }
+
             let totalRAM = ProcessInfo.processInfo.physicalMemory
             // Trang speculative là cache có thể thu hồi ngay nên không tính vào RAM đã dùng
             // (khớp với cách Activity Monitor đếm "Memory Used")
-            
-            let usedPages = pagesActive + pagesWired + pagesCompressed
-            let usedRAM = usedPages * pageSize
-            
+
+            let usedPages = pages.active + pages.wired + pages.compressed
+            let usedRAM = usedPages * pages.pageSize
+
             let memoryUsageValue = Double(usedRAM) / Double(totalRAM)
             let memoryUsedStringValue = ByteCountFormatter.string(fromByteCount: Int64(usedRAM), countStyle: .memory)
             let memoryTotalStringValue = ByteCountFormatter.string(fromByteCount: Int64(totalRAM), countStyle: .memory)
-            
+
             Task {
-                await self.uiUpdater.batch {
+                await self.uiUpdater.throttle(Self.samplingFlushKey, minInterval: Self.samplingFlushMinInterval) {
+                    // Chỉ publish khi chuỗi hiển thị đổi; giá trị như cũ thì khỏi layout lại window
+                    guard self.memoryUsedString != memoryUsedStringValue else { return }
                     self.memoryUsage = memoryUsageValue
                     self.memoryUsedString = memoryUsedStringValue
                     self.memoryTotalString = memoryTotalStringValue
                 }
             }
-            
+
             if includeDetailedStats {
                 self.updateDetailedStats(
-                    pagesActive: pagesActive + pagesInactive + pagesSpeculative,
-                    pagesWired: pagesWired,
-                    pagesCompressed: pagesCompressed,
-                    pageSize: pageSize,
+                    pagesActive: pages.active + pages.inactive + pages.speculative,
+                    pagesWired: pages.wired,
+                    pagesCompressed: pages.compressed,
+                    pageSize: pages.pageSize,
                     totalRAM: totalRAM
                 )
             }
@@ -859,7 +932,7 @@ class SystemMonitorService: ObservableObject {
                 let totalUploadStr = ByteCountFormatter.string(fromByteCount: Int64(bytesOut), countStyle: .file)
                 
                 Task {
-                    await self.uiUpdater.batch {
+                    await self.uiUpdater.throttle(Self.samplingFlushKey, minInterval: Self.samplingFlushMinInterval) {
                         self.downloadSpeed = downloadRate
                         self.uploadSpeed = uploadRate
                         self.totalDownload = totalDownloadStr
@@ -1207,17 +1280,7 @@ class SystemMonitorService: ObservableObject {
     @Published var batteryHealth: String = L("Đang đo")
     @Published var batteryCycleCount: Int = 0
     @Published var batteryCondition: String = L("Đang kiểm tra")
-    
-    // ... existing extractPageCount ...
-    private func extractPageCount(_ line: String) -> UInt64 {
-        let parts = line.components(separatedBy: ":")
-        if parts.count == 2 {
-            let numberPart = parts[1].replacingOccurrences(of: ".", with: "").trimmingCharacters(in: .whitespaces)
-            return UInt64(numberPart) ?? 0
-        }
-        return 0
-    }
-    
+
     // Add logic to updateStats
     private func updateDetailedStats(pagesActive: UInt64, pagesWired: UInt64, pagesCompressed: UInt64, pageSize: UInt64, totalRAM: UInt64) {
         let memoryAppValue = Double(pagesActive * pageSize) / Double(totalRAM)
