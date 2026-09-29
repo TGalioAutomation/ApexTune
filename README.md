@@ -5,7 +5,7 @@
 
   **A macOS cleaner, optimizer and system monitor that lives in your menu bar**
 
-  **English** · [Tiếng Việt](README.vi.md)
+  **English** · [Tiếng Việt](README.vi.md) · [🌐 Website](https://tgalioautomation.github.io/MacOptimizervn/)
 
   <p>
     <img src="https://img.shields.io/badge/macOS-13%2B-111827?style=for-the-badge&logo=apple&logoColor=white" alt="macOS 13+">

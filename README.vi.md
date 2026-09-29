@@ -5,7 +5,7 @@
 
   **Bộ công cụ dọn dẹp, tối ưu và giám sát macOS — giao diện tiếng Việt & tiếng Anh**
 
-  [English](README.md) · **Tiếng Việt**
+  [English](README.md) · **Tiếng Việt** · [🌐 Website](https://tgalioautomation.github.io/MacOptimizervn/)
 
   <p>
     <img src="https://img.shields.io/badge/macOS-13%2B-111827?style=for-the-badge&logo=apple&logoColor=white" alt="macOS 13+">
