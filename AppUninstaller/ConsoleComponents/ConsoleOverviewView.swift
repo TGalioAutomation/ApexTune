@@ -243,10 +243,7 @@ struct ConsoleOverviewView: View {
                 Spacer()
             }
         }
-        .onAppear {
-            systemMonitor.startMonitoring()
-            // Force quick refresh if needed
-        }
+        // Lifecycle start/stop do MonitorView sở hữu (dùng chung 1 SystemMonitorService)
     }
 }
 

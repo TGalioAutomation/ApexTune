@@ -5,6 +5,11 @@ import AppKit
 struct MonitorView: View {
     @State private var viewState: DashboardState = .dashboard
     @ObservedObject var loc = LocalizationManager.shared
+    /// Một instance duy nhất cho cả module: tạo service riêng trong body (hoặc riêng từng view con)
+    /// sẽ sinh polling trùng và mất dữ liệu đã lấy; lifecycle start/stop tập trung ở đây
+    @StateObject private var systemService = SystemMonitorService()
+    /// Observer occlusion của cửa sổ — cửa sổ ẩn thì phải dừng sampling (xem onAppear)
+    @State private var windowVisibilityObservers: [NSObjectProtocol] = []
     
     enum DashboardState {
         case dashboard
@@ -28,7 +33,7 @@ struct MonitorView: View {
             ZStack {
                 switch viewState {
                 case .dashboard:
-                    ConsoleOverviewView(viewState: $viewState, systemMonitor: SystemMonitorService())
+                    ConsoleOverviewView(viewState: $viewState, systemMonitor: systemService)
                         .transition(.opacity)
                 case .protection:
                     ConsoleProtectionView(viewState: $viewState)
@@ -43,7 +48,7 @@ struct MonitorView: View {
                     ConsoleProcessManagerView(viewState: $viewState)
                         .transition(.opacity)
                 case .networkOptimize:
-                    ConsoleNetworkOptimizeView(viewState: $viewState)
+                    ConsoleNetworkOptimizeView(viewState: $viewState, systemService: systemService)
                         .transition(.opacity)
                 }
             }
@@ -51,6 +56,58 @@ struct MonitorView: View {
             .background(Color.clear) // Gradient is in main window
         }
         .animation(.easeInOut(duration: 0.2), value: viewState)
+        .onAppear {
+            // Cửa sổ chính bị orderOut ngay sau launch nhưng view tree vẫn sống:
+            // nếu chỉ bám vào onAppear thì sampling sẽ chạy mãi trong cửa sổ ẩn và
+            // render lại ngầm ~mỗi giây (~4-6% CPU). Chỉ sampling khi cửa sổ thật sự hiển thị.
+            syncMonitoringWithWindowVisibility()
+            observeWindowVisibility()
+        }
+        .onDisappear {
+            removeWindowVisibilityObservers()
+            systemService.stopMonitoring()
+        }
+    }
+
+    /// Cửa sổ chuẩn = cửa sổ chính của app, đang hiển thị. Loại popup menu bar
+    /// (MenuBarWindow), các window của status item (NSStatusBarWindow là class private
+    /// nên phải soi tên — chúng luôn báo isVisible=true khiến predicate chỉ lọc
+    /// is NSPanel bị hỏng), và mọi panel
+    private static func anyStandardWindowVisible() -> Bool {
+        NSApp.windows.contains { (window: NSWindow) in
+            // occlusionState thay cho isVisible: isVisible vẫn true với cửa sổ thu nhỏ
+            // vào Dock hoặc nằm ở Space khác (không ai thấy) — sampling sẽ chạy thừa
+            window.occlusionState.contains(.visible)
+                && window.level == .normal
+                && !(window is MenuBarWindow)
+                && !String(describing: type(of: window)).contains("StatusBar")
+        }
+    }
+
+    private func syncMonitoringWithWindowVisibility() {
+        if Self.anyStandardWindowVisible() {
+            systemService.startMonitoring()
+        } else {
+            systemService.stopMonitoring()
+        }
+    }
+
+    private func observeWindowVisibility() {
+        guard windowVisibilityObservers.isEmpty else { return }
+        windowVisibilityObservers.append(
+            NotificationCenter.default.addObserver(
+                forName: NSWindow.didChangeOcclusionStateNotification,
+                object: nil,
+                queue: .main
+            ) { _ in
+                syncMonitoringWithWindowVisibility()
+            }
+        )
+    }
+
+    private func removeWindowVisibilityObservers() {
+        windowVisibilityObservers.forEach(NotificationCenter.default.removeObserver)
+        windowVisibilityObservers = []
     }
 }
 
@@ -1387,7 +1444,9 @@ struct NetworkWaveform: View {
 // MARK: - 6. Network Optimize View
 struct ConsoleNetworkOptimizeView: View {
     @Binding var viewState: MonitorView.DashboardState
-    @StateObject private var systemService = SystemMonitorService()
+    /// Dùng chung service từ MonitorView — trước đây view này giữ service riêng nhưng không bao giờ
+    /// startMonitoring nên tốc độ mạng/biểu đồ luôn hiển thị 0
+    @ObservedObject var systemService: SystemMonitorService
     @ObservedObject private var loc = LocalizationManager.shared
     
     @State private var isOptimizing = false

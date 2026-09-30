@@ -345,8 +345,10 @@ class SystemMonitorService: ObservableObject {
     // ... updateStats logic ...
     
     /// Chạy lệnh hệ thống và trả về stdout. CHỈ gọi từ samplingQueue.
-    
-    private func runCommand(_ launchPath: String, _ arguments: [String]) -> String? {
+    /// Có deadline: nếu lệnh chưa tự thoát sau `timeout` giây thì SIGTERM (tiếp SIGKILL nếu vẫn treo)
+    /// để một lệnh treo không đóng băng im lặng cả hàng đợi sampling.
+
+    private func runCommand(_ launchPath: String, _ arguments: [String], timeout: TimeInterval = 5) -> String? {
         let task = Process()
         task.launchPath = launchPath
         task.arguments = arguments
@@ -354,13 +356,51 @@ class SystemMonitorService: ObservableObject {
         task.standardOutput = pipe
         do {
             try task.run()
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            task.waitUntilExit()
-            return String(data: data, encoding: .utf8)
         } catch {
             print("Command Error [\(launchPath)]: \(error)")
             return nil
         }
+
+        // Đọc liên tục bằng handler để ống không bao giờ bị đầy (deadlock) và không block samplingQueue
+
+        let outputLock = NSLock()
+        var output = Data()
+        pipe.fileHandleForReading.readabilityHandler = { handle in
+            let chunk = handle.availableData
+            if chunk.isEmpty {
+                handle.readabilityHandler = nil
+            } else {
+                outputLock.lock()
+                output.append(chunk)
+                outputLock.unlock()
+            }
+        }
+
+        let exited = DispatchSemaphore(value: 0)
+        DispatchQueue.global(qos: .utility).async {
+            task.waitUntilExit()
+            exited.signal()
+        }
+
+        if exited.wait(timeout: .now() + timeout) == .timedOut {
+            task.terminate()
+            if exited.wait(timeout: .now() + 0.5) == .timedOut {
+                kill(task.processIdentifier, SIGKILL)
+                _ = exited.wait(timeout: .now() + 1)
+            }
+            print("Command Timeout [\(launchPath)] sau \(timeout) giây — đã buộc dừng")
+            pipe.fileHandleForReading.readabilityHandler = nil
+            return nil
+        }
+
+        pipe.fileHandleForReading.readabilityHandler = nil
+        outputLock.lock()
+        var data = output
+        outputLock.unlock()
+        // Vét phần dữ liệu còn nằm trong ống sau khi tiến trình thoát (handler có thể chưa kịp nhận)
+
+        data.append(pipe.fileHandleForReading.readDataToEndOfFile())
+        return String(data: data, encoding: .utf8)
     }
 
     // Tick CPU của lần đo trước. CHỈ truy cập trên samplingQueue (nối tiếp) để tránh data race.
@@ -759,7 +799,7 @@ class SystemMonitorService: ObservableObject {
             self?.fetchUserProcesses()
         }
         
-        configureTimer(&alertTimer, enabled: samplingNeeds.highMemoryAlerts, interval: menuBarSamplingConfiguration.interval(for: .alerts), runImmediately: runImmediately) { [weak self] in
+        configureTimer(&alertTimer, enabled: samplingNeeds.highMemoryAlerts, interval: menuBarSamplingConfiguration.interval(for: .alerts) * idleFactor, runImmediately: runImmediately) { [weak self] in
             self?.sampleMemoryUsage(includeDetailedStats: false)
             self?.checkHighMemoryApps()
         }

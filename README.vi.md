@@ -10,7 +10,7 @@
   <p>
     <img src="https://img.shields.io/badge/macOS-13%2B-111827?style=for-the-badge&logo=apple&logoColor=white" alt="macOS 13+">
     <img src="https://img.shields.io/badge/Swift-5.9-F97316?style=for-the-badge&logo=swift&logoColor=white" alt="Swift 5.9">
-    <img src="https://img.shields.io/badge/Version-5.0.0-2563EB?style=for-the-badge" alt="Version 4.0.9">
+    <img src="https://img.shields.io/badge/Version-5.0.1-2563EB?style=for-the-badge" alt="Version 4.0.9">
     <img src="https://img.shields.io/badge/UI-Vi%E1%BB%87t%20Nam%20%2F%20English-059669?style=for-the-badge" alt="UI Việt / English">
     <img src="https://img.shields.io/badge/Menu%20Bar-GPU%20%2F%20CPU%20%2F%20DISK%20%2F%20RAM-7C3AED?style=for-the-badge" alt="Menu bar metrics">
   </p>

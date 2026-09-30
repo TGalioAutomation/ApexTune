@@ -67,6 +67,10 @@ class MenuBarManager: NSObject, ObservableObject {
     
     var statusItem: NSStatusItem?
     var popoverWindow: MenuBarWindow?
+    /// Giữ controller nội dung popup: cửa sổ chỉ orderOut khi đóng nhưng view graph
+    /// SwiftUI vẫn sống và render lại theo nhịp sampling dù không ai thấy — phải tháo
+    /// content khỏi cửa sổ khi đóng và gắn lại khi mở
+    private var popoverContentController: NSHostingController<AnyView>?
     var detailWindow: MenuBarWindow?
     var memoryAlertController: MemoryAlertWindowController?
     
@@ -228,8 +232,9 @@ class MenuBarManager: NSObject, ObservableObject {
             .environmentObject(self)
             .environmentObject(systemMonitor)
             .edgesIgnoringSafeArea(.all)
-        
-        let hostingController = NSHostingController(rootView: contentView)
+
+        let hostingController = NSHostingController(rootView: AnyView(contentView))
+        popoverContentController = hostingController
         let window = MenuBarWindow(contentViewController: hostingController)
         self.popoverWindow = window
         window.level = .floating
@@ -255,7 +260,13 @@ class MenuBarManager: NSObject, ObservableObject {
     
     private func showWindow(relativeTo button: NSStatusBarButton) {
         guard let window = popoverWindow else { return }
-        
+
+        // Gắn lại nội dung đã tháo lúc đóng popup (xem closeWindow)
+        if window.contentView == nil, let controller = popoverContentController {
+            window.contentViewController = controller
+            window.setContentSize(NSSize(width: Self.popupSize.width, height: Self.popupSize.height))
+        }
+
         // Neo popup vào chính giữa icon status item thay vì mặc định ở góc phải màn hình
         let padding: CGFloat = 12
         if let screen = button.window?.screen ?? NSScreen.main {
@@ -298,10 +309,13 @@ class MenuBarManager: NSObject, ObservableObject {
             window.animator().alphaValue = 0
         }, completionHandler: {
             window.orderOut(nil)
+            // Tháo nội dung khỏi cửa sổ: view graph SwiftUI vẫn sống và render lại
+            // theo nhịp sampling ngay cả khi cửa sổ đã orderOut, tốn CPU ngầm (~2%)
+            window.contentView = nil
             self.isOpen = false
         })
     }
-    
+
     // MARK: - Detail Window Logic
     
     func showDetail(route: MenuBarRoute) {

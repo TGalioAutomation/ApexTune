@@ -154,7 +154,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
 
 <header class="hero">
   <div class="wrap">
-    <div class="pill"><span class="dot"></span><span data-vi="v5.0.0 — bản tối ưu hiệu năng lớn" data-en="v5.0.0 — major performance release">v5.0.0 — bản tối ưu hiệu năng lớn</span></div>
+    <div class="pill"><span class="dot"></span><span data-vi="v5.0.1 — CPU khi chạy nền chỉ còn ~0.8%" data-en="v5.0.1 — background CPU now ~0.8%">v5.0.1 — CPU khi chạy nền chỉ còn ~0.8%</span></div>
     <h1><span data-vi="Máy Mac của bạn," data-en="Your Mac,">Máy Mac của bạn,</span><br><span class="grad" data-vi="gọn gàng và nhanh hơn" data-en="cleaner and faster">gọn gàng và nhanh hơn</span></h1>
     <p class="sub" data-vi="Dọn rác hệ thống, gỡ ứng dụng sạch sẽ, giám sát CPU/RAM/GPU theo thời gian thực — tất cả trong một icon trên menu bar. Tiếng Việt &amp; English, chạy nhẹ tênh từ bản 4.0.11."
       data-en="System cleanup, complete app uninstalling, real-time CPU/RAM/GPU monitoring — all from one menu bar icon. Vietnamese &amp; English, feather-light since 4.0.11.">
@@ -172,7 +172,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
     <p class="note" data-vi="DMG Universal (Apple Silicon + Intel) · macOS 13+ · Miễn phí" data-en="Universal DMG (Apple Silicon + Intel) · macOS 13+ · Free">DMG Universal (Apple Silicon + Intel) · macOS 13+ · Miễn phí</p>
 
     <div class="stats rv">
-      <div class="stat"><b class="c1">~1%</b><span data-vi="CPU khi chạy nền (v5.0.0)" data-en="background CPU (v5.0.0)">CPU khi chạy nền (v5.0.0)</span></div>
+      <div class="stat"><b class="c1">&lt;1%</b><span data-vi="CPU khi chạy nền (v5.0.1)" data-en="background CPU (v5.0.1)">CPU khi chạy nền (v5.0.1)</span></div>
       <div class="stat"><b class="c2">20+</b><span data-vi="module dọn dẹp &amp; giám sát" data-en="cleaning &amp; monitor modules">module dọn dẹp &amp; giám sát</span></div>
       <div class="stat"><b class="c3">2</b><span data-vi="ngôn ngữ: Tiếng Việt &amp; English" data-en="languages: Vietnamese &amp; English">ngôn ngữ: Tiếng Việt &amp; English</span></div>
       <div class="stat"><b class="c4">100%</b><span data-vi="Swift thuần, không telemetry" data-en="native Swift, zero telemetry">Swift thuần, không telemetry</span></div>
@@ -246,19 +246,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
 <section id="performance">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="kicker" data-vi="v5.0.0" data-en="v5.0.0">v5.0.0</div>
+      <div class="kicker" data-vi="v5.0.1" data-en="v5.0.1">v5.0.1</div>
       <h2 data-vi="Ứng dụng tối ưu lại nhẹ nhất từ trước đến nay" data-en="The optimizer is now optimized">Ứng dụng tối ưu lại nhẹ nhất từ trước đến nay</h2>
-      <p data-vi="Bộ giám sát chuyển sang Mach API đọc thẳng kernel — hết spawn ps/vm_stat mỗi giây. Đo thực tế trên Apple Silicon, macOS 27:"
-        data-en="The monitor now reads the kernel via Mach APIs — no more spawning ps/vm_stat every second. Measured on Apple Silicon, macOS 27:">
-        Bộ giám sát chuyển sang Mach API đọc thẳng kernel — hết spawn ps/vm_stat mỗi giây. Đo thực tế trên Apple Silicon, macOS 27:</p>
+      <p data-vi="Bộ giám sát chuyển sang Mach API đọc thẳng kernel — hết spawn ps/vm_stat mỗi giây. Từ v5.0.1, hai vòng render ngầm trong cửa sổ ẩn cũng bị dừng hẳn. Đo thực tế trên Apple Silicon, macOS 27:"
+        data-en="The monitor now reads the kernel via Mach APIs — no more spawning ps/vm_stat every second. v5.0.1 also kills two hidden-window render loops. Measured on Apple Silicon, macOS 27:">
+        Bộ giám sát chuyển sang Mach API đọc thẳng kernel — hết spawn ps/vm_stat mỗi giây. Từ v5.0.1, hai vòng render ngầm trong cửa sổ ẩn cũng bị dừng hẳn. Đo thực tế trên Apple Silicon, macOS 27:</p>
     </div>
     <div class="perf rv">
       <div class="legend">
         <span><i style="background:#ef4444"></i><span data-vi="v4.0.10" data-en="v4.0.10">v4.0.10</span></span>
-        <span><i style="background:#10b981"></i><span data-vi="v5.0.0" data-en="v5.0.0">v5.0.0</span></span>
+        <span><i style="background:#10b981"></i><span data-vi="v5.0.1" data-en="v5.0.1">v5.0.1</span></span>
       </div>
-      <div class="perf-row" data-val-before="20" data-val-after="1.5">
-        <div class="lab"><span data-vi="Chạy nền (menu bar)" data-en="Background (menu bar)">Chạy nền (menu bar)</span><b><span class="a">20%</span> → <span class="g">~1.5%</span></b></div>
+      <div class="perf-row" data-val-before="20" data-val-after="0.8">
+        <div class="lab"><span data-vi="Chạy nền (menu bar)" data-en="Background (menu bar)">Chạy nền (menu bar)</span><b><span class="a">20%</span> → <span class="g">~0.8%</span></b></div>
         <div class="track"><div class="fill before"></div></div>
         <div class="track" style="margin-top:5px"><div class="fill after"></div></div>
       </div>
@@ -272,7 +272,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
         <div class="track"><div class="fill before"></div></div>
         <div class="track" style="margin-top:5px"><div class="fill after"></div></div>
       </div>
-      <span class="perf-tag" data-vi="↓ ~13 lần CPU nền · Mach API · throttle 1 Hz · chế độ tiết kiệm khi đóng dashboard" data-en="↓ ~13× background CPU · Mach APIs · 1 Hz throttle · idle mode when dashboard closed">↓ ~13 lần CPU nền · Mach API · throttle 1 Hz · chế độ tiết kiệm khi đóng dashboard</span>
+      <span class="perf-tag" data-vi="↓ ~25 lần CPU nền · Mach API · throttle 1 Hz · dừng render ngầm khi cửa sổ ẩn/đóng" data-en="↓ ~25× background CPU · Mach APIs · 1 Hz throttle · no hidden rendering when windows closed">↓ ~25 lần CPU nền · Mach API · throttle 1 Hz · dừng render ngầm khi cửa sổ ẩn/đóng</span>
     </div>
   </div>
 </section>
@@ -304,7 +304,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
 
 <footer>
   <div class="wrap">
-    <div>© 2026 ApexTune · <span data-vi="Landing page v5.0.0" data-en="Landing page v5.0.0">Landing page v5.0.0</span></div>
+    <div>© 2026 ApexTune · <span data-vi="Landing page v5.0.1" data-en="Landing page v5.0.1">Landing page v5.0.1</span></div>
     <div><span style="color:var(--muted)">apextune.app</span></div>
   </div>
 </footer>

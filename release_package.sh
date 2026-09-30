@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ApexTune - Tập lệnh đóng gói phát hành v5.0.0
+# ApexTune - Tập lệnh đóng gói phát hành v5.0.1
 #
 # Chức năng:
 # 1. Biên dịch riêng phiên bản Intel (x86_64) và Apple Silicon (arm64)
@@ -15,7 +15,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-VERSION="5.0.0"
+VERSION="5.0.1"
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${BLUE}    ApexTune v${VERSION} - Đóng gói phát hành${NC}"
