@@ -17,15 +17,15 @@ class RecoveryManager: ObservableObject {
 
     
     private init() {
-        // Thư mục sao lưu: ~/Thư viện/Hỗ trợ ứng dụng/MacOptimizer/Sao lưu
+        // Thư mục sao lưu: ~/Thư viện/Hỗ trợ ứng dụng/ApexTune/Sao lưu
 
         let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         backupDirectory = appSupport
-            .appendingPathComponent("MacOptimizer")
+            .appendingPathComponent("ApexTune")
             .appendingPathComponent("Backups")
         
         historyFile = appSupport
-            .appendingPathComponent("MacOptimizer")
+            .appendingPathComponent("ApexTune")
             .appendingPathComponent("deletion_history.json")
         
         // Tạo thư mục sao lưu

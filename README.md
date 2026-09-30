@@ -1,16 +1,16 @@
 <div align="center">
-  <img src="AppUninstaller/welcome.png" alt="MacOptimizer Hero" width="180" />
+  <img src="AppUninstaller/welcome.png" alt="ApexTune Hero" width="180" />
 
-  # MacOptimizer
+  # ApexTune
 
   **A macOS cleaner, optimizer and system monitor that lives in your menu bar**
 
-  **English** · [Tiếng Việt](README.vi.md) · [🌐 Website](https://tgalioautomation.github.io/MacOptimizervn/)
+  **English** · [Tiếng Việt](README.vi.md) · [🌐 Website](https://tgalioautomation.github.io/ApexTune/)
 
   <p>
     <img src="https://img.shields.io/badge/macOS-13%2B-111827?style=for-the-badge&logo=apple&logoColor=white" alt="macOS 13+">
     <img src="https://img.shields.io/badge/Swift-5.9-F97316?style=for-the-badge&logo=swift&logoColor=white" alt="Swift 5.9">
-    <img src="https://img.shields.io/badge/Version-4.0.11-2563EB?style=for-the-badge" alt="Version 4.0.9">
+    <img src="https://img.shields.io/badge/Version-5.0.0-2563EB?style=for-the-badge" alt="Version 4.0.9">
     <img src="https://img.shields.io/badge/UI-Vi%E1%BB%87t%20Nam%20%2F%20English-059669?style=for-the-badge" alt="UI Vietnamese / English">
     <img src="https://img.shields.io/badge/Menu%20Bar-GPU%20%2F%20CPU%20%2F%20DISK%20%2F%20RAM-7C3AED?style=for-the-badge" alt="Menu bar metrics">
   </p>
@@ -20,7 +20,7 @@
 
 ## Overview
 
-MacOptimizer is a SwiftUI macOS utility that lives in the menu bar and focuses on four jobs:
+ApexTune is a SwiftUI macOS utility that lives in the menu bar and focuses on four jobs:
 
 - cleaning system junk, caches, logs and large files,
 - uninstalling apps together with their leftover files,
@@ -137,20 +137,20 @@ The app runs as an accessory utility (`LSUIElement`): no Dock icon, everything h
 ### Quick build
 
 ```bash
-git clone git@github.com:TGalioAutomation/MacOptimizervn.git
-cd MacOptimizervn
+git clone git@github.com:TGalioAutomation/ApexTune.git
+cd ApexTunevn
 ./build.sh
 ```
 
 Build artifacts:
 
-- `build/MacOptimizer.app`
-- `build/MacOptimizer.dmg`
+- `build/ApexTune.app`
+- `build/ApexTune.dmg`
 
 Run it:
 
 ```bash
-open build/MacOptimizer.app
+open build/ApexTune.app
 ```
 
 ### Dual-architecture release package
@@ -161,8 +161,8 @@ open build/MacOptimizer.app
 
 Build artifacts:
 
-- `build_release/MacOptimizer_v4.0.11_AppleSilicon.dmg`
-- `build_release/MacOptimizer_v4.0.11_Intel.dmg`
+- `build_release/ApexTune_v4.0.11_AppleSilicon.dmg`
+- `build_release/ApexTune_v4.0.11_Intel.dmg`
 
 ### Package check
 
@@ -183,7 +183,7 @@ Master icon source: `AppUninstaller/BrandAssets/AppIcon-master-1024.png`.
 ## Repository layout
 
 ```text
-MacOptimizervn/
+ApexTunevn/
 ├── AppUninstaller/             # macOS app sources
 │   ├── AppDelegate.swift       # Accessory-utility startup & menu bar
 │   ├── AppUninstallerApp.swift
@@ -233,6 +233,6 @@ MacOptimizervn/
 ---
 
 <div align="center">
-  <strong>MacOptimizer</strong><br/>
+  <strong>ApexTune</strong><br/>
   Lean, fast, always watching from the menu bar.
 </div>

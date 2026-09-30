@@ -100,12 +100,12 @@ class MenuBarManager: NSObject, ObservableObject {
     /// Leading mark in the menu bar banner; matches sidebar `AppBrandMark` (SF Symbol).
     private lazy var statusBarIconImage: NSImage? = {
         let config = NSImage.SymbolConfiguration(pointSize: 11, weight: .semibold, scale: .medium)
-        if let image = NSImage(systemSymbolName: "shield.lefthalf.filled.badge.checkmark", accessibilityDescription: "MacOptimizer")?
+        if let image = NSImage(systemSymbolName: "shield.lefthalf.filled.badge.checkmark", accessibilityDescription: "ApexTune")?
             .withSymbolConfiguration(config) {
             image.isTemplate = true
             return image
         }
-        let fallback = NSImage(systemSymbolName: "macpro.gen3", accessibilityDescription: "MacOptimizer")
+        let fallback = NSImage(systemSymbolName: "macpro.gen3", accessibilityDescription: "ApexTune")
         fallback?.isTemplate = true
         return fallback
     }()
@@ -171,7 +171,7 @@ class MenuBarManager: NSObject, ObservableObject {
         
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem?.button {
-            // Chuột trái mở popup, chuột phải mở menu (bao gồm Thoát MacOptimizer)
+            // Chuột trái mở popup, chuột phải mở menu (bao gồm Thoát ApexTune)
             button.action = #selector(statusItemClicked)
             button.target = self
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
@@ -195,13 +195,13 @@ class MenuBarManager: NSObject, ObservableObject {
         openPanel.target = self
         menu.addItem(openPanel)
         
-        let openApp = NSMenuItem(title: L("Mở MacOptimizer"), action: #selector(openMainAppFromMenu), keyEquivalent: "")
+        let openApp = NSMenuItem(title: L("Mở ApexTune"), action: #selector(openMainAppFromMenu), keyEquivalent: "")
         openApp.target = self
         menu.addItem(openApp)
         
         menu.addItem(.separator())
         
-        let quit = NSMenuItem(title: L("Thoát MacOptimizer"), action: #selector(quitApp), keyEquivalent: "q")
+        let quit = NSMenuItem(title: L("Thoát ApexTune"), action: #selector(quitApp), keyEquivalent: "q")
         quit.target = self
         menu.addItem(quit)
         
@@ -518,7 +518,7 @@ extension MenuBarManager {
                 return "\(display.metric.title): \(display.text)"
             }
         }
-        return lines.isEmpty ? "MacOptimizer" : lines.joined(separator: "\n")
+        return lines.isEmpty ? "ApexTune" : lines.joined(separator: "\n")
     }
     
     private func loadStatusBarPreferences() {

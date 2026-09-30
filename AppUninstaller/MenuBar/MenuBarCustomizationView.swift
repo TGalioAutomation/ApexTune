@@ -448,7 +448,7 @@ struct MenuBarCustomizationView: View {
                     Text(L("Khởi động cùng macOS"))
                         .font(itemTitleFont)
                         .foregroundColor(.white)
-                    Text(L("Tự động chạy MacOptimizer và giám sát menu bar khi đăng nhập."))
+                    Text(L("Tự động chạy ApexTune và giám sát menu bar khi đăng nhập."))
                         .font(secondaryBodyFont)
                         .foregroundColor(.white.opacity(0.5))
                 }

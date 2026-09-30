@@ -43,10 +43,10 @@ class DeletionLogService: ObservableObject {
     private let retentionDays: Int = 30
     
     private init() {
-        // Thư mục lưu trữ nhật ký: ~/Library/Application Support/MacOptimizer/deletion_logs/
+        // Thư mục lưu trữ nhật ký: ~/Library/Application Support/ApexTune/deletion_logs/
 
         let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        logDirectory = appSupport.appendingPathComponent("MacOptimizer/deletion_logs")
+        logDirectory = appSupport.appendingPathComponent("ApexTune/deletion_logs")
         
         // Tạo thư mục
 

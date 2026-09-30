@@ -26,7 +26,7 @@ final class DockerManager: ObservableObject {
     @Published private(set) var totalSizeText: String = "—"
     @Published private(set) var statusMessage: String = ""
 
-    private let shellQueue = DispatchQueue(label: "com.macoptimizer.docker", qos: .utility)
+    private let shellQueue = DispatchQueue(label: "com.apextune.docker", qos: .utility)
 
     var imageCount: Int { images.count }
 

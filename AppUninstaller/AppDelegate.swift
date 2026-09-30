@@ -2,19 +2,48 @@ import AppKit
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var observers: [NSObjectProtocol] = []
-    
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        migrateLegacyMacOptimizerDataIfNeeded()
+
         // Set application icon for all windows
         if let appIconPath = Bundle.main.path(forResource: "AppIcon", ofType: "icns"),
            let appIcon = NSImage(contentsOfFile: appIconPath) {
             NSApp.applicationIconImage = appIcon
         }
-        
+
         MenuBarManager.shared.ensureSetup()
         NSApp.setActivationPolicy(.accessory)
         hideMainWindowsOnLaunch()
         registerWindowObservers()
         openDashboardForUiTestingIfNeeded()
+    }
+
+    /// Chuyển toàn bộ dữ liệu cài đặt từ bản MacOptimizer cũ (bundle id khác) sang
+    /// ApexTune, chạy đúng một lần: preferences (UserDefaults domain), nhật ký xóa,
+    /// sao lưu phục hồi. Không xóa dữ liệu cũ — bản cũ còn trên máy vẫn chạy được.
+    private func migrateLegacyMacOptimizerDataIfNeeded() {
+        let migratedKey = "ApexTune.MigratedFromMacOptimizer"
+        guard !UserDefaults.standard.bool(forKey: migratedKey) else { return }
+        UserDefaults.standard.set(true, forKey: migratedKey)
+
+        let legacyID = "com.apexdev.MacOptimizer"
+        let defaults = UserDefaults.standard
+        guard let legacy = UserDefaults(suiteName: legacyID) else { return }
+        let legacyDict = legacy.dictionaryRepresentation()
+        for (key, value) in legacyDict where defaults.object(forKey: key) == nil {
+            defaults.set(value, forKey: key)
+        }
+        defaults.removePersistentDomain(forName: legacyID)
+
+        let fm = FileManager.default
+        let appSupport = fm.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Application Support")
+        let oldDir = appSupport.appendingPathComponent("MacOptimizer")
+        let newDir = appSupport.appendingPathComponent("ApexTune")
+        if fm.fileExists(atPath: oldDir.path) && !fm.fileExists(atPath: newDir.path) {
+            try? fm.copyItem(at: oldDir, to: newDir)
+        }
     }
 
     /// Mở sẵn bảng điều khiển khi khởi động bằng `--open-dashboard`,

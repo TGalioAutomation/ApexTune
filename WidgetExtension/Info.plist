@@ -5,21 +5,21 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>vi</string>
 	<key>CFBundleDisplayName</key>
-	<string>MacOptimizer</string>
+	<string>ApexTune</string>
 	<key>CFBundleExecutable</key>
-	<string>MacOptimizerWidget</string>
+	<string>ApexTuneWidget</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.apexdev.MacOptimizer.widget</string>
+	<string>com.apexdev.apextune.widget</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>7.0</string>
 	<key>CFBundleName</key>
-	<string>MacOptimizerWidget</string>
+	<string>ApexTuneWidget</string>
 	<key>CFBundlePackageType</key>
 	<string>XPC!</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.0.11</string>
+	<string>5.0.0</string>
 	<key>CFBundleVersion</key>
-	<string>6</string>
+	<string>7</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>13.0</string>
 	<key>NSExtension</key>

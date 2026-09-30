@@ -312,7 +312,7 @@ class SystemMonitorService: ObservableObject {
     // Hàng đợi nối tiếp cho toàn bộ việc lấy mẫu: các subprocess còn lại (netstat, ioreg,
     // pmset, ps cho danh sách tiến trình) chạy ở đây để không bao giờ chặn main thread
     
-    private let samplingQueue = DispatchQueue(label: "com.macoptimizer.systemmonitor.sampling", qos: .utility)
+    private let samplingQueue = DispatchQueue(label: "com.apextune.systemmonitor.sampling", qos: .utility)
 
     // Process Monitoring
     struct AppProcess: Identifiable {

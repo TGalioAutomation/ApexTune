@@ -162,7 +162,7 @@ struct PrivacyView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     FeatureRow(icon: "theatermasks", title: L("Xóa dấu vết duyệt web"), description: L("Làm sạch lịch sử duyệt web, bao gồm các biểu mẫu tự động điền và dữ liệu khác được lưu trữ bởi các trình duyệt phổ biến."))
                     FeatureRow(icon: "message", title: L("Làm sạch dữ liệu trò chuyện"), description: L("Bạn có thể xóa lịch sử trò chuyện của Skype và các ứng dụng nhắn tin khác."))
-                    FeatureRow(icon: "exclamationmark.triangle", title: L("Cấp Toàn quyền truy cập ổ đĩa để dọn sâu hơn"), description: L("MacOptimizer cần Toàn quyền truy cập ổ đĩa để xóa các mục riêng tư."), isWarning: true)
+                    FeatureRow(icon: "exclamationmark.triangle", title: L("Cấp Toàn quyền truy cập ổ đĩa để dọn sâu hơn"), description: L("ApexTune cần Toàn quyền truy cập ổ đĩa để xóa các mục riêng tư."), isWarning: true)
                     
                     Button(action: {
                         // Mở cài đặt hệ thống

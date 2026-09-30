@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# MacOptimizer - Tập lệnh build
+# ApexTune - Tập lệnh build
 # Biên dịch Universal Binary (Intel + Apple Silicon) và đóng gói DMG
 
 set -e
@@ -20,12 +20,12 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}    MacOptimizer - Tập lệnh Build${NC}"
+echo -e "${BLUE}    ApexTune - Tập lệnh Build${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
 # 1. Định nghĩa biến
-APP_NAME="MacOptimizer"
+APP_NAME="ApexTune"
 EXECUTABLE_NAME="AppUninstaller"
 BUNDLE_NAME="${APP_NAME}.app"
 BUILD_DIR="build"
@@ -113,7 +113,7 @@ echo -e "${YELLOW}[4/7] Đang biên dịch (Swift Package, release)...${NC}"
 echo -n "  - swift build -c release ... "
 swift build -c release
 BIN_DIR=$(swift build -c release --show-bin-path)
-cp "${BIN_DIR}/${EXECUTABLE_NAME}" "${BUILD_DIR}/${BUNDLE_NAME}/Contents/MacOS/${EXECUTABLE_NAME}"
+cp "${BIN_DIR}/${EXECUTABLE_NAME}" "${BUILD_DIR}/${BUNDLE_NAME}/Contents/MacOS/${APP_NAME}"
 RESOURCE_BUNDLE="${BIN_DIR}/MacOptimizer_AppUninstaller.bundle"
 if [ -d "${RESOURCE_BUNDLE}" ]; then
     rm -rf "${BUILD_DIR}/${BUNDLE_NAME}/Contents/Resources/MacOptimizer_AppUninstaller.bundle"
@@ -125,17 +125,19 @@ else
 fi
 
 # 5.1 Widget extension (WidgetKit — Notification Center / Desktop)
+# Target SPM giữ tên lịch sử MacOptimizerWidget (trùng tên thư mục nguồn),
+# binary được đổi thành ApexTuneWidget khi đóng vào appex.
 echo -e "${YELLOW}[5.1/7] Đóng gói widget extension...${NC}"
 echo -n "  - swift build --target MacOptimizerWidget ... "
 swift build -c release --target MacOptimizerWidget
 WIDGET_BIN="${BIN_DIR}/MacOptimizerWidget"
-APPEX="${BUILD_DIR}/${BUNDLE_NAME}/Contents/PlugIns/MacOptimizerWidget.appex"
+APPEX="${BUILD_DIR}/${BUNDLE_NAME}/Contents/PlugIns/ApexTuneWidget.appex"
 mkdir -p "${APPEX}/Contents/MacOS"
 cp "WidgetExtension/Info.plist" "${APPEX}/Contents/Info.plist"
-cp "${WIDGET_BIN}" "${APPEX}/Contents/MacOS/MacOptimizerWidget"
+cp "${WIDGET_BIN}" "${APPEX}/Contents/MacOS/ApexTuneWidget"
 # Widget extension BẮT BUỘC có app-sandbox entitlement, nếu không dasd/pluginkit bỏ qua.
 codesign --force --sign - --entitlements "WidgetExtension/widget.entitlements" "${APPEX}"
-echo -e "${GREEN}OK (PlugIns/MacOptimizerWidget.appex)${NC}"
+echo -e "${GREEN}OK (PlugIns/ApexTuneWidget.appex)${NC}"
 
 # 6. Ký ứng dụng
 echo -e "${YELLOW}[5/7] Ký ứng dụng...${NC}"

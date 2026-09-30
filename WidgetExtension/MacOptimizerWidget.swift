@@ -34,18 +34,18 @@ struct HealthProvider: TimelineProvider {
 // chạy bình thường. Hướng đi: chờ Apple sửa hoặc rebuild appex bằng
 // Xcode project thật.
 @main
-struct MacOptimizerWidgetBundle: WidgetBundle {
+struct ApexTuneWidgetBundle: WidgetBundle {
     var body: some Widget {
         MacHealthWidget()
     }
 }
 struct MacHealthWidget: Widget {
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: "MacOptimizerHealth", provider: HealthProvider()) { entry in
+        StaticConfiguration(kind: "ApexTuneHealth", provider: HealthProvider()) { entry in
             MacHealthWidgetView(entry: entry)
         }
         .configurationDisplayName(WidgetL.t("Điểm sức khỏe hệ thống"))
-        .description(WidgetL.t("Theo dõi CPU, RAM, ổ đĩa và điểm sức khỏe của Mac theo thiết kế MacOptimizer."))
+        .description(WidgetL.t("Theo dõi CPU, RAM, ổ đĩa và điểm sức khỏe của Mac theo thiết kế ApexTune."))
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

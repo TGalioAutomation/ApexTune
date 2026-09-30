@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MacOptimizer — Trợ lý tối ưu macOS trong menu bar</title>
+<title>ApexTune — Trợ lý tối ưu macOS trong menu bar</title>
 <meta name="description" content="Dọn dẹp, gỡ cài đặt, giám sát hệ thống và quản lý AI model ngay trên menu bar macOS. Nhẹ — chỉ ~1% CPU khi chạy nền. Tiếng Việt & English, Apple Silicon + Intel.">
-<meta property="og:title" content="MacOptimizer — macOS cleaner & system monitor">
-<meta property="og:description" content="Menu bar utility làm sạch macOS, giám sát realtime, quét malware — tối ưu CPU từ v4.0.11.">
+<meta property="og:title" content="ApexTune — macOS cleaner & system monitor">
+<meta property="og:description" content="Menu bar utility làm sạch macOS, giám sát realtime, quét malware — tái kiến trúc lấy tên mới ApexTune từ v5.0.0.">
 <meta property="og:image" content="assets/mainwindow.png">
 <link rel="icon" href="assets/appicon.png">
 <style>
@@ -141,15 +141,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
 
 <nav>
   <div class="navin">
-    <a class="brand" href="#"><img src="assets/appicon.png" alt="MacOptimizer">Mac<span class="opt">Optimizer</span></a>
+    <a class="brand" href="#"><img src="assets/appicon.png" alt="ApexTune">Apex<span class="opt">Tune</span></a>
     <div class="links">
       <a href="#features" data-vi="Tính năng" data-en="Features">Tính năng</a>
       <a href="#performance" data-vi="Hiệu năng" data-en="Performance">Hiệu năng</a>
       <a href="#download" data-vi="Tải về" data-en="Download">Tải về</a>
-      <a class="gh" href="https://github.com/TGalioAutomation/MacOptimizervn" aria-label="GitHub">
-        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-        <span>GitHub</span>
-      </a>
       <button class="lang" id="langBtn">EN</button>
     </div>
   </div>
@@ -157,25 +153,25 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
 
 <header class="hero">
   <div class="wrap">
-    <div class="pill"><span class="dot"></span><span data-vi="v4.0.11 — bản tối ưu hiệu năng lớn" data-en="v4.0.11 — major performance release">v4.0.11 — bản tối ưu hiệu năng lớn</span></div>
+    <div class="pill"><span class="dot"></span><span data-vi="v5.0.0 — bản tối ưu hiệu năng lớn" data-en="v5.0.0 — major performance release">v5.0.0 — bản tối ưu hiệu năng lớn</span></div>
     <h1><span data-vi="Máy Mac của bạn," data-en="Your Mac,">Máy Mac của bạn,</span><br><span class="grad" data-vi="gọn gàng và nhanh hơn" data-en="cleaner and faster">gọn gàng và nhanh hơn</span></h1>
     <p class="sub" data-vi="Dọn rác hệ thống, gỡ ứng dụng sạch sẽ, giám sát CPU/RAM/GPU theo thời gian thực — tất cả trong một icon trên menu bar. Tiếng Việt &amp; English, chạy nhẹ tênh từ bản 4.0.11."
       data-en="System cleanup, complete app uninstalling, real-time CPU/RAM/GPU monitoring — all from one menu bar icon. Vietnamese &amp; English, feather-light since 4.0.11.">
       Dọn rác hệ thống, gỡ ứng dụng sạch sẽ, giám sát CPU/RAM/GPU theo thời gian thực — tất cả trong một icon trên menu bar. Tiếng Việt &amp; English, chạy nhẹ tênh từ bản 4.0.11.</p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/TGalioAutomation/MacOptimizervn/releases/latest/download/MacOptimizer.dmg">
+      <a class="btn primary" href="https://github.com/TGalioAutomation/ApexTune/releases/latest/download/ApexTune.dmg">
         <svg viewBox="0 0 16 16"><path d="M8 12.5a1 1 0 0 1-.7-.29L3.3 8.21a1 1 0 0 1 1.41-1.41L7 9.08V1.5a1 1 0 0 1 2 0v7.58l2.29-2.28a1 1 0 1 1 1.41 1.41l-4 4A1 1 0 0 1 8 12.5ZM13.5 14.5h-11a1 1 0 0 1 0-2h11a1 1 0 0 1 0 2Z"/></svg>
         <span data-vi="Tải về cho macOS" data-en="Download for macOS">Tải về cho macOS</span>
       </a>
-      <a class="btn ghost" href="https://github.com/TGalioAutomation/MacOptimizervn">
-        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-        <span data-vi="Xem mã nguồn" data-en="View source">Xem mã nguồn</span>
+      <a class="btn ghost" href="#features">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span data-vi="Tính năng chi tiết" data-en="Explore features">Tính năng chi tiết</span>
       </a>
     </div>
     <p class="note" data-vi="DMG Universal (Apple Silicon + Intel) · macOS 13+ · Miễn phí" data-en="Universal DMG (Apple Silicon + Intel) · macOS 13+ · Free">DMG Universal (Apple Silicon + Intel) · macOS 13+ · Miễn phí</p>
 
     <div class="stats rv">
-      <div class="stat"><b class="c1">~1%</b><span data-vi="CPU khi chạy nền (v4.0.11)" data-en="background CPU (v4.0.11)">CPU khi chạy nền (v4.0.11)</span></div>
+      <div class="stat"><b class="c1">~1%</b><span data-vi="CPU khi chạy nền (v5.0.0)" data-en="background CPU (v5.0.0)">CPU khi chạy nền (v5.0.0)</span></div>
       <div class="stat"><b class="c2">20+</b><span data-vi="module dọn dẹp &amp; giám sát" data-en="cleaning &amp; monitor modules">module dọn dẹp &amp; giám sát</span></div>
       <div class="stat"><b class="c3">2</b><span data-vi="ngôn ngữ: Tiếng Việt &amp; English" data-en="languages: Vietnamese &amp; English">ngôn ngữ: Tiếng Việt &amp; English</span></div>
       <div class="stat"><b class="c4">100%</b><span data-vi="Swift thuần, không telemetry" data-en="native Swift, zero telemetry">Swift thuần, không telemetry</span></div>
@@ -183,7 +179,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
 
     <figure class="shots rv">
       <div class="shot">
-        <img src="assets/mainwindow.png" alt="MacOptimizer main window" loading="lazy">
+        <img src="assets/mainwindow.png" alt="ApexTune main window" loading="lazy">
         <figcaption data-vi="Cửa sổ chính — module dọn dẹp, quét và công cụ" data-en="Main window — cleaning, scanning and tools">Cửa sổ chính — module dọn dẹp, quét và công cụ</figcaption>
       </div>
       <div class="shotcol">
@@ -249,7 +245,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
 <section id="performance">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="kicker" data-vi="v4.0.11" data-en="v4.0.11">v4.0.11</div>
+      <div class="kicker" data-vi="v5.0.0" data-en="v5.0.0">v5.0.0</div>
       <h2 data-vi="Ứng dụng tối ưu lại nhẹ nhất từ trước đến nay" data-en="The optimizer is now optimized">Ứng dụng tối ưu lại nhẹ nhất từ trước đến nay</h2>
       <p data-vi="Bộ giám sát chuyển sang Mach API đọc thẳng kernel — hết spawn ps/vm_stat mỗi giây. Đo thực tế trên Apple Silicon, macOS 27:"
         data-en="The monitor now reads the kernel via Mach APIs — no more spawning ps/vm_stat every second. Measured on Apple Silicon, macOS 27:">
@@ -258,7 +254,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
     <div class="perf rv">
       <div class="legend">
         <span><i style="background:#ef4444"></i><span data-vi="v4.0.10" data-en="v4.0.10">v4.0.10</span></span>
-        <span><i style="background:#10b981"></i><span data-vi="v4.0.11" data-en="v4.0.11">v4.0.11</span></span>
+        <span><i style="background:#10b981"></i><span data-vi="v5.0.0" data-en="v5.0.0">v5.0.0</span></span>
       </div>
       <div class="perf-row" data-val-before="20" data-val-after="1.5">
         <div class="lab"><span data-vi="Chạy nền (menu bar)" data-en="Background (menu bar)">Chạy nền (menu bar)</span><b><span class="a">20%</span> → <span class="g">~1.5%</span></b></div>
@@ -289,11 +285,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
         data-en="macOS 13 Ventura or later · Universal binary for Apple Silicon (M-series) and Intel · Nothing else to install — drag into Applications and go.">
         macOS 13 Ventura trở lên · Universal binary cho Apple Silicon (M-series) và Intel · Không cần cài thêm gì — kéo vào Applications là chạy.</p>
       <div class="cta">
-        <a class="btn primary" href="https://github.com/TGalioAutomation/MacOptimizervn/releases/latest/download/MacOptimizer.dmg">
+        <a class="btn primary" href="https://github.com/TGalioAutomation/ApexTune/releases/latest/download/ApexTune.dmg">
           <svg viewBox="0 0 16 16"><path d="M8 12.5a1 1 0 0 1-.7-.29L3.3 8.21a1 1 0 0 1 1.41-1.41L7 9.08V1.5a1 1 0 0 1 2 0v7.58l2.29-2.28a1 1 0 1 1 1.41 1.41l-4 4A1 1 0 0 1 8 12.5ZM13.5 14.5h-11a1 1 0 0 1 0-2h11a1 1 0 0 1 0 2Z"/></svg>
-          <span data-vi="Tải MacOptimizer.dmg" data-en="Download MacOptimizer.dmg">Tải MacOptimizer.dmg</span>
+          <span data-vi="Tải ApexTune.dmg" data-en="Download ApexTune.dmg">Tải ApexTune.dmg</span>
         </a>
-        <a class="btn ghost" href="https://github.com/TGalioAutomation/MacOptimizervn/releases">
+        <a class="btn ghost" href="https://github.com/TGalioAutomation/ApexTune/releases">
           <span data-vi="Các bản phát hành" data-en="All releases">Các bản phát hành</span>
         </a>
       </div>
@@ -307,8 +303,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
 
 <footer>
   <div class="wrap">
-    <div>© 2026 MacOptimizer · <span data-vi="Landing page v4.0.11" data-en="Landing page v4.0.11">Landing page v4.0.11</span></div>
-    <div><a href="https://github.com/TGalioAutomation/MacOptimizervn" style="color:var(--muted)">github.com/TGalioAutomation/MacOptimizervn</a></div>
+    <div>© 2026 ApexTune · <span data-vi="Landing page v5.0.0" data-en="Landing page v5.0.0">Landing page v5.0.0</span></div>
+    <div><span style="color:var(--muted)">apextune.app</span></div>
   </div>
 </footer>
 

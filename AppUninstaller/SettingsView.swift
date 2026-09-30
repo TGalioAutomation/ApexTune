@@ -41,7 +41,7 @@ struct SettingsView: View {
                             .resizable()
                             .frame(width: 80, height: 80)
 
-                        Text("MacOptimizer")
+                        Text("ApexTune")
                             .font(.headline)
 
                         Text(String(format: L("Phiên bản %@"), updateService.currentVersion))
@@ -64,7 +64,7 @@ struct SettingsView: View {
                         )) {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(L("Khởi động cùng macOS"))
-                                Text(L("Tự động chạy MacOptimizer và giám sát menu bar khi đăng nhập."))
+                                Text(L("Tự động chạy ApexTune và giám sát menu bar khi đăng nhập."))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -168,7 +168,7 @@ struct SettingsView: View {
                                 // No Update / Checked
                                 HStack {
                                     VStack(alignment: .leading) {
-                                        Text(L("MacOptimizer đã được cập nhật"))
+                                        Text(L("ApexTune đã được cập nhật"))
                                             .foregroundColor(.secondary)
                                         Text(L("Kiểm tra lần cuối: Vừa rồi"))
                                             .font(.caption)

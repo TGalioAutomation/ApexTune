@@ -292,7 +292,7 @@ struct MemoryAlertFloatingView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.right.circle.fill")
                             .font(.system(size: 14))
-                        Text(L("Mở MacOptimizer"))
+                        Text(L("Mở ApexTune"))
                             .font(.system(size: 13, weight: .bold))
                     }
                     .foregroundColor(Color.black)

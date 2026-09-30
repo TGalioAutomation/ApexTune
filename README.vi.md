@@ -1,16 +1,16 @@
 <div align="center">
-  <img src="AppUninstaller/welcome.png" alt="MacOptimizer Hero" width="180" />
+  <img src="AppUninstaller/welcome.png" alt="ApexTune Hero" width="180" />
 
-  # MacOptimizer
+  # ApexTune
 
   **Bộ công cụ dọn dẹp, tối ưu và giám sát macOS — giao diện tiếng Việt & tiếng Anh**
 
-  [English](README.md) · **Tiếng Việt** · [🌐 Website](https://tgalioautomation.github.io/MacOptimizervn/)
+  [English](README.md) · **Tiếng Việt** · [🌐 Website](https://tgalioautomation.github.io/ApexTune/)
 
   <p>
     <img src="https://img.shields.io/badge/macOS-13%2B-111827?style=for-the-badge&logo=apple&logoColor=white" alt="macOS 13+">
     <img src="https://img.shields.io/badge/Swift-5.9-F97316?style=for-the-badge&logo=swift&logoColor=white" alt="Swift 5.9">
-    <img src="https://img.shields.io/badge/Version-4.0.11-2563EB?style=for-the-badge" alt="Version 4.0.9">
+    <img src="https://img.shields.io/badge/Version-5.0.0-2563EB?style=for-the-badge" alt="Version 4.0.9">
     <img src="https://img.shields.io/badge/UI-Vi%E1%BB%87t%20Nam%20%2F%20English-059669?style=for-the-badge" alt="UI Việt / English">
     <img src="https://img.shields.io/badge/Menu%20Bar-GPU%20%2F%20CPU%20%2F%20DISK%20%2F%20RAM-7C3AED?style=for-the-badge" alt="Menu bar metrics">
   </p>
@@ -20,7 +20,7 @@
 
 ## Tổng quan
 
-MacOptimizer là app macOS viết bằng SwiftUI, chạy thường trú trên menu bar, tập trung vào bốn nhóm việc chính:
+ApexTune là app macOS viết bằng SwiftUI, chạy thường trú trên menu bar, tập trung vào bốn nhóm việc chính:
 
 - dọn dẹp rác hệ thống, cache, log và file lớn,
 - gỡ cài đặt app kèm file liên quan,
@@ -137,20 +137,20 @@ App chạy dạng utility (`LSUIElement`): không có icon ở Dock, mọi thứ
 ### Build nhanh
 
 ```bash
-git clone git@github.com:TGalioAutomation/MacOptimizervn.git
-cd MacOptimizervn
+git clone git@github.com:TGalioAutomation/ApexTune.git
+cd ApexTunevn
 ./build.sh
 ```
 
 Artifact sau build:
 
-- `build/MacOptimizer.app`
-- `build/MacOptimizer.dmg`
+- `build/ApexTune.app`
+- `build/ApexTune.dmg`
 
 Chạy app trực tiếp:
 
 ```bash
-open build/MacOptimizer.app
+open build/ApexTune.app
 ```
 
 ### Build gói phát hành hai kiến trúc
@@ -161,8 +161,8 @@ open build/MacOptimizer.app
 
 Artifact sau build:
 
-- `build_release/MacOptimizer_v4.0.11_AppleSilicon.dmg`
-- `build_release/MacOptimizer_v4.0.11_Intel.dmg`
+- `build_release/ApexTune_v4.0.11_AppleSilicon.dmg`
+- `build_release/ApexTune_v4.0.11_Intel.dmg`
 
 ### Build kiểm tra package
 
@@ -183,7 +183,7 @@ Nguồn icon master: `AppUninstaller/BrandAssets/AppIcon-master-1024.png`.
 ## Cấu trúc repo
 
 ```text
-MacOptimizervn/
+ApexTunevn/
 ├── AppUninstaller/             # Source app macOS
 │   ├── AppDelegate.swift       # Khởi động accessory utility và menu bar
 │   ├── AppUninstallerApp.swift
@@ -233,6 +233,6 @@ MacOptimizervn/
 ---
 
 <div align="center">
-  <strong>MacOptimizer</strong><br/>
+  <strong>ApexTune</strong><br/>
   Gọn, nhanh, theo dõi trực tiếp từ menu bar.
 </div>

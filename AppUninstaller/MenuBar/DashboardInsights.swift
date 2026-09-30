@@ -13,7 +13,7 @@ final class DashboardInsights: ObservableObject {
     @Published private(set) var dockerImageCount: Int = 0
     @Published private(set) var dockerTotalBytes: Int64 = 0
 
-    private let queue = DispatchQueue(label: "com.macoptimizer.dashboard-insights", qos: .utility)
+    private let queue = DispatchQueue(label: "com.apextune.dashboard-insights", qos: .utility)
     private var isRefreshing = false
 
     private init() {}

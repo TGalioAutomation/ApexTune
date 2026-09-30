@@ -46,7 +46,7 @@ struct MenuBarView: View {
         }
         .frame(width: MenuBarManager.popupSize.width, height: MenuBarManager.popupSize.height)
         .background(Color(hex: "0C0E13"))
-        .confirmationDialog(L("Thoát MacOptimizer?"), isPresented: $showQuitConfirm, titleVisibility: .visible) {
+        .confirmationDialog(L("Thoát ApexTune?"), isPresented: $showQuitConfirm, titleVisibility: .visible) {
             Button(L("Thoát"), role: .destructive) {
                 NSApp.terminate(nil)
             }
@@ -107,7 +107,7 @@ struct MenuBarView: View {
             DashboardBrandMark()
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("MacOptimizer")
+                Text("ApexTune")
                     .font(.system(size: 15.5, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                 Text(L("Bảng điều khiển hệ thống"))
@@ -140,7 +140,7 @@ struct MenuBarView: View {
             headerIconButton(icon: "power", tint: Color(hex: "FF6B6B")) {
                 showQuitConfirm = true
             } help: {
-                L("Thoát MacOptimizer")
+                L("Thoát ApexTune")
             }
         }
     }

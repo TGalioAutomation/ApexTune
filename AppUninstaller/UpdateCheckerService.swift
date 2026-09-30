@@ -13,9 +13,10 @@ class UpdateCheckerService: ObservableObject {
     @Published var isChecking = false
     @Published var errorMessage: String?
     
-    // GitHub Repo Info
-    private let repoOwner = "apexdev"
-    private let repoName = "MacOptimizer"
+    // Ứng dụng cá nhân — không còn gắn với repo phân phối nào. Để trống: hàm kiểm tra
+    // update thoát ngay không gọi mạng, mọi UI "Có bản mới" đơn giản không bao giờ hiện.
+    private let repoOwner = ""
+    private let repoName = ""
     
     // Giám sát trạng thái mạng
 
@@ -67,6 +68,14 @@ class UpdateCheckerService: ObservableObject {
             self.errorMessage = nil
         }
         
+        guard !repoOwner.isEmpty, !repoName.isEmpty else {
+            await MainActor.run {
+                self.isChecking = false
+                self.hasUpdate = false
+            }
+            return
+        }
+
         let urlString = "https://api.github.com/repos/\(repoOwner)/\(repoName)/releases/latest"
         guard let url = URL(string: urlString) else {
             await MainActor.run {

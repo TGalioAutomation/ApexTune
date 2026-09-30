@@ -841,7 +841,7 @@ struct JunkCleanerView: View {
                         // Mở nhật ký xóa
 
                         let logPath = FileManager.default.homeDirectoryForCurrentUser
-                            .appendingPathComponent("Library/Application Support/MacOptimizer/deletion_log.json")
+                            .appendingPathComponent("Library/Application Support/ApexTune/deletion_log.json")
                         NSWorkspace.shared.activateFileViewerSelecting([logPath])
                     }) {
                         HStack(spacing: 6) {

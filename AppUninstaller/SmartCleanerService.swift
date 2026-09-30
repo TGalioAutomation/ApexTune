@@ -1908,7 +1908,7 @@ class SmartCleanerService: ObservableObject {
             "1password", "lastpass", "keychain", "security", "firewall",
             // xử lý đặc biệt
 
-            "antigravity", "macoptimizer"
+            "antigravity", "apextune"
         ]
         
         for safe in systemSafelist {

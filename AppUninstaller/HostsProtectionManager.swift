@@ -16,10 +16,14 @@ final class HostsProtectionManager: ObservableObject {
     @Published private(set) var isApplying = false
     @Published var lastMessage: String?
 
-    static let adBlockMarker = "MacOptimizer AdBlock"
-    static let antiTrackMarker = "MacOptimizer AntiTrack"
+    // Marker mới (ApexTune). Marker cũ "MacOptimizer ..." vẫn được nhận diện khi
+    // dọn/migrate để khối hosts do bản cũ ghi không bị mồ côi trong /etc/hosts.
+    static let adBlockMarker = "ApexTune AdBlock"
+    static let antiTrackMarker = "ApexTune AntiTrack"
+    /// Marker cũ từ thời MacOptimizer — chỉ dùng để nhận diện khi strip/migrate
+    static let legacyMarkers: [String] = ["MacOptimizer AdBlock", "MacOptimizer AntiTrack"]
     private static let hostsPath = "/etc/hosts"
-    private static let backupPath = "/etc/hosts.macoptimizer.bak"
+    private static let backupPath = "/etc/hosts.apextune.bak"
 
     // MARK: - Danh mục hostname chặn (hosts chỉ chặn đúng từng hostname, không có wildcard)
 
@@ -201,7 +205,7 @@ final class HostsProtectionManager: ObservableObject {
         }
 
         let newContent = lines.joined(separator: "\n") + "\n"
-        let tmpPath = NSTemporaryDirectory() + "hosts.macoptimizer"
+        let tmpPath = NSTemporaryDirectory() + "hosts.apextune"
         do {
             try newContent.write(toFile: tmpPath, atomically: true, encoding: .utf8)
         } catch {
@@ -226,7 +230,7 @@ final class HostsProtectionManager: ObservableObject {
         return content.components(separatedBy: "\n")
     }
 
-    /// Cắt bỏ các khối do MacOptimizer quản lý, giữ nguyên phần còn lại
+    /// Cắt bỏ các khối do ApexTune quản lý (kể cả marker cũ MacOptimizer), giữ nguyên phần còn lại
     private static func stripManagedSections(from lines: [String]) -> [String] {
         var result: [String] = []
         var currentMarker: String?
@@ -257,7 +261,8 @@ final class HostsProtectionManager: ObservableObject {
     private static func managedMarker(in line: String, prefix: String) -> String? {
         guard line.hasPrefix("#") else { return nil }
         let body = line.dropFirst().trimmingCharacters(in: .whitespaces)
-        for marker in [adBlockMarker, antiTrackMarker] {
+        // Nhận diện cả marker hiện tại lẫn marker cũ (MacOptimizer) để migrate sạch
+        for marker in [adBlockMarker, antiTrackMarker] + legacyMarkers {
             if body == "\(prefix) \(marker)" || body == "\(prefix): \(marker)" {
                 return marker
             }

@@ -258,7 +258,7 @@ struct SmartCleanerView: View {
                     }
 
                     VStack(spacing: compactHeight ? 8 : 12) {
-                        Text(L("Chào mừng đến với MacOptimizer"))
+                        Text(L("Chào mừng đến với ApexTune"))
                             .font(.system(size: compactHeight ? 31 : 40, weight: .regular))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)

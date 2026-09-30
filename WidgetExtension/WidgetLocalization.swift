@@ -40,8 +40,8 @@ enum WidgetL {
     }
 
     /// Tìm `Languages/<code>.json` trong app chứa widget. Widget appex nằm ở
-    /// `MacOptimizer.app/Contents/PlugIns/`, resource bundle SPM nằm ở
-    /// `MacOptimizer.app/Contents/Resources/MacOptimizer_AppUninstaller.bundle`
+    /// `ApexTune.app/Contents/PlugIns/`, resource bundle SPM nằm ở
+    /// `ApexTune.app/Contents/Resources/MacOptimizer_AppUninstaller.bundle`
     /// (JSON nằm ở `<bundle>/Contents/Resources/Languages/`). Quét mọi
     /// *.bundle cho chắc, kèm đường dự phòng không qua bundle.
     private static func languageFileURL(code: String) -> URL? {

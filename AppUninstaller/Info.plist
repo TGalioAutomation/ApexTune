@@ -5,25 +5,25 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>vi_VN</string>
     <key>CFBundleExecutable</key>
-    <string>AppUninstaller</string>
+    <string>ApexTune</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIconName</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.apexdev.MacOptimizer</string>
+    <string>com.apexdev.apextune</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>MacOptimizer</string>
+    <string>ApexTune</string>
     <key>CFBundleDisplayName</key>
-    <string>MacOptimizer</string>
+    <string>ApexTune</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>4.0.11</string>
+    <string>5.0.0</string>
     <key>CFBundleVersion</key>
-    <string>6</string>
+    <string>7</string>
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.utilities</string>
     <key>LSUIElement</key>

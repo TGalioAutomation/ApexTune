@@ -30,7 +30,7 @@ enum PrivilegedShell {
     /// - Returns: true nếu lệnh thoát thành công (exit 0)
     @discardableResult
     static func run(_ command: String) -> Bool {
-        let script = "do shell script \"\(appleScriptEscape(command))\" with administrator privileges with prompt \"\(L("MacOptimizer cần quyền quản trị để tiếp tục"))\""
+        let script = "do shell script \"\(appleScriptEscape(command))\" with administrator privileges with prompt \"\(L("ApexTune cần quyền quản trị để tiếp tục"))\""
 
         let task = Process()
         task.launchPath = "/usr/bin/osascript"

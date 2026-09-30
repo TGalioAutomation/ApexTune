@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# MacOptimizer - Tập lệnh đóng gói phát hành v3.0.0
+# ApexTune - Tập lệnh đóng gói phát hành v5.0.0
 #
 # Chức năng:
 # 1. Biên dịch riêng phiên bản Intel (x86_64) và Apple Silicon (arm64)
@@ -15,16 +15,16 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-VERSION="3.0.1"
+VERSION="5.0.0"
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}    MacOptimizer v${VERSION} - Đóng gói phát hành${NC}"
+echo -e "${BLUE}    ApexTune v${VERSION} - Đóng gói phát hành${NC}"
 echo -e "${BLUE}    Intel & Apple Silicon DMG Generator${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
 # Biến cấu hình
-APP_NAME="MacOptimizer"
+APP_NAME="ApexTune"
 EXECUTABLE_NAME="AppUninstaller"
 BUNDLE_NAME="${APP_NAME}.app"
 BUILD_DIR="build_release"

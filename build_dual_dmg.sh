@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# MacOptimizer 4.0.11 - Tập lệnh đóng gói DMG hai kiến trúc
+# ApexTune 4.0.11 - Tập lệnh đóng gói DMG hai kiến trúc
 # Build phiên bản Apple Silicon và Intel
 
 set -e
@@ -13,18 +13,18 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}    MacOptimizer v4.0.11 - Đóng gói hai kiến trúc${NC}"
+echo -e "${BLUE}    ApexTune v4.0.11 - Đóng gói hai kiến trúc${NC}"
 echo -e "${BLUE}    Apple Silicon + Intel DMG Generator${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
 # Định nghĩa biến
-APP_NAME="MacOptimizer"
+APP_NAME="ApexTune"
 EXECUTABLE_NAME="AppUninstaller"
 BUNDLE_NAME="${APP_NAME}.app"
 BUILD_DIR="build_release"
 SOURCE_DIR="AppUninstaller"
-VERSION="4.0.11"
+VERSION="5.0.0"
 
 # Tên file DMG
 DMG_ARM64="${APP_NAME}_v${VERSION}_AppleSilicon.dmg"
