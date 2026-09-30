@@ -1,0 +1,24 @@
+PROMPT #4 — WEBSITE OG IMAGE (1920×960)
+
+Vị trí lưu:
+  website/assets/og.png   (ảnh mới — hiện chưa có)
+Sau đó thêm vào website/index.html trong <head>:
+  <meta property="og:image" content="assets/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+Prompt:
+
+Wide social-share banner for a macOS optimization app called ApexTune.
+Left 60%: deep graphite background (#0B0E14) with a soft blue radial glow
+and three floating translucent glass cards suggesting system metrics —
+a circular progress ring at 62%, a horizontal bar gauge, and a small
+line chart — all in blue (#3B82F6), cyan (#22D3EE) and mint (#34D399)
+accents, flat glassmorphism, soft borders. Right 40%: large empty dark
+area reserved for text overlay added later. Subtle diagonal light streaks
+suggesting speed. Flat vector, premium, clean.
+No text, no letters, no apple logo, no laptop, no watermark.
+
+Negative: text, letters, words, apple logo, macbook photo, clutter, noise.
+
+Midjourney suffix: --ar 2:1 --no text,apple,watermark --v 6
+(1920×960 tỉ lệ 2:1 — upscale sau khi sinh)

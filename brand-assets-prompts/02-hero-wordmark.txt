@@ -1,0 +1,26 @@
+PROMPT #2 — HERO WORDMARK (1024×1024, nền cho welcome screen)
+
+Vị trí lưu (thay file cũ, giữ nguyên tên):
+  AppUninstaller/welcome.png
+Lưu ý: ảnh hiện tại là hình vuông 1024×1024 hiển thị ở màn welcome trong app
+và làm ảnh đại diện README. Nên sinh NỀN + LOGO MARK KHÔNG CHỮ, rồi thêm chữ
+"APEXTUNE" bằng Figma/Canva (font gợi ý: SF Pro Display Bold hoặc Inter ExtraBold)
+để chữ sắc nét và đúng chính tả.
+
+Prompt:
+
+Abstract minimal brand hero background for a premium macOS utility app.
+A dark graphite canvas (#0B0E14) with a single soft radial blue glow
+(rgba 59,130,246 at 18%) positioned upper-center, and faint diagonal
+motion streaks suggesting speed and cleaning, resolving into one glowing
+chevron-peak mark in the center — two symmetric geometric strokes forming
+an apex mountain silhouette, gradient electric blue (#3B82F6) to cyan
+(#22D3EE), with a thin cyan tuning-arc orbiting the peak's base.
+Flat vector illustration, ultra minimal, generous negative space below
+the mark (bottom 40% kept almost empty for text overlay later).
+No text, no letters, no apple logo, no icons other than the central mark.
+
+Negative: text, typography, letters, numbers, apple logo, busy background,
+noise, watermark.
+
+Midjourney suffix: --ar 1:1 --no text,letters,apple,watermark --v 6

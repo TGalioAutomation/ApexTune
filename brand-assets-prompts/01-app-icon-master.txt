@@ -1,0 +1,24 @@
+PROMPT #1 — APP ICON MASTER (1024×1024)
+
+Vị trí lưu (thay file cũ, giữ nguyên tên):
+  AppUninstaller/BrandAssets/AppIcon-master-1024.png
+Sau đó chạy:  ./scripts/generate_app_icon.sh  (tự sinh AppIcon.icns)
+
+Prompt:
+
+A modern macOS app icon for a system optimization utility called ApexTune.
+A single elegant apex/summit mountain peak formed by two clean geometric
+chevron strokes, subtly merged with a rising tuning dial arc at its base.
+The peak glows with a gradient from electric blue (#3B82F6) to cyan (#22D3EE)
+against a deep graphite rounded-square background (#10141D to #1A2030 vertical
+gradient, macOS Big Sur style squircle with soft inner highlight along the
+top edge). Minimal, flat-vector style with very subtle depth, no text, no
+letters, no apple logo, no drop shadow outside the squircle. Centered
+composition, generous padding inside the squircle edges. Crisp edges,
+premium software aesthetic similar to modern developer tools.
+
+Negative: text, letters, words, apple logo, macbook, clutter, gradients band,
+photorealistic, 3d render, drop shadow outside canvas.
+
+Midjourney suffix: --ar 1:1 --no text,apple,logo,watermark --v 6
+DALL·E/Ideogram: dùng nguyên prompt trên, thêm "flat vector icon, no text".

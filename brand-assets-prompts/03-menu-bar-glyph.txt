@@ -1,0 +1,22 @@
+PROMPT #3 — MENU BAR GLYPH (tham khảo hình dạng, vẽ lại bằng code)
+
+Đây KHÔNG phải file thay trực tiếp: banner menu bar được vẽ bằng code trong
+MenuBarManager.makeStatusItemImage (hiện dùng SF Symbol
+"shield.lefthalf.filled.badge.checkmark"). Dùng ảnh sinh ra làm THAM KHẢO
+hình dạng để một session sau vẽ lại bằng NSBezierPath/CoreText, hoặc chọn
+SF Symbol mới gần giống.
+
+Prompt:
+
+A tiny monochrome status-bar glyph for a macOS menu bar, 18x18 points,
+pure white solid silhouette on transparent background: a minimal apex
+mountain chevron with a small glowing dot orbiting at its right base,
+single-weight strokes, geometric, instantly readable at 16 pixels,
+similar visual density to SF Symbols "bold" weight.
+Flat vector, no gradients, no outline-only shapes, no text.
+
+Negative: text, shading, color, gradient, 3d, apple logo, shield, checkmark.
+
+Midjourney suffix: --ar 1:1 --no text,color,apple --v 6
+Sau khi có ảnh: chuyển thành đường path đen/trắng, vẽ lại bằng
+NSBezierPath trong makeStatusItemImage (xem tintedIconCache).

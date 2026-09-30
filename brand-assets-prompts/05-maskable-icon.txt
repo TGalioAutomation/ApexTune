@@ -1,0 +1,20 @@
+PROMPT #5 — MASKABLE / PINNED ICON (tùy chọn)
+
+Dùng làm favicon/avatar khi cần bo tròn hoặc nền đặc — sinh từ prompt #1
+nhưng đơn giản hơn nữa (chỉ mark, không squircle).
+
+Prompt:
+
+A single geometric apex mountain mark made of two clean chevron strokes,
+gradient from electric blue (#3B82F6) to cyan (#22D3EE), centered on a
+solid very dark graphite square background (#0B0E14), no rounded-corner
+container, no border, mark occupies exactly 55% of the canvas width,
+perfectly centered. Flat vector, minimal, no text, no letters.
+
+Negative: text, letters, apple logo, gradient background, border, shadow.
+
+Midjourney suffix: --ar 1:1 --no text,apple,border --v 6
+
+Vị trí dùng (tham khảo, đặt tên mới khi cần):
+  website/assets/favicon.png     — rồi thêm <link rel="icon" href="assets/favicon.png">
+  (hiện index.html đang dùng assets/appicon.png là ảnh welcome cũ)
